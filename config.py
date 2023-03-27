@@ -11,7 +11,8 @@ class Config:
     DEBUG = False
     TESTING = False
     DATABASE_URI = ''
-    SECRET_KEY = os.urandom(32)
+    # SECRET_KEY = os.urandom
+    SECRET_KEY = 'secret_key'
     # 是否追踪数据库修改，一般不开启，会影响性能
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # 是否显示底层执行的SQL语句

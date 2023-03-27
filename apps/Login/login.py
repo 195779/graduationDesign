@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, redirect, render_template, url_for, flash
+from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session
 from apps.Login.__init__ import login_bp
 from form import LoginForm
 from exts import db
@@ -17,6 +17,8 @@ def login_index():
             flash("不存在该用户")
             return render_template('login/login.html', form=form)
         if user.password == password:
+            # return redirect(url_for("index.user_index", username=username))
+            session['username'] = username
             return redirect(url_for("index.user_index"))
         else:
             flash("密码输入错误")

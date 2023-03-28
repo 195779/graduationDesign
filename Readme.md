@@ -9,4 +9,4 @@
 1. 学习flask框架ing（进度:SQLAlchemy的操作)  2023.3.27
 2. 准备了一个前端模板，但是不太好用，觉得它的菜单栏不错，希望留下菜单栏， 内容部分自己再使用bootstrop填充
 3. 数据库设计雏形：
-![数据库草图](E:\Onedrive\OneDrive-stu.hebut.edu.cn_new\OneDrive - stu.hebut.edu.cn\桌面\UML 图.jpg)
+![数据库草图](UML.jpg)

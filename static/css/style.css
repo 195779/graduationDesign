@@ -6303,7 +6303,7 @@ body.skin-3 {
   .navbar-static-side {
     z-index: 2001;
     position: absolute;
-    width: 220px;
+    width: 200px;
   }
   .navbar-top-links .dropdown-messages,
   .navbar-top-links .dropdown-tasks,

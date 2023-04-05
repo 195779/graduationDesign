@@ -1,7 +1,7 @@
 from flask import render_template, request, session, redirect, url_for
 from flask import Blueprint
 from apps.Index.__init__ import index_bp
-from apps.models.user_model import User
+from apps.models.check_model import Admin
 
 
 @index_bp.route('/', methods=["POST", "GET"], endpoint='user_index')
@@ -9,8 +9,8 @@ def user_index():
     if request.method == 'GET':
         if 'username' in session:
             username = session['username']
-            user = User.query.filter_by(username=username).first()
-            return render_template('index/index.html', user=user)
+            admin = Admin.query.filter_by(adminId=username).first()
+            return render_template('index/index.html', user=admin)
         else:
             return redirect(url_for('login.login'))
     else:

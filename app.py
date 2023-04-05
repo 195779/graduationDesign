@@ -2,7 +2,7 @@ from flask_script import Manager
 from flask_migrate import MigrateCommand, Migrate
 from apps import create_app
 from exts import db
-from apps.models.user_model import User
+from apps.models.check_model import Admin
 app = create_app()
 manager = Manager(app)
 

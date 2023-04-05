@@ -9,6 +9,6 @@ def staff_show(id):
         username = session['username']
         user = Admin.query.filter_by(username=username).first()
 
-        return render_template('staff_manage/staff_manage.html', user=user)
+        return render_template('staff_all/staff_message_mange.html', user=user)
 
     return render_template("error/404.html")

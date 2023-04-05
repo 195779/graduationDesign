@@ -1,16 +1,17 @@
 from flask import render_template, request, session, redirect, url_for
 from flask import Blueprint
 from apps.Index.__init__ import index_bp
-from apps.models.check_model import Admin
+from apps.models.check_model import Admin, Departments
 
 
-@index_bp.route('/', methods=["POST", "GET"], endpoint='user_index')
-def user_index():
+@index_bp.route('/admin_index', methods=["POST", "GET"], endpoint='admin_index')
+def admin_index():
     if request.method == 'GET':
         if 'username' in session:
             username = session['username']
             admin = Admin.query.filter_by(adminId=username).first()
-            return render_template('index/index.html', user=admin)
+            departments = Departments.query.all()
+            return render_template('index/admin_index.html', admin=admin, departments=departments)
         else:
             return redirect(url_for('login.login'))
     else:
@@ -33,7 +34,7 @@ return redirect(url_for('index.usr_index', username=username))
 def user_index(username):
     if request.method == 'GET':
         user = User.query.filter_by(username=username).first()
-        return render_template('index/index.html', user=user)
+        return render_template('index/admin_index.html', user=user)
     else:
         return "not post now"
 """

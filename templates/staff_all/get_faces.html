@@ -1,0 +1,200 @@
+{% extends 'index/staff_index.html' %}
+
+{% block styles %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta name="keywords" content="后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link href="../../static/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link href="../../static/font-awesome/css/font-awesome.css?v=4.3.0" rel="stylesheet">
+    <!-- Morris -->
+    <link href="../../static/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+    <!-- Gritter -->
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <!--link href="../../static/js/plugins/gritter/jquery.gritter.css" rel="stylesheet"-->
+
+    <link href="../../static/css/animate.css" rel="stylesheet">
+    <link href="../../static/css/style.css?v=2.2.0" rel="stylesheet">
+
+    <style>
+        video, canvas {
+            border: 2px solid #2b8cdf;
+        }
+
+        .rr {
+            float: right;
+
+        }
+        .wrap{
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <main div="col-xs-12">
+        <div align="center" class="alert-danger" style="min-height: 15px; max-height: 20px" id="message" role="alert" hidden> 提示</div>
+        <div class="wrap">
+            <span class="label label-info">企业职工：{{ staff.staffId }} <br> 当前的人脸信息状态为： {{ staff_information.faceValueState }} </span>
+            <input type="button"  value="人脸信息录入详情" class="btn btn-primary" data-toggle="modal" data-target="#{{ staff.staffId }}{{ staff_information.staffName }}face"></td>
+        </div>
+        <div class="col-xs-6" style="min-height: 520px; margin-top: 10px">
+            <video style="min-height: 480px" id="video" width="640" height="480"></video>
+            <div class="col-xs-6" style="width: 330px">
+                <button onclick="openvideo()" class="btn btn-primary"
+                        style="width: 90px;  height: 30px;margin-left: 235px;background-color: #2a99f7">开始拍摄
+                </button>
+                <form action="{{ url_for('staff_all.staff_upload_faces') }}" method="post">
+                    <input type="submit" class="btn btn-primary" value="提交"
+                           style="width: 85px;height: 55px; margin-top: 20px ;margin-left: 562px; font-size: 22px; background-color: #2a99f7">
+                </form>
+            </div>
+        </div>
+        <div class="col-xs-6" style="min-height: 520px; margin-top: 10px">
+            <canvas id="canvas" style="min-height: 480px"  width="640" height="480"></canvas>
+            <div class="col-xs-6" style="width: 330px">
+                <button onclick="getPic()" class="btn btn-primary"
+                        style="float:left; margin-left: 120px;width: 60px;height: 30px;background-color: #2a99f7">拍摄
+                </button>
+                <button class="btn btn-primary" id='test'
+                        style="width: 60px;height: 30px; margin-left: 60px;background-color: #2a99f7">确认
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="{{ staff.staffId }}{{ staff_information.staffName }}face" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        职工照片录入详情
+                    </h4>
+                </div>
+                <form action="{{ url_for('staff_all.delete_faces') }}" method="post">
+                    <div class="modal-body">
+                        职工&nbsp&nbspID:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" class="table-input" name="staffId"
+                                                                            value="{{ staff.staffId }}" readonly>
+                        <br>
+                        职工&nbsp&nbsp姓名:&nbsp&nbsp<input type="text" class="table-input" name="staffName"
+                                                        value="{{ staff_information.staffName }}" readonly>
+                        <br>
+                        照&nbsp&nbsp片:
+                        <br>
+                        <br>
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/1.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/2.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/3.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/4.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/5.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/6.jpg"
+                             style="width:150px;height: 150px">
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/7.jpg"
+                             style="width:150px;height: 150px">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">驳回重录</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+    <script>
+        $("#canvas").width($("#video").width())
+        $("#canvas").height($("#video").height())
+        function openvideo() {
+            /*获取前端的视频标签*/
+            video = document.getElementById("video")
+            /*定义一个video设备的字典,显示宽高*/
+            cons = {
+                video: {width: video.width, height: video.height}
+            }
+            /*navigator导航的对象,它可以找到一些硬件mediaDevices,*/
+            /*getUserMedia取出video摄像头这个设备*/
+            pros = navigator.mediaDevices.getUserMedia(cons)
+            /*取出后做的内容,用then来接,把内容放在res参数中,与video进行关联*/
+            pros.then(function (res) {
+                video.srcObject = res
+                video.play()
+            })
+
+        }
+
+        function upload() {
+            $.post("/staff/upload_faces")
+        }
+
+        function getPic() {
+            /*获取前端的视频标签和画布的标签*/
+            video = document.getElementById("video")
+            canvas = document.getElementById("canvas")
+            /*用canvas画图,画的是平面的2d图形*/
+            ctx = canvas.getContext("2d")
+            /*调用canvas画布当中的drawImage画图函数*/
+            /*drawImage四个参数:画图位置和宽高*/
+            /*画的目标是视频中的内容*/
+            ctx.drawImage(video, 0, 0, 640, 480)
+        }
+
+        $(document).ready(function () {
+            $("#test").click(function () {
+                /*获取前端画布的标签*/
+                canvas = document.getElementById("canvas")
+                data = canvas.toDataURL("image/jpg", 0.5)
+                /*下面一句代码的意思,这个canvas转成的data数据前面的22位只是编码格式,不是图片数据*/
+                data = data.substring(22)
+                //console.log(data)
+                /*图片数据只能post方式来提交*/
+                $.post("{{ url_for('staff_all.staff_get_faces') }}", {"face": data}, function (res) {
+                    var data = res;
+                    flag = data.result;
+                    num = data.code;
+                    if (flag == 'none') {
+                        msg = '未检测到人脸，请重新拍摄';
+                        $("#message").attr("class", 'alert-danger');
+                    } else if (flag == 'big') {
+                        msg = '人脸范围过大，请调整距离后再拍摄';
+                        $("#message").attr("class", 'alert-danger');
+                    } else if (flag == 'error') {
+                        msg = '提交不合格照片，请确保7张照片都合格后再提交';
+                        $("#message").attr("class", 'alert-danger');
+                    } else {
+                        if (num == 7) {
+                            $("#message").attr("class", 'alert-warning');
+                            msg = '已成功拍摄7张照片，再次拍摄将覆盖最旧的照片，无误请点击提交';
+                        } else {
+                            msg = '照片合格，已保存，请继续拍摄至7张';
+                            $("#message").attr("class", 'alert-success');
+                        }
+                    }
+
+                    $("#message").text(msg);
+                    $("#message").show(msg);
+                    $("#message").fadeOut(3000);
+                })
+            })
+        })
+
+    </script>
+{% endblock %}
+

@@ -34,6 +34,7 @@ def login_index():
                 if user_password == post_password:
                     session['username'] = post_username
                     session['loginTime'] = user_loginTime
+                    session['num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
@@ -56,6 +57,7 @@ def login_index():
                 if user_password == post_password:
                     session['username'] = post_username
                     session['loginTime'] = user_loginTime
+                    session['num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
@@ -79,6 +81,7 @@ def login_index():
                 if user_password == post_password:
                     session['username'] = post_username
                     session['loginTime'] = user_loginTime
+                    session['num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
@@ -102,6 +105,7 @@ def login_index():
                 if user_password == post_password:
                     session['username'] = post_username
                     session['loginTime'] = user_loginTime
+                    session['num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime

@@ -2,7 +2,7 @@ from flask import Flask
 
 from apps.Index.__init__ import index_bp
 from apps.Login.__init__ import login_bp
-from apps.Staff_Manage.__init__ import staff_bp
+from apps.staff.__init__ import staff_bp
 from config import DevelopmentConfig
 from exts import db
 

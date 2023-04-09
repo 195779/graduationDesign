@@ -88,7 +88,7 @@ class Position(db.Model):
     __table_name = 'position'
     positionId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='岗位ID')
     positionName = db.Column(db.String(20), unique=True, comment='岗位名称')
-    positionLevel = db.Column(db.Integer, unique=True, comment='岗位等级')
+    positionLevel = db.Column(db.Integer, comment='岗位等级')
 
     position_staff_informations = db.relationship('staffInformation', backref='position', lazy='dynamic')
     # 岗位---职工信息 1对多

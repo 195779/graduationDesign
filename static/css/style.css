@@ -2757,10 +2757,12 @@ a.forum-item-title:hover {
 .sidebar-content .wrapper,
 .wrapper.sidebar-content {
   padding-right: 230px !important;
+  min-height: 1000px;
 }
 .body-small .sidebar-content .wrapper,
 .body-small .wrapper.sidebar-content {
   padding-right: 20px !important;
+  min-height: 1000px;
 }
 #right-sidebar {
   background-color: #fff;
@@ -2884,7 +2886,7 @@ body.full-height-layout #page-wrapper {
   height: 100%;
 }
 #page-wrapper {
-  min-height: auto;
+  min-height: 1000px;
 }
 body.boxed-layout {
   background: url('patterns/shattered.png');
@@ -3005,9 +3007,11 @@ video {
 #wrapper {
   width: 100%;
   overflow-x: hidden;
+  min-height: 1000px;
 }
 .wrapper {
   padding: 0 20px;
+
 }
 .wrapper-content {
   padding: 20px 10px 40px;
@@ -6298,7 +6302,7 @@ body.skin-3 {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 220px;
-    min-height: 1200px;
+    min-height: 1000px;
   }
   .navbar-static-side {
     z-index: 2001;
@@ -6344,6 +6348,7 @@ body.skin-3 {
   }
   .sidebar-content .wrapper {
     padding-right: 0px;
+
     z-index: 1;
   }
   .fixed-sidebar.body-small .navbar-static-side {

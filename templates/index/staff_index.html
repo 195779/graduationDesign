@@ -109,7 +109,7 @@
             </div>
  {% endblock %}
 {% block left_content %}
-    <nav class="navbar-default navbar-static-side" role="navigation">
+    <nav class="navbar-default navbar-static-side"  role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="side-menu">
                     <li class="nav-header">
@@ -203,7 +203,7 @@
                         <ul class="nav nav-second-level">
                             <li><a href="form_basic.html">人脸信息</a>
                             </li>
-                            <li><a href="form_validate.html">？人脸签到？</a>
+                            <li><a href="{{ url_for('staff_all.staff_get_faces') }}">人脸录入</a>
                             </li>
                         </ul>
                     </li>
@@ -212,3 +212,4 @@
             </div>
         </nav>
 {% endblock %}
+

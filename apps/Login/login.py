@@ -20,7 +20,6 @@ def login_index():
             # 职工编号       195779、195778、195780..........六位ID
             # 闸机编号       gateAdmin001、gateAdmin002......12位ID
             # 部门管理员编号 depAdmin001、depAdmin002.........11为ID
-
             # 查询
             if len(post_username) == 8:
                 # admin

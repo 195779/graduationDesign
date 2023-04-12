@@ -24,7 +24,7 @@ def return_128d_features(path_img):
     img_rd = io.imread(path_img)
     faces = detector(img_rd, 1)
 
-    print("%-40s %-20s" % (" >> 检测到人脸的图像 / Image with faces detected:", path_img), '\n')
+    # print("%-40s %-20s" % (" >> 检测到人脸的图像 / Image with faces detected:", path_img), '\n')
 
     # 因为有可能截下来的人脸再去检测，检测不出来人脸了, 所以要确保是 检测到人脸的人脸图像拿去算特征
     # For photos of faces saved, we need to make sure that we can detect faces from the cropped images
@@ -46,7 +46,7 @@ def return_features_mean_personX(path_faces_personX):
     if photos_list:
         for i in range(len(photos_list)):
             # 调用 return_128d_features() 得到 128D 特征 / Get 128D features for single image of personX
-            print("%-40s %-20s" % (" >> 正在读的人脸图像 / Reading image:", path_faces_personX + "/" + photos_list[i]))
+            # print("%-40s %-20s" % (" >> 正在读的人脸图像 / Reading image:", path_faces_personX + "/" + photos_list[i]))
             features_128d = return_128d_features(path_faces_personX + "/" + photos_list[i])
             # 遇到没有检测出人脸的图片跳过 / Jump if no face detected from image
             if features_128d == 0:

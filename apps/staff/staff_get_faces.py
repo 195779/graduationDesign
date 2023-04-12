@@ -69,17 +69,22 @@ def upload_faces():
         features_mean_personX = features_extraction.return_features_mean_personX(path)
         features = str(features_mean_personX[0])
         for i in range(1, 128):
+            # range(1,128) 遍历 1-127的全部数字 i  加上前面已经加入的 0 ，
+            # 将128维的特征向量（128个浮点数）全部从float类型转换为字符串类型，并用逗号隔开
             features = features + ',' + str(features_mean_personX[i])
         face = faceValue.query.filter(faceValue.staffId == session['username']).first()
         if face:
             face.staffFaceValue = features
+            # 如果存在则更新
         else:
+            # 不存在则添加
             face = faceValue(staffId=session['username'], staffFaceValue=features)
             db.session.add(face)
         db.session.commit()
-        print(" >> 特征均值 / The mean of features:", list(features_mean_personX), '\n')
+        # print(" >> 特征均值 / The mean of features:", list(features_mean_personX), '\n')
         staff_information = staffInformation.query.filter(staffInformation.staffId == session['username']).first()
         staff_information.faceValueState = True
+        # 更改人脸信息录入的状态
         db.session.commit()
         flash("提交成功！")
         return redirect(url_for('index.staff_index'))
@@ -91,6 +96,7 @@ def upload_faces():
 
 @staff_bp.route('/delete_faces', methods=['POST'], endpoint='delete_faces')
 def delete_face():
+    # 驳回重录
     staffId = request.form.get('staffId')
     staff_information = staffInformation.query.filter(staffInformation.staffId == staffId).first()
     face_value = faceValue.query.filter(faceValue.staffId == staffId).first()

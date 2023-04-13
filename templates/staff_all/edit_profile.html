@@ -1,0 +1,126 @@
+{% extends 'index/staff_index.html' %}
+
+{% block content %}
+    <div class="content">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/style.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css">
+        <script src="../../static/js2/jquery-3.2.1.min.js"></script>
+	<script src="../../static/js2/popper.min.js"></script>
+    <script src="../../static/js2/bootstrap.min.js"></script>
+    <script src="../../static/js2/jquery.slimscroll.js"></script>
+    <script src="../../static/js2/select2.min.js"></script>
+    <script src="../../static/js2/moment.min.js"></script>
+    <script src="../../static/js2/bootstrap-datetimepicker.min.js"></script>
+    <script src="../../static/js2/app.js"></script>
+                <div class="row">
+                    <div class="col-sm-12" style="margin-top: 10px">
+                        <h4 class="page-title">编辑个人信息</h4>
+                    </div>
+                </div>
+                <form>
+                    <div class="card-box">
+                        <h3 class="card-title">基本信息</h3>
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-md-12">
+                                <div class="profile-img-wrap">
+                                    <img class="inline-block" src="assets/img/user.jpg" alt="user">
+                                    <div class="fileupload btn">
+                                        <span class="btn-text">编辑头像</span>
+                                        <input class="upload" type="file">
+                                    </div>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group form-focus focused">
+                                                <label class="focus-label">姓名</label>
+                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="John">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">部门</label>
+                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="New York">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">岗位</label>
+                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="United States">
+                                </div>
+                            </div>
+                                         <div class="col-md-6">
+                                            <div class="form-group form-focus focused">
+                                                <label class="focus-label">职工ID</label>
+                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="Doe">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-box" style="display: inline-block; min-height: 100px;">
+                        <h3 class="card-title">详细信息</h3>
+                        <div class="row" style="display: inline-block; min-height: 100px; margin-top: 10px">
+                            <div class="col-md-6">
+                                            <div class="form-group form-focus focused">
+                                                <label class="focus-label">性别</label>
+                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="Doe">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-focus focused">
+                                                <label class="focus-label">出生日期</label>
+                                                <div class="cal-icon">
+                                                    <input class="form-control floating datetimepicker" style="margin-top: 5px"  type="text" value="05/06/1985">
+                                                </div>
+                                            </div>
+                                        </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">籍贯</label>
+                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="10523">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">在职状态</label>
+                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="631-889-3206">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">电子邮件地址</label>
+                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="暂无">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">联系方式</label>
+                                    <input type="text" style="margin-top: 5px" class="form-control floating" value="ddd">
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="display: inline-block; min-height: 100px;">
+                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 80px; min-width: 100%">
+                                    <label class="focus-label" style="margin-bottom: 5px">现住址</label>
+                                    <textarea type="text" class="form-control floating" style="width: 100%;margin-top: 5px; height: 100%">ddddddddddd</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="display: inline-block; min-height: 150px;">
+                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 120px; min-width: 100%">
+                                    <label class="focus-label" style="margin-bottom: 5px">备注信息</label>
+                                    <textarea type="text" class="form-control floating" style="width: 100%; margin-top: 5px;height: 100%">ddddddddddd</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center m-t-20">
+                            <button class="btn btn-primary submit-btn" type="button">Save</button>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+{% endblock %}

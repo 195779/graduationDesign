@@ -109,7 +109,7 @@
             </div>
  {% endblock %}
 {% block left_content %}
-    <nav class="navbar-default navbar-static-side"  role="navigation">
+    <nav class="navbar-default navbar-static-side" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="side-menu">
                     <li class="nav-header">
@@ -117,19 +117,19 @@
                             <span>
                             <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
                             </span>
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="admin_index.html#">
-                                <span class="clear">
+                            <a data-toggle="dropdown" class="dropdown-toggle">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
                                     <span class="block m-t-xs">
-                                        <strong class="font-bold">
+                                        <strong class="font-bold" style="color: #fdffff">
                                             {{ staff.staffId }}
                                         </strong>
                                     </span>
-                                    <span class="text-muted text-xs block">
-                                        企业职工
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">企业职工</strong>
                                         <b class="caret"></b></span>
                                 </span>
                             </a>
-                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
                                 <li><a href="../../static/form_avatar.html">修改头像</a>
                                 </li>
                                 <li><a href="{{ url_for('staff_all.staff_profile') }}">个人资料</a>
@@ -147,63 +147,59 @@
 
                     </li>
                     <li class="active">
-                        <a href="{{ url_for('staff_all.staff_profile') }}"><i class="fa fa-th-large"></i> <span class="nav-label">个人信息管理</span> <span
-                                class="fa arrow"></span></a>
-                    </li>
-                    <li>
-                        <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">个人考勤统计</span><span
+                        <a href="#" style="color: #fdffff"><i class="fa fa-th-large"></i> <span class="nav-label">个人信息管理</span> <span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="toastr_notifications.html">总况</a>
+                            <li>
+                                <a href="{{ url_for('staff_all.staff_profile') }}" style="color: #fdffff">查看个人信息</a>
+                                <a href="{{ url_for('staff_all.edit_profile') }}" style="color: #fdffff">编辑个人信息</a>
                             </li>
-                            <li><a href="nestable_list.html">出勤/工时统计</a>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#" style="color: #fdffff" ><i class="fa fa fa-globe"></i> <span class="nav-label">个人考勤统计</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="toastr_notifications.html" style="color: #fdffff">总况</a>
                             </li>
-                            <li><a href="timeline_v2.html">迟到统计</a>
+                            <li><a href="nestable_list.html" style="color: #fdffff">出勤/工时统计</a>
                             </li>
-                            <li><a href="forum_main.html">早退统计</a>
+                            <li><a href="timeline_v2.html" style="color: #fdffff">迟到统计</a>
                             </li>
-                            <li><a href="code_editor.html">休假统计</a>
+                            <li><a href="forum_main.html" style="color: #fdffff">早退统计</a>
                             </li>
-                            <li><a href="modal_window.html">出差统计</a>
+                            <li><a href="code_editor.html" style="color: #fdffff">休假统计</a>
                             </li>
-                            <li><a href="validation.html">加班统计</a>
+                            <li><a href="modal_window.html" style="color: #fdffff">出差统计</a>
+                            </li>
+                            <li><a href="validation.html" style="color: #fdffff">加班统计</a>
                             </li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">查看考勤设置</span><span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="graph_echarts.html">查看出勤</a>
-                            </li>
-                            <li><a href="graph_flot.html">查看休假</a>
-                            </li>
-                            <li><a href="graph_morris.html">查看出差</a>
-                            </li>
-                            <li><a href="graph_rickshaw.html">查看加班</a>
-                            </li>
-                        </ul>
+                        <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">查看考勤设置</span><span
+                        ></span></a>
                     </li>
                     <li>
-                        <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">请假/留言/公告</span><span
+                        <a href="mailbox.html" style="color: #fdffff"><i class="fa fa-envelope"></i> <span class="nav-label">请假/留言/公告</span><span
                                 class="label label-warning pull-right">16</span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="mailbox.html">收件箱</a>
+                            <li><a href="mailbox.html" style="color:#fdffff;">收件箱</a>
                             </li>
-                            <li><a href="mail_compose.html">查看公告</a>
+                            <li><a href="mail_compose.html" style="color:#fdffff;">查看公告</a>
                             </li>
-                            <li><a href="xxxxxxx.html">申请休假</a>
+                            <li><a href="xxxxxxx.html" style="color: #fdffff">申请休假</a>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <a href="admin_index.html#"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
+                        <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="form_basic.html">人脸信息</a>
+                            <li><a href="form_basic.html" style="color: #fdffff">人脸信息</a>
                             </li>
-                            <li><a href="{{ url_for('staff_all.staff_get_faces') }}">人脸录入</a>
+                            <li><a href="{{ url_for('staff_all.staff_get_faces') }}" style="color: #fdffff">人脸录入</a>
                             </li>
                         </ul>
                     </li>

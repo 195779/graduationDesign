@@ -1,7 +1,7 @@
 import base64
 import os
 
-from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session
+from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, abort
 from apps.staff.__init__ import staff_bp
 from apps.models.check_model import Staff, faceValue, staffInformation
 from apps import get_faces_from_camera
@@ -33,6 +33,8 @@ def get_faces():
         限定一下上面逻辑的发生条件,不是POST方式,就是GET,GET请求页面
         :return:
     '''
+    if session['username'] is None or session['num'] is None:
+        abort(404)
     staff = Staff.query.filter_by(staffId=session['username']).first()
     staff_information = staffInformation.query.filter_by(staffId=session['username']).first()
     if request.method == "POST":
@@ -62,6 +64,8 @@ def get_faces():
 
 @staff_bp.route('/upload_faces', methods=['POST', 'GET'], endpoint='staff_upload_faces')
 def upload_faces():
+    if session['username'] is None:
+        abort(404)
     try:
         path_images_from_camera = "static/data/data_faces_from_camera/"
         path = path_images_from_camera + session['username']

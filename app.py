@@ -1,3 +1,4 @@
+from flask import render_template
 from flask_script import Manager
 from flask_migrate import MigrateCommand, Migrate
 from apps import create_app
@@ -16,6 +17,12 @@ if __name__ == '__main__':
     print(app.secret_key)
     # app.run()
     manager.run()
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('../templates/error/404.html'), 404
+
 
 
 # python app.py  (app.run())

@@ -1,5 +1,197 @@
 {% extends 'index/admin_index.html' %}
+{% block styles %}
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="renderer" content="webkit">
+        <meta name="keywords" content="后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+        <meta name="description" content="基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
 
+        <link href="../../static/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+        <link href="../../static/font-awesome/css/font-awesome.css?v=4.3.0" rel="stylesheet">
+
+        <!-- Morris -->
+        <link href="../../static/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+        <!-- Gritter -->
+        <link href="../../static/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+
+        <link href="../../static/css/animate.css" rel="stylesheet">
+        <link href="../../static/css/style.css?v=2.2.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css2/style.css">
+{% endblock %}
 {% block content %}
+<div class="content">
+                <div class="row">
+                    <div class="col-sm-4 col-3">
+                        <h4 class="page-title">{{ department.departmentName }}职工信息</h4>
+                    </div>
+                    <div class="col-sm-8 col-9 text-right m-b-20">
+                        <a href="add-employee.html" class="btn btn-primary float-right btn-rounded"><i class="fa fa-plus"></i> Add Employee</a>
+                    </div>
+                </div>
+                <div class="row filter-row">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Employee ID</label>
+                            <input type="text" class="form-control floating">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group form-focus">
+                            <label class="focus-label">Employee Name</label>
+                            <input type="text" class="form-control floating">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group form-focus select-focus focused">
+                            <label class="focus-label">Role</label>
+                            <select class="select floating select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                                <option>Select Role</option>
+                                <option>Nurse</option>
+                                <option>Pharmacist</option>
+                                <option>Laboratorist</option>
+                                <option>Accountant</option>
+                                <option>Receptionist</option>
+                            </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-6a17-container"><span class="select2-selection__rendered" id="select2-6a17-container" title="Select Role">Select Role</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <a href="#" class="btn btn-success btn-block"> Search </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+						<div class="table-responsive">
+                            <table class="table table-striped custom-table">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width:200px;">姓名</th>
+                                        <th>职工ID</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th style="min-width: 110px;">Join Date</th>
+                                        <th>岗位</th>
+                                        <th class="text-right">状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for staff_information in staffInformation %}
 
+                                {% endfor %}
+                                    <tr>
+                                        <td>
+											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Albina Simonis</h2>
+										</td>
+                                        <td>NS-0001</td>
+                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb9a979992959a88929694959288bb9e839a968b979ed5989496">[email&nbsp;protected]</a></td>
+                                        <td>828-634-2744</td>
+                                        <td>7 May 2015</td>
+                                        <td>
+                                            <span class="custom-badge status-green">Nurse</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Cristina Groves</h2>
+										</td>
+                                        <td>DR-0001</td>
+                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0665746f75726f686761746970637546637e676b766a632865696b">[email&nbsp;protected]</a></td>
+                                        <td>928-344-5176</td>
+                                        <td>1 Jan 2013</td>
+                                        <td>
+                                            <span class="custom-badge status-blue">Doctor</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+									<tr>
+                                        <td>
+											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Mary Mericle</h2>
+										</td>
+                                        <td>SF-0003</td>
+                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="731e12010a1e16011a101f1633160b121e031f165d101c1e">[email&nbsp;protected]</a></td>
+                                        <td>603-831-4983</td>
+                                        <td>27 Dec 2017</td>
+                                        <td>
+                                            <span class="custom-badge status-grey">Accountant</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+									<tr>
+                                        <td>
+											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Haylie Feeney</h2>
+										</td>
+                                        <td>SF-0002</td>
+                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ff7fee6f3f6faf9fafaf1fae6dffae7fef2eff3fab1fcf0f2">[email&nbsp;protected]</a></td>
+                                        <td>616-774-4962</td>
+                                        <td>21 Apr 2017</td>
+                                        <td>
+                                            <span class="custom-badge status-grey">Laboratorist</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+									<tr>
+                                        <td>
+											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Zoe Butler</h2>
+										</td>
+                                        <td>SF-0001</td>
+                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7adb8b2b5a2a3bbb2a597b2afb6baa7bbb2f9b4b8ba">[email&nbsp;protected]</a></td>
+                                        <td>444-555-9999</td>
+                                        <td>19 May 2012</td>
+                                        <td>
+                                            <span class="custom-badge status-grey">Pharmacist</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+						</div>
+                    </div>
+                </div>
+            </div>
 {% endblock %}

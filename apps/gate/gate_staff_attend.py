@@ -17,6 +17,9 @@ import dlib
 attend_records = []
 # 本次签到的开启时间
 the_now_time = ''
+# 签到人员名字
+staffName_first = None
+staffName_last = None
 
 # Dlib 正向人脸检测器
 detector = dlib.get_frontal_face_detector()
@@ -74,8 +77,7 @@ class VideoCamera(object):
     def __del__(self):
         self.video.release()
 
-        # 从 "features_all.csv" 读取录入人脸特征 / Get known faces from "features_all.csv"
-
+    # 从 allfeatures 读取录入人脸特征 / Get known faces from allfeatures
     def get_face_database(self, testId, all_featuers, all_Id):
         from_db_all_features = all_featuers
         from_db_all_id = all_Id
@@ -148,7 +150,6 @@ class VideoCamera(object):
         if self.get_face_database(testId, all_features, all_Id):
             while stream.isOpened():
                 self.frame_cnt += 1
-                # print(">>> Frame " + str(self.frame_cnt) + " starts")
                 flag, img_rd = stream.read()
                 # 2. 检测人脸 / Detect faces for frame X
                 faces = detector(img_rd, 0)  # 人脸特征数组
@@ -159,80 +160,55 @@ class VideoCamera(object):
                 with open(filename, 'a') as file:
                     # 4.1 当前帧和上一帧相比没有发生人脸数变化 / If cnt not changes, 1->1 or 0->0
                     if self.current_frame_face_cnt == self.last_frame_faces_cnt:
-                        # print("   >>> scene 1: 当前帧和上一帧相比没有发生人脸数变化 / No face cnt changes in this frame!!!")
                         if "unknown" in self.current_frame_name_list:
-                            # print("   >>> 有未知人脸, 开始进行 reclassify_interval_cnt 计数")
                             self.reclassify_interval_cnt += 1
-
                         # 4.1.1 当前帧一张人脸 / One face in this frame
                         if self.current_frame_face_cnt == 1:
                             if self.reclassify_interval_cnt == self.reclassify_interval:
-                                # print("   >>> scene 1.1 需要对于当前帧重新进行人脸识别 / Re-classify for current frame")
-
                                 self.reclassify_interval_cnt = 0
                                 self.current_frame_face_feature_list = []
                                 self.current_frame_face_X_e_distance_list = []
                                 self.current_frame_name_list = []
-
                                 for i in range(len(faces)):
                                     shape = predictor(img_rd, faces[i])
                                     self.current_frame_face_feature_list.append(
                                         face_reco_model.compute_face_descriptor(img_rd, shape))
-
                                 # a. 遍历捕获到的图像中所有的人脸 / Traversal all the faces in the database
                                 for k in range(len(faces)):
                                     self.current_frame_name_list.append("unknown")
-
                                     # b. 每个捕获人脸的名字坐标 / Positions of faces captured
                                     self.current_frame_face_position_list.append(tuple(
                                         [faces[k].left(),
                                          int(faces[k].bottom() + (faces[k].bottom() - faces[k].top()) / 4)]))
-
                                     # c. 对于某张人脸，遍历所有存储的人脸特征 / For every face detected, compare it with all the faces
                                     # in the database
                                     for i in range(len(self.features_known_list)):
                                         # 如果 person_X 数据不为空 / If the data of person_X is not empty
                                         if str(self.features_known_list[i][0]) != '0.0':
-                                            # print("            >>> with person", str(i + 1), "the e distance: ",
-                                            # end='')
                                             e_distance_tmp = self.return_euclidean_distance(
                                                 self.current_frame_face_feature_list[k],
                                                 self.features_known_list[i])
-                                            # print(e_distance_tmp)
                                             self.current_frame_face_X_e_distance_list.append(e_distance_tmp)
                                         else:
                                             # 空数据 person_X / For empty data
                                             self.current_frame_face_X_e_distance_list.append(999999999)
-                                    # print("            >>> current_frame_face_X_e_distance_list:",
-                                    #       self.current_frame_face_X_e_distance_list)
-
                                     # d. 寻找出最小的欧式距离匹配 / Find the one with minimum e distance
                                     similar_person_num = self.current_frame_face_X_e_distance_list.index(
                                         min(self.current_frame_face_X_e_distance_list))
-                                    # print("   >>> Minimum e distance with ", self.name_known_list[similar_person_num],
-                                    #      ": ",
-                                    #      min(self.current_frame_face_X_e_distance_list))
-
                                     if min(self.current_frame_face_X_e_distance_list) < 0.4:
                                         # 在这里更改显示的人名
-                                        # self.show_chinese_name()
                                         self.current_frame_name_list[k] = self.name_known_list[similar_person_num]
-                                        # print("            >>> recognition result for face " + str(k + 1) + ": " +
-                                        #       self.name_known_list[similar_person_num])
                                         now = time.strftime("%Y 年-%m 月-%d 日 %H:%M", time.localtime())
                                         mm = self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n'
                                         file.write(self.name_known_list[similar_person_num] + '  ' + now + '     已签到\n')
                                         attend_records.append(mm)
                                         staffName = self.name_known_list[similar_person_num]
-                                        # session['attend'].append(mm)
+                                        global staffName_first
+                                        staffName_first = staffName
                                     else:
                                         staffName = None
                                         pass
-                                    # print(
-                                    #    "            >>> recognition result for face " + str(
-                                    #        k + 1) + ": " + "unknown")
                             else:
-                                # print("   >>> scene 1.2 不需要对于当前帧重新进行人脸识别 / No re-classification for current frame")
                                 # 获取特征框坐标 / Get ROI positions
                                 for k, d in enumerate(faces):
                                     # 计算矩形框大小 / Compute the shape of ROI
@@ -240,99 +216,69 @@ class VideoCamera(object):
                                     width = (d.right() - d.left())
                                     hh = int(height / 2)
                                     ww = int(width / 2)
-
                                     cv2.rectangle(img_rd,
                                                   tuple([d.left() - ww, d.top() - hh]),
                                                   tuple([d.right() + ww, d.bottom() + hh]),
                                                   (255, 255, 0), 2)
-
                                     self.current_frame_face_position_list[k] = tuple(
                                         [faces[k].left(),
                                          int(faces[k].bottom() + (faces[k].bottom() - faces[k].top()) / 4)])
-
-                                    # print("   >>> self.current_frame_name_list:              ",
-                                    #       self.current_frame_name_list[k])
-                                    # print("   >>> self.current_frame_face_position_list:     ",
-                                    #       self.current_frame_face_position_list[k])
-
                                     img_rd = self.draw_name(img_rd)
-
                     # 4.2 当前帧和上一帧相比发生人脸数变化
                     else:
-                        # print("   >>> scene 2: 当前帧和上一帧相比人脸数发生变化 / Faces cnt changes in this frame")
                         self.current_frame_face_position_list = []
                         self.current_frame_face_X_e_distance_list = []
                         self.current_frame_face_feature_list = []
-
                         # 4.2.1 人脸数从 0->1 / Face cnt 0->1
                         if self.current_frame_face_cnt == 1:
-                            # print("   >>> scene 2.1 出现人脸，进行人脸识别
                             self.current_frame_name_list = []
-
                             for i in range(len(faces)):
                                 shape = predictor(img_rd, faces[i])
                                 self.current_frame_face_feature_list.append(
                                     face_reco_model.compute_face_descriptor(img_rd, shape))
-
                             # a. 遍历捕获到的图像中所有的人脸
                             for k in range(len(faces)):
                                 self.current_frame_name_list.append("unknown")
-
                                 # b. 每个捕获人脸的名字坐标
                                 self.current_frame_face_position_list.append(tuple(
                                     [faces[k].left(),
                                      int(faces[k].bottom() + (faces[k].bottom() - faces[k].top()) / 4)]))
-
                                 # c. 对于某张人脸，遍历所有存储的人脸特征
-                                # print(len(self.features_known_list))
                                 for i in range(len(self.features_known_list)):
                                     # 如果 person_X 数据不为空 / If data of person_X is not empty
                                     if str(self.features_known_list[i][0]) != '0.0':
-                                        #  print("            >>> with person", str(i + 1), "the e distance: ", end='')
                                         e_distance_tmp = self.return_euclidean_distance(
                                             self.current_frame_face_feature_list[k],
                                             self.features_known_list[i])
-                                        # print(e_distance_tmp)
                                         self.current_frame_face_X_e_distance_list.append(e_distance_tmp)
                                     else:
                                         # 空数据 person_X
                                         self.current_frame_face_X_e_distance_list.append(999999999)
-
                                 # d. 寻找出最小的欧式距离匹配
                                 similar_person_num = self.current_frame_face_X_e_distance_list.index(
                                     min(self.current_frame_face_X_e_distance_list))
-
                                 if min(self.current_frame_face_X_e_distance_list) < 0.4:
                                     # 在这里更改显示的人名
-                                    # self.show_chinese_name()
                                     self.current_frame_name_list[k] = self.name_known_list[similar_person_num]
-                                    # print("            >>> recognition result for face " + str(k + 1) + ": " +
-                                    #     self.name_known_list[similar_person_num])
                                     now = time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())
                                     mm = self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n'
                                     file.write(self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n')
                                     staffName = self.name_known_list[similar_person_num]
-                                    # session['attend'].append(mm)
                                     attend_records.append(mm)
+                                    staffName_first = staffName
                                 else:
                                     pass
                             if "unknown" in self.current_frame_name_list:
                                 self.reclassify_interval_cnt += 1
-
                         # 4.2.1 人脸数从 1->0 / Face cnt 1->0
                         elif self.current_frame_face_cnt == 0:
-                            # print("   >>> scene 2.2 人脸消失, 当前帧中没有人脸 / No face in this frame!!!")
-
                             self.reclassify_interval_cnt = 0
                             self.current_frame_name_list = []
                             self.current_frame_face_feature_list = []
                             staffName = None
-
                 # 5. 生成的窗口添加说明文字 / Add note on cv2 window
                 self.draw_note(img_rd)
-
                 self.update_fps()
-
                 ret, jpeg = cv2.imencode('.jpg', img_rd)
                 return [jpeg.tobytes(), time.localtime(), staffName]
 
@@ -373,6 +319,10 @@ def now_attend():
     if attend_records:
         for records in attend_records:
             print(records)
+    global staffName_last
+    if staffName_last is None or staffName_last != staffName_first:
+        staffName_last = staffName_first
+        print("此时新来的签到人员为：" + str(staffName_first))
     return jsonify(attend_records)
 
 

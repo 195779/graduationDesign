@@ -9,20 +9,16 @@ from apps import features_extraction
 from exts import db
 
 
-@staff_bp.route('/staff_profile', methods=["GET", "POST"], endpoint="staff_profile")
-def staff_profile():
-    if session['username'] is None:
+@staff_bp.route('/edit_profile', methods=["GET", "POST"], endpoint='edit_profile')
+def edit_profile():
+    if 'username' not in session:
         abort(404)
-    username = session['username']
-    if username:
+    else:
+        username = session['username']
         staff = Staff.query.filter(Staff.staffId == username).first()
         staff_information = staffInformation.query.filter(staffInformation.staffId == username).first()
         staffPositionId = staff_information.staffPositionId
         staffDepartmentId = staff_information.staffDepartmentId
         staffPostion = Position.query.filter_by(positionId=staffPositionId).first()
         staffDepartment = Departments.query.filter(Departments.departmentId == staffDepartmentId).first()
-        return render_template('staff_all/staff_profile.html',
-                               staff=staff, staff_information=staff_information, Postion=staffPostion,
-                               Department=staffDepartment)
-    else:
-        return render_template('login/login.html')
+        return render_template('staff_all/edit_profile.html', staff=staff)

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test_jquery_ajax</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+</head>
+<body>
+
+<div id="sidebar">
+    {% include 'test/nav.html' %}
+</div>
+
+<div id="header">
+    {% include 'test/top.html' %}
+</div>
+
+
+<div id="main-content">
+    <!-- 中间部分主界面内容将通过Ajax加载 -->
+</div>
+
+
+<script>
+
+// 监听左侧导航栏按键的点击事件
+document.getElementById("page1-btn").addEventListener("click", function(event) {
+  event.preventDefault(); // 阻止默认的链接跳转行为
+  loadPageContent("page1");
+});
+
+document.getElementById("page2-btn").addEventListener("click", function(event) {
+  event.preventDefault();
+  loadPageContent("page2");
+});
+
+document.getElementById("page3-btn").addEventListener("click", function(event) {
+  event.preventDefault();
+  loadPageContent("page3");
+});
+
+
+
+// 发送ajax请求并更新中间部分页面内容的函数
+function loadPageContent(pageName) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/test/" + pageName);
+  xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest"); // 添加异步请求标志
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      document.getElementById("main-content").innerHTML = xhr.responseText; // 更新页面内容
+      history.pushState(null, null, "/test/" + pageName); // 更新路由路径
+    }
+  };
+  xhr.send();
+}
+
+</script>
+
+</body>
+
+</html>

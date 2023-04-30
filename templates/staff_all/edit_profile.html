@@ -18,16 +18,17 @@
                         <h4 class="page-title">编辑个人信息</h4>
                     </div>
                 </div>
-                <form>
+                <form method="post" action="{{ url_for('staff_all.edit_profile') }}" enctype="multipart/form-data">
+                {{ form.csrf_token }}
                     <div class="card-box">
                         <h3 class="card-title">基本信息</h3>
                         <div class="row" style="margin-top: 10px">
                             <div class="col-md-12">
                                 <div class="profile-img-wrap">
-                                    <img class="inline-block" src="assets/img/user.jpg" alt="user">
+                                    <img class="inline-block" src="../../"{{ url_image }}  alt="user">
                                     <div class="fileupload btn">
                                         <span class="btn-text">编辑头像</span>
-                                        <input class="upload" type="file">
+                                        {{ form.staffImage(class='upload') }}
                                     </div>
                                 </div>
                                 <div class="profile-basic">
@@ -35,25 +36,31 @@
                                         <div class="col-md-6">
                                             <div class="form-group form-focus focused">
                                                 <label class="focus-label">姓名</label>
-                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="John">
+                                                {{ form.staffName(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffName ) }}
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                <div class="form-group form-focus focused">
+                                <div class="form-group form-focus focused" style="background-color: #fdffff;">
                                     <label class="focus-label">部门</label>
-                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="New York">
+                                    <input type="text"  style="margin-top: 5px; background-color: #fdffff" class="form-control floating" value="{{ staffDepartment }}" readonly="readonly" title="该字段为只读，不可编辑">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus focused">
+                            <div class="col-md-3">
+                                <div class="form-group form-focus focused" style="background-color: #fdffff">
                                     <label class="focus-label">岗位</label>
-                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="United States">
+                                    <input type="text"  style="margin-top: 5px; background-color: #fdffff" class="form-control floating" value="{{ staffPosition.positionName }}" readonly="readonly" title="该字段为只读，不可编辑" >
+                                </div>
+                            </div>
+                                   <div class="col-md-3">
+                                <div class="form-group form-focus focused" style="background-color: #fdffff">
+                                    <label class="focus-label">岗位等级</label>
+                                    <input type="text"  style="margin-top: 5px; background-color: #fdffff" class="form-control floating" value="{{ staffPosition.positionLevel }}" readonly="readonly" title="该字段为只读，不可编辑" >
                                 </div>
                             </div>
                                          <div class="col-md-6">
-                                            <div class="form-group form-focus focused">
+                                            <div class="form-group form-focus focused" style="background-color: #fdffff">
                                                 <label class="focus-label">职工ID</label>
-                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="Doe">
+                                                <input type="text" style="margin-top: 5px; background-color: #fdffff; " class="form-control floating" value="{{ staff.staffId }}" readonly="readonly" title="该字段为只读，不可编辑">
                                             </div>
                                         </div>
                                     </div>
@@ -61,66 +68,118 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-box" style="display: inline-block; min-height: 100px;">
+                    <div class="card-box" style="display: inline-block; min-height: 100%; min-width: 100%">
                         <h3 class="card-title">详细信息</h3>
                         <div class="row" style="display: inline-block; min-height: 100px; margin-top: 10px">
                             <div class="col-md-6">
                                             <div class="form-group form-focus focused">
                                                 <label class="focus-label">性别</label>
-                                                <input type="text" style="margin-top: 5px" class="form-control floating" value="Doe">
+                                                {{ form.staffGender(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffGender ) }}
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group form-focus focused">
                                                 <label class="focus-label">出生日期</label>
                                                 <div class="cal-icon">
-                                                    <input class="form-control floating datetimepicker" style="margin-top: 5px"  type="text" value="05/06/1985">
+                                                    {{ form.staffBirthday(class="form-control floating datetimepicker", style="margin-top: 5px", value=staffInformation.staffBirthday.day|string+"/"+staffInformation.staffBirthday.month|string+'/'+staffInformation.staffBirthday.year|string) }}
                                                 </div>
                                             </div>
                                         </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <div class="form-group form-focus focused">
-                                    <label class="focus-label">籍贯</label>
-                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="10523">
+                                    <label class="focus-label">国籍</label>
+                                    {{ form.staffCountry(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffCountry) }}
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <div class="form-group form-focus focused">
+                                    <label class="focus-label">民族</label>
+                                    {{ form.staffNation( style="margin-top: 5px", class="form-control floating", value=staffInformation.staffNation) }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-focus focused">
+                                    <label class="focus-label">籍贯</label>
+                                    {{ form.staffHomeTown(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffOrigin) }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-focus focused" style="background-color: #fdffff">
                                     <label class="focus-label">在职状态</label>
-                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="631-889-3206">
+                                    {% if staff.staffState %}
+                                        <input type="text"  style="margin-top: 5px; background-color: #fdffff" class="form-control floating" value="在职" readonly="readonly" title="该字段为只读，不可编辑">
+                                    {% else %}
+                                        <input type="text"  style="margin-top: 5px; background-color: #fdffff" class="form-control floating" value="离职" readonly="readonly" title="该字段为只读，不可编辑">
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group form-focus focused">
                                     <label class="focus-label">电子邮件地址</label>
-                                    <input type="text"  style="margin-top: 5px" class="form-control floating" value="暂无">
+                                    {{ form.staffEmail(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffEmailAddress) }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group form-focus focused">
                                     <label class="focus-label">联系方式</label>
-                                    <input type="text" style="margin-top: 5px" class="form-control floating" value="ddd">
+                                    {{ form.staffPhoneNumber( style="margin-top: 5px", class="form-control floating", value=staffInformation.staffPhoneNumber) }}
                                 </div>
                             </div>
                             <div class="col-md-12" style="display: inline-block; min-height: 100px;">
-                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 80px; min-width: 100%">
+                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 100px; min-width: 100%">
                                     <label class="focus-label" style="margin-bottom: 5px">现住址</label>
-                                    <textarea type="text" class="form-control floating" style="width: 100%;margin-top: 5px; height: 100%">ddddddddddd</textarea>
+                                    <textarea id="{{ form.staffAddress.id }}" name="{{ form.staffAddress.name }}" class="form-control floating" style="width: 100%;margin-top: 5px; height: 100%">{{form.staffAddress.data}}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-12" style="display: inline-block; min-height: 150px;">
-                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 120px; min-width: 100%">
+                                <div class="form-group form-focus focused" style="display: inline-block; min-height: 150px; min-width: 100%">
                                     <label class="focus-label" style="margin-bottom: 5px">备注信息</label>
-                                    <textarea type="text" class="form-control floating" style="width: 100%; margin-top: 5px;height: 100%">ddddddddddd</textarea>
+                                    <textarea id="{{ form.staffRemark.id }}" name="{{ form.staffRemark.name }}" class="form-control floating" style="width: 100%; margin-top: 5px;height: 100%">{{ staffInformation.staff_Remark }}</textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="text-center m-t-20">
-                            <button class="btn btn-primary submit-btn" type="button">Save</button>
+                            {{ form.submit(class="btn btn-primary submit-btn", value='保存') }}
                         </div>
                     </div>
 
 
                 </form>
             </div>
+
+
+
+    <!-- 修改密码弹出窗口 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                </div>
+                <form>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="old-password">旧密码：</label>
+                            <input type="password" class="form-control" id="old-password" name="old-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">新密码：</label>
+                            <input type="password" class="form-control" id="new-password" name="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">确认新密码：</label>
+                            <input type="password" class="form-control" id="confirm-password" name="confirm-password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

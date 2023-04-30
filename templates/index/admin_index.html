@@ -1,5 +1,9 @@
 ﻿{% extends "base/base.html" %}
-
+{% macro show_dep(departments) %}
+{% for department in  departments  %}
+    <li><a href='/admin/{{ department.departmentId }}'>{{ department.departmentName }}</a></li>
+{% endfor %}
+{% endmacro %}
  {% block top %}
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -120,24 +124,24 @@
                             <span>
                             <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
                             </span>
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="admin_index.html#">
-                                <span class="clear">
+                            <a data-toggle="dropdown" class="dropdown-toggle">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
                                     <span class="block m-t-xs">
-                                        <strong class="font-bold">
+                                        <strong class="font-bold" style="color: #fdffff">
                                             {{ admin.adminId }}
                                         </strong>
                                     </span>
-                                    <span class="text-muted text-xs block">
-                                        系统管理员
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">系统管理员</strong>
                                         <b class="caret"></b></span>
                                 </span>
                             </a>
-                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
                                 <li><a href="../../static/form_avatar.html">修改头像</a>
                                 </li>
-                                <li><a href="../../static/profile.html">个人资料</a>
+                                <li><a href="#">个人资料</a>
                                 </li>
-                                <li><a href="../../static/mailbox.html">信箱</a>
+                                <li><a class="btn btn-primary btn-lg center-block" data-toggle="modal" data-target="#myModal">修改密码</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li><a href="{{ url_for('login.login') }}">安全退出</a>
@@ -152,10 +156,8 @@
                     <li class="active">
                         <a href="admin_index.html"><i class="fa fa-th-large"></i> <span class="nav-label">职工信息管理</span> <span
                                 class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            {% for department in departments %}
-                            <li><a href='/department_manage/{{ department.departmentId }}'>{{ department.departmentName }}</a></li>
-                            {% endfor %}
+                        <ul class="nav nav-second-level" id='department-list'>
+
                         </ul>
                     </li>
                     <li>
@@ -221,92 +223,267 @@
 
 
 {% block content %}
-     <div class="row  border-bottom white-bg dashboard-header">
-        <div class="col-sm-3">
-            <h2>Hello,Beaut-zihan</h2>
-            <small>您有32条消息和6个待处理事项</small>
-            <ul class="list-group clear-list m-t">
-                <li class="list-group-item fist-item">
-                            <span class="pull-right">
-                                    09:00
-                                </span>
-                    <span class="label label-success">1</span> 请联系我
-                </li>
-                <li class="list-group-item">
-                            <span class="pull-right">
-                                    10:16
-                                </span>
-                    <span class="label label-info">2</span> 签订合同
-                </li>
-                <li class="list-group-item">
-                            <span class="pull-right">
-                                    08:22
-                                </span>
-                    <span class="label label-primary">3</span> 新分店开张
-                </li>
-                <li class="list-group-item">
-                            <span class="pull-right">
-                                    11:06
-                                </span>
-                    <span class="label label-default">4</span> 打电话给XX
-                </li>
-                <li class="list-group-item">
-                            <span class="pull-right">
-                                    12:00
-                                </span>
-                    <span class="label label-primary">5</span> 发邮件给XX
-                </li>
-            </ul>
-        </div>
-        <div class="col-sm-6">
-            <div class="flot-chart dashboard-chart">
-                <div class="flot-chart-content" id="flot-dashboard-chart"></div>
-            </div>
-            <div class="row text-left">
-                <div class="col-xs-4">
-                    <div class=" m-l-md">
-                        <span class="h4 font-bold m-t block">&yen; 406,100</span>
-                        <small class="text-muted m-b block">销售营销报告</small>
+
+    <div class="row">
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
+                        <div class="dash-widget">
+							<span class="dash-widget-bg1"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
+							<div class="dash-widget-info text-right">
+								<h3>28</h3>
+								<span class="widget-title1">职工总数 <i class="fa fa-check" aria-hidden="true"></i></span>
+							</div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xs-4">
-                    <span class="h4 font-bold m-t block">&yen; 150,401</span>
-                    <small class="text-muted m-b block">年销售收入</small>
-                </div>
-                <div class="col-xs-4">
-                    <span class="h4 font-bold m-t block">&yen; 16,822</span>
-                    <small class="text-muted m-b block">半年收入利润率</small>
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
+                        <div class="dash-widget">
+                            <span class="dash-widget-bg2"><i class="glyphicon glyphicon-check"></i></span>
+                            <div class="dash-widget-info text-right">
+                                <h3>22</h3>
+                                <span class="widget-title2">今天出勤人数<i class="fa fa-check" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xl-">
+                        <div class="dash-widget">
+                            <span class="dash-widget-bg3"><i class="glyphicon glyphicon-ban-circle" aria-hidden="true"></i></span>
+                            <div class="dash-widget-info text-right">
+                                <h3>4</h3>
+                                <span class="widget-title3">今天缺勤人数<i class="fa fa-check" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-lg-3 col-xl-3">
+                        <div class="dash-widget">
+                            <span class="dash-widget-bg4"><i class="glyphicon glyphicon-plane" aria-hidden="true"></i></span>
+                            <div class="dash-widget-info text-right">
+                                <h3>2</h3>
+                                <span class="widget-title4">今天出差/请假人数<i class="fa fa-check" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="statistic-box">
-                <h4>
-                    项目的进度
-                </h4>
-                <p>
-                    您还有两项未完成的任务
-                </p>
-                <div class="row text-center">
-                    <div class="col-lg-6">
-                        <div class="chart easypiechart inline" data-percent="73"><span
-                                class="easypie-text">61%</span>
+    <div class="highlight">
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-line-chart" ></div>
+                            </div>
                         </div>
-                        <h5>OA测</h5>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="chart2 easypiechart inline" data-percent="33"><span
-                                class="easypie-text">31%</span>
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-bar-chart" ></div>
+                            </div>
                         </div>
-                        <h5>CRM</h5>
                     </div>
-                </div>
-                <div class="m-t">
-                    <small>请尽快完成相关项目的开发、测试工作</small>
-                </div>
-
-            </div>
-        </div>
     </div>
+    <div class="row">
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-pie-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-pie2-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-pie3-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+        <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-pie4-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+        <div class="col-lg-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-scatter-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+    </div>
+
+     <!-- Mainly scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 发送 AJAX 请求获取部门列表数据
+        $.ajax({
+            url: '{{ url_for('index.departments') }}',
+            method: 'GET',
+            success: function(data) {
+                $.each(data, function(key, value) {
+                    $('#department-list').append("<li><a href='/admin/" + key +"'>"+value+'</a></li>');
+        });
+    }
+});
+    </script>
+
+    <script src="../../static/js/jquery-2.1.1.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js?v=3.4.0"></script>
+    <script src="../../static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- ECharts -->
+    <script src="../../static/js/plugins/echarts/echarts-all.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../static/js/hplus.js?v=2.2.0"></script>
+    <script src="../../static/js/plugins/pace/pace.min.js"></script>
+
+    <!-- ECharts demo data -->
+    <script src="../../static/js/demo/echarts-demo.js"></script>
 {% endblock %}

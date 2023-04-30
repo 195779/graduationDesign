@@ -28,7 +28,8 @@
             float: right;
 
         }
-        .wrap{
+
+        .wrap {
             display: flex;
             justify-content: space-between;
         }
@@ -37,10 +38,13 @@
 
 {% block content %}
     <main div="col-xs-12">
-        <div align="center" class="alert-danger" style="min-height: 15px; max-height: 20px" id="message" role="alert" hidden> 提示</div>
+        <div align="center" class="alert-danger" style="min-height: 15px; max-height: 20px" id="message" role="alert"
+             hidden> 提示
+        </div>
         <div class="wrap">
             <span class="label label-info">企业职工：{{ staff.staffId }} <br> 当前的人脸信息状态为： {{ staff_information.faceValueState }} </span>
-            <input type="button"  value="人脸信息录入详情" class="btn btn-primary" data-toggle="modal" data-target="#{{ staff.staffId }}{{ staff_information.staffName }}face"></td>
+            <input type="button" value="人脸信息录入详情" class="btn btn-primary" data-toggle="modal"
+                   data-target="#{{ staff.staffId }}{{ staff_information.staffName }}face"></td>
         </div>
         <div class="col-xs-6" style="min-height: 520px; margin-top: 10px">
             <video style="min-height: 480px" id="video" width="640" height="480"></video>
@@ -50,12 +54,12 @@
                 </button>
                 <form action="{{ url_for('staff_all.staff_upload_faces') }}" method="post">
                     <input type="submit" class="btn btn-primary" value="提交"
-                           style="width: 85px;height: 55px; margin-top: 20px ;margin-left: 562px; font-size: 22px; background-color: #2a99f7">
+                           style="width: 85px;height: 55px; margin-top: 20px ;margin-left: 495px; font-size: 22px; background-color: #2a99f7">
                 </form>
             </div>
         </div>
         <div class="col-xs-6" style="min-height: 520px; margin-top: 10px">
-            <canvas id="canvas" style="min-height: 480px"  width="640" height="480"></canvas>
+            <canvas id="canvas" style="min-height: 480px" width="640" height="480"></canvas>
             <div class="col-xs-6" style="width: 330px">
                 <button onclick="getPic()" class="btn btn-primary"
                         style="float:left; margin-left: 120px;width: 60px;height: 30px;background-color: #2a99f7">拍摄
@@ -84,7 +88,8 @@
                 </div>
                 <form action="{{ url_for('staff_all.delete_faces') }}" method="post">
                     <div class="modal-body">
-                        职工&nbsp&nbspID:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" class="table-input" name="staffId"
+                        职工&nbsp&nbspID:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" class="table-input"
+                                                                            name="staffId"
                                                                             value="{{ staff.staffId }}" readonly>
                         <br>
                         职工&nbsp&nbsp姓名:&nbsp&nbsp<input type="text" class="table-input" name="staffName"
@@ -99,13 +104,13 @@
                              style="width:150px;height: 150px">
                         <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/3.jpg"
                              style="width:150px;height: 150px">
-                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/4.jpg"
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/4.jpg"
                              style="width:150px;height: 150px">
                         <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/5.jpg"
                              style="width:150px;height: 150px">
-                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/6.jpg"
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/6.jpg"
                              style="width:150px;height: 150px">
-                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId  }}/7.jpg"
+                        <img src="../../static/data/data_faces_from_camera/{{ staff.staffId }}/7.jpg"
                              style="width:150px;height: 150px">
                     </div>
                     <div class="modal-footer">
@@ -122,6 +127,7 @@
     <script>
         $("#canvas").width($("#video").width())
         $("#canvas").height($("#video").height())
+
         function openvideo() {
             /*获取前端的视频标签*/
             video = document.getElementById("video")

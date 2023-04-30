@@ -1,4 +1,4 @@
-from flask import render_template, request, session, redirect, url_for
+from flask import render_template, request, session, redirect, url_for, jsonify
 from flask import Blueprint
 from apps.Index.__init__ import index_bp
 from apps.models.check_model import Admin, Departments
@@ -10,14 +10,35 @@ def admin_index():
         if 'username' in session:
             username = session['username']
             admin = Admin.query.filter_by(adminId=username).first()
-            departments = Departments.query.all()
-            return render_template('index/admin_index.html', admin=admin, departments=departments)
+            return render_template('index/admin_index.html', admin=admin)
         else:
             return redirect(url_for('login.login'))
     else:
         return "not post now"
 
 
+@index_bp.route('/departments', endpoint='departments')
+def get_departments():
+    departments = Departments.query.all()
+    Id_data = []
+    Name_data = []
+    for department in departments:
+        Id_data.append(department.departmentId)
+        Name_data.append(department.departmentName)
+    Data = dict(zip(Id_data, Name_data))
+    return Data
+
+
+@index_bp.route('/departments2', endpoint='departments2')
+def get_departments2():
+    departments = Departments.query.all()
+    Id_data = []
+    Name_data = []
+    for department in departments:
+        Id_data.append(department.departmentId)
+        Name_data.append(department.departmentName)
+    Data = dict(zip(Id_data, Name_data))
+    return Data
 
 
 """  

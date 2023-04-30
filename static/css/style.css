@@ -50,7 +50,7 @@ h5 {
 }
 .navbar-default .nav > li > a:hover,
 .navbar-default .nav > li > a:focus {
-  background-color: #293846;
+  background-color: rgba(255,255,255,0.5);
   color: white;
 }
 .nav .open > a,
@@ -161,14 +161,14 @@ body.body-small .navbar-top-links li:last-child {
 }
 .nav-header {
   padding: 33px 25px;
-  background: url("patterns/header-profile.png") no-repeat;
+  background-color: linear-gradient(to right, #011f39, #7093eb);
 }
 .pace-done .nav-header {
   transition: all 0.5s;
 }
 .nav > li.active {
   border-left: 4px solid #19aa8d;
-  background: #293846;
+  background: linear-gradient(to right, #011f39, #7093eb);;
 }
 .nav.nav-second-level > li.active {
   border: none;
@@ -2872,7 +2872,7 @@ a.forum-item-title:hover {
 }
 body {
   font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-color: #2f4050;
+  background-color: #dcebbb;
   font-size: 13px;
   color: #676a6c;
   overflow-x: hidden;

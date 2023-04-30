@@ -115,21 +115,24 @@ class staffInformation(db.Model):
     staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
                         comment="职工ID，外键、主键、不为空、不重复")
     staffName = db.Column(db.String(20), nullable=False, comment='姓名 不允许为空')
+    staffGetFaceState = db.Column(db.Boolean, nullable=False, default=False, comment='职工录入人脸图片权限')
     staffGender = db.Column(db.String(20), nullable=False,
                             comment=' 性别 不允许为空 设置String字符串，在前端设置为仅允许选择填入“男”、 “女”、“其他” 这三个选项')
     staffCountry = db.Column(db.String(20), nullable=True, comment='国籍')
     staffNation = db.Column(db.String(20), nullable=True, comment='民族')
+    staffOrigin = db.Column(db.String(20), nullable=True, comment='籍贯')
     staffAge = db.Column(db.Integer, nullable=True, comment='年龄')
     staffBirthday = db.Column(db.Date(), nullable=True, comment='出生日期')
     staffPhoneNumber = db.Column(db.String(11), nullable=True, comment='手机号')
     staffEmailAddress = db.Column(db.String(30), nullable=True, comment='邮箱地址')
     staffState = db.Column(db.Boolean, nullable=False, comment='在职状态 不允许为空')
     staffPositionId = db.Column(db.String(20), db.ForeignKey('position.positionId'), nullable=False, comment='岗位ID')
-    staffDepartmentId = db.Column(db.String(20),db.ForeignKey('departments.departmentId'), nullable=False, comment='部门ID')
+    staffDepartmentId = db.Column(db.String(20), db.ForeignKey('departments.departmentId'), nullable=False, comment='部门ID')
     staff_create_updateDate = db.Column(db.DateTime(), nullable=False, default=datetime.now, comment='信息创建时间/更新时间')
     staff_create_updateId = db.Column(db.String(20), nullable=True, comment='创建/更新ID')
     informationState = db.Column(db.Boolean, nullable=False, default=False, comment='职工信息完善状态')
     faceValueState = db.Column(db.Boolean, nullable=False, default=False, comment='职工人脸信息完善状态')
+    staffAddress = db.Column(db.Text, comment='家庭住址')
     staff_Remark = db.Column(db.Text, comment="备注/Text任意长度字符类型")
 
     def __str__(self):

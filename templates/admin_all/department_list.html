@@ -1,0 +1,5 @@
+{% macro show_dep(departments) %}
+{% for department in  departments  %}
+    <li><a href='/admin/{{ department.departmentId }}'>{{ department.departmentName }}</a></li>
+{% endfor %}
+{% endmacro %}

@@ -1,9 +1,9 @@
-from flask import render_template
+from flask import render_template, request
 from flask_script import Manager
 from flask_migrate import MigrateCommand, Migrate
 from apps import create_app
 from exts import db
-from apps.models.check_model import Admin
+
 app = create_app()
 manager = Manager(app)
 
@@ -21,8 +21,23 @@ if __name__ == '__main__':
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('../templates/error/404.html'), 404
+    return render_template('error/404.html'), 404
 
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('error/500.html'), 500
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return render_template('error/404.html'), 404
+
+
+@app.before_request
+def before_request():
+    if not app.url_map.bind('').match(request.path):
+        return render_template('../templates/error/404.html'), 404
 
 
 # python app.py  (app.run())

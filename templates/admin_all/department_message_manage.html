@@ -1,6 +1,10 @@
-{% extends 'index/admin_index.html' %}
-{% block styles %}
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>企业考勤管理系统</title>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="renderer" content="webkit">
         <meta name="keywords" content="后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
@@ -17,51 +21,233 @@
 
         <link href="../../static/css/animate.css" rel="stylesheet">
         <link href="../../static/css/style.css?v=2.2.0" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../../static/css2/bootstrap.min.css">
+</head>
+
+
+
+<body>
+
+<div id="wrapper" style="background: linear-gradient(to right, #011f39, #7093eb);">
     <link rel="stylesheet" type="text/css" href="../../static/css2/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="../../static/css2/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css">
-    <link rel="stylesheet" type="text/css" href="../../static/css2/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="../../static/css2/style.css">
-{% endblock %}
-{% block content %}
-<div class="content">
-                <div class="row">
+    <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                            <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
+                            </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold" style="color: #fdffff">
+                                            {{ admin.adminId }}
+                                        </strong>
+                                    </span>
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">系统管理员</strong>
+                                        <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
+                                <li><a href="../../static/form_avatar.html">修改头像</a>
+                                </li>
+                                <li><a href="#">个人资料</a>
+                                </li>
+                                <li><a class="btn btn-primary btn-lg center-block" data-toggle="modal" data-target="#myModal">修改密码</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="{{ url_for('login.login') }}">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            A+
+                        </div>
+
+                    </li>
+                    <li class="active">
+                        <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">职工信息管理</span> <span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level" id='department-list2'>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">考勤记录统计</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="toastr_notifications.html">总况</a>
+                            </li>
+                            <li><a href="nestable_list.html">出勤/工时统计</a>
+                            </li>
+                            <li><a href="timeline_v2.html">迟到统计</a>
+                            </li>
+                            <li><a href="forum_main.html">早退统计</a>
+                            </li>
+                            <li><a href="code_editor.html">休假统计</a>
+                            </li>
+                            <li><a href="modal_window.html">出差统计</a>
+                            </li>
+                            <li><a href="validation.html">加班统计</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">职工考勤设置</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="graph_echarts.html">出勤设置</a>
+                            </li>
+                            <li><a href="graph_flot.html">休假设置</a>
+                            </li>
+                            <li><a href="graph_morris.html">出差设置</a>
+                            </li>
+                            <li><a href="graph_rickshaw.html">加班设置</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
+                                class="label label-warning pull-right">16</span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="mailbox.html">收件箱</a>
+                            </li>
+                            <li><a href="mail_compose.html">发布公告</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="form_basic.html">人脸信息</a>
+                            </li>
+                            <li><a href="form_validate.html">？人脸签到？</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+    <div id="page-wrapper" class="gray-bg dashboard-1"  >
+        <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="index_1.html#"><i
+                                class="fa fa-bars"></i> </a>
+                        <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                            <div class="form-group">
+                                <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
+                                       id="top-search">
+                            </div>
+                        </form>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li id="datetime">
+                            <script>
+                                    setInterval("document.getElementById('datetime').innerHTML=new Date().toLocaleString();", 1000);
+                                </script>
+                        </li>
+                        <li>
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.admin_index') }}" title="返回首页"><i
+                                class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                                <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-messages">
+                                <li>
+                                    <div class="dropdown-messages-box">
+                                        <a href="profile.html" class="pull-left">
+                                            <img alt="image" class="img-circle" src="../../static/img/a7.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <small class="pull-right">46小时前</small>
+                                            <strong>小四</strong> 项目已处理完结
+                                            <br>
+                                            <small class="text-muted">3天前 2014.11.8</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="dropdown-messages-box">
+                                        <a href="profile.html" class="pull-left">
+                                            <img alt="image" class="img-circle" src="../../static/img/a4.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right text-navy">25小时前</small>
+                                            <strong>国民岳父</strong> 这是一条测试信息
+                                            <br>
+                                            <small class="text-muted">昨天</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="mailbox.html">
+                                            <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts">
+                                <li>
+                                    <a href="mailbox.html">
+                                        <div>
+                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
+                                            <span class="pull-right text-muted small">4分钟前</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="profile.html">
+                                        <div>
+                                            <i class="fa fa-qq fa-fw"></i> 3条新回复
+                                            <span class="pull-right text-muted small">12分钟钱</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="notifications.html">
+                                            <strong>查看所有 </strong>
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+
+                        <li>
+                            <a href="{{ url_for('login.login') }}">
+                                <i class="fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        <div class="content">
+                <div class="row" style="margin-top: 10px">
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">{{ department.departmentName }}职工信息</h4>
+                        <h4 class="page-title">{{ Dep.departmentName }}职工信息</h4>
                     </div>
                     <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="add-employee.html" class="btn btn-primary float-right btn-rounded"><i class="fa fa-plus"></i> Add Employee</a>
-                    </div>
-                </div>
-                <div class="row filter-row">
-                    <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Employee ID</label>
-                            <input type="text" class="form-control floating">
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Employee Name</label>
-                            <input type="text" class="form-control floating">
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus select-focus focused">
-                            <label class="focus-label">Role</label>
-                            <select class="select floating select2-hidden-accessible" tabindex="-1" aria-hidden="true">
-                                <option>Select Role</option>
-                                <option>Nurse</option>
-                                <option>Pharmacist</option>
-                                <option>Laboratorist</option>
-                                <option>Accountant</option>
-                                <option>Receptionist</option>
-                            </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-6a17-container"><span class="select2-selection__rendered" id="select2-6a17-container" title="Select Role">Select Role</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3">
-                        <a href="#" class="btn btn-success btn-block"> Search </a>
+                        <a href="#" class="btn btn-primary float-right btn-rounded"><i class="fa fa-plus"></i> Add Employee</a>
                     </div>
                 </div>
                 <div class="row">
@@ -70,35 +256,34 @@
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
-                                        <th style="min-width:200px;">姓名</th>
+                                        <th>姓名</th>
                                         <th>职工ID</th>
                                         <th>Email</th>
-                                        <th>Mobile</th>
-                                        <th style="min-width: 110px;">Join Date</th>
+                                        <th>联系电话</th>
+                                        <th>人脸录入权限</th>
                                         <th>岗位</th>
-                                        <th class="text-right">状态</th>
+                                        <th>今日考勤状态</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for staff_information in staffInformation %}
 
-                                {% endfor %}
                                     <tr>
                                         <td>
-											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Albina Simonis</h2>
+											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹增博</h2>
 										</td>
-                                        <td>NS-0001</td>
-                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb9a979992959a88929694959288bb9e839a968b979ed5989496">[email&nbsp;protected]</a></td>
-                                        <td>828-634-2744</td>
-                                        <td>7 May 2015</td>
+                                        <td>195780</td>
+                                        <td><a href="#" class="__cf_email__" data-cfemail="fb9a979992959a88929694959288bb9e839a968b979ed5989496">[email&nbsp;protected]</a></td>
+                                        <td>13463971712</td>
+                                        <td><span class="custom-badge status-green">是</span></td>
                                         <td>
-                                            <span class="custom-badge status-green">Nurse</span>
+                                            <span class="custom-badge status-blue">助理工程师</span>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="custom-badge status-green">出勤</span></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                 </div>
                                             </div>
@@ -106,20 +291,22 @@
                                     </tr>
                                     <tr>
                                         <td>
-											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Cristina Groves</h2>
+											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹汉宗</h2>
 										</td>
-                                        <td>DR-0001</td>
-                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0665746f75726f686761746970637546637e676b766a632865696b">[email&nbsp;protected]</a></td>
-                                        <td>928-344-5176</td>
-                                        <td>1 Jan 2013</td>
+                                        <td>195778</td>
+                                        <td><a href="#" class="__cf_email__" data-cfemail="0665746f75726f686761746970637546637e676b766a632865696b">[email&nbsp;protected]</a></td>
+                                        <td>19283445176</td>
+                                        <td><span class="custom-badge status-green">是</span></td>
+
                                         <td>
-                                            <span class="custom-badge status-blue">Doctor</span>
+                                            <span class="custom-badge status-blue">助理工程师</span>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="custom-badge status-red">缺勤</span></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                 </div>
                                             </div>
@@ -127,20 +314,21 @@
                                     </tr>
 									<tr>
                                         <td>
-											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Mary Mericle</h2>
+											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹轶明</h2>
 										</td>
-                                        <td>SF-0003</td>
-                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="731e12010a1e16011a101f1633160b121e031f165d101c1e">[email&nbsp;protected]</a></td>
-                                        <td>603-831-4983</td>
-                                        <td>27 Dec 2017</td>
+                                        <td>195779</td>
+                                        <td><a href="#" class="__cf_email__" data-cfemail="731e12010a1e16011a101f1633160b121e031f165d101c1e">[email&nbsp;protected]</a></td>
+                                        <td>13223416270</td>
+                                        <td><span class="custom-badge status-red">否</span></td>
                                         <td>
-                                            <span class="custom-badge status-grey">Accountant</span>
+                                            <span class="custom-badge status-blue">技术员</span>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="custom-badge status-grey">请假</span></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                 </div>
                                             </div>
@@ -148,41 +336,21 @@
                                     </tr>
 									<tr>
                                         <td>
-											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Haylie Feeney</h2>
+											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>赵志华</h2>
 										</td>
-                                        <td>SF-0002</td>
-                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ff7fee6f3f6faf9fafaf1fae6dffae7fef2eff3fab1fcf0f2">[email&nbsp;protected]</a></td>
-                                        <td>616-774-4962</td>
-                                        <td>21 Apr 2017</td>
+                                        <td>195768</td>
+                                        <td><a href="#" class="__cf_email__" data-cfemail="d7adb8b2b5a2a3bbb2a597b2afb6baa7bbb2f9b4b8ba">[email&nbsp;protected]</a></td>
+                                        <td>44445559999</td>
+                                        <td><span class="custom-badge status-red">否</span></td>
                                         <td>
-                                            <span class="custom-badge status-grey">Laboratorist</span>
+                                            <span class="custom-badge status-blue">运行副职</span>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="custom-badge status-orange">出差</span></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-									<tr>
-                                        <td>
-											<img width="28" height="28" src="assets/img/user.jpg" class="rounded-circle" alt=""> <h2>Zoe Butler</h2>
-										</td>
-                                        <td>SF-0001</td>
-                                        <td><a href="http://cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7adb8b2b5a2a3bbb2a597b2afb6baa7bbb2f9b4b8ba">[email&nbsp;protected]</a></td>
-                                        <td>444-555-9999</td>
-                                        <td>19 May 2012</td>
-                                        <td>
-                                            <span class="custom-badge status-grey">Pharmacist</span>
-                                        </td>
-                                        <td class="text-right">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-employee.html"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                 </div>
                                             </div>
@@ -194,4 +362,79 @@
                     </div>
                 </div>
             </div>
-{% endblock %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        // 发送 AJAX 请求获取部门列表数据
+        $(document).ready(function() {
+    // 发送 AJAX 请求获取部门列表数据
+        $.ajax({
+            url: '{{ url_for('index.departments2') }}',
+            method: 'GET',
+            success: function(data) {
+                $.each(data, function(key, value) {
+                    $('#department-list2').append("<li><a href='/admin/" + key +"'>"+value+'</a></li>');
+        });
+    }
+});
+        });
+    </script>
+        <div class="footer">
+                <div class="pull-right">
+                    By：<a href="https://github.com/195779/graduationDesign" target="_blank">Alan's github
+                    repositories</a>
+                </div>
+                <div>
+                    <strong>Hebut</strong> A+ &copy; 2023
+                </div>
+            </div>
+    </div>
+</div>
+
+</body>
+
+
+    <!-- Mainly scripts -->
+    <script src="../../static/js/jquery-2.1.1.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js?v=3.4.0"></script>
+    <script src="../../static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../../static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Flot -->
+    <script src="../../static/js/plugins/flot/jquery.flot.js"></script>
+    <script src="../../static/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="../../static/js/plugins/flot/jquery.flot.spline.js"></script>
+    <script src="../../static/js/plugins/flot/jquery.flot.resize.js"></script>
+    <script src="../../static/js/plugins/flot/jquery.flot.pie.js"></script>
+
+    <!-- Peity -->
+    <script src="../../static/js/plugins/peity/jquery.peity.min.js"></script>
+    <script src="../../static/js/demo/peity-demo.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../static/js/hplus.js?v=2.2.0"></script>
+    <script src="../../static/js/plugins/pace/pace.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="../../static/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- GITTER -->
+    <script src="../../static/js/plugins/gritter/jquery.gritter.min.js"></script>
+
+    <!-- EayPIE -->
+    <script src="../../static/js/plugins/easypiechart/jquery.easypiechart.js"></script>
+
+    <!-- Sparkline -->
+    <script src="../../static/js/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Sparkline demo data  -->
+    <script src="../../static/js/demo/sparkline-demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+        })
+    </script>
+
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script><!--统计代码，可删除-->
+
+</html>

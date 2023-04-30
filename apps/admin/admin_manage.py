@@ -4,13 +4,17 @@ from apps.admin.__init__ import admin_bp
 from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff
 
 
-@admin_bp.route("/staff_manage", methods=['POST', "GET"], endpoint='staff_manage')
-def staff_manage():
-    if session['username'] is None:
+@admin_bp.route("/<departmentId>", methods=['POST', "GET"])
+def staff_manage(departmentId):
+    if session['username'] is None or departmentId is None:
         abort(404)
     else:
-        adminId = session['username']
-        admin = Admin.query.filter(Admin.adminId == adminId).first()
-        staffList = Staff.query.all()
-        staffInformationList = staffInformation.query.all()
-        return 0
+        if len(departmentId) == 3:
+            adminId = session['username']
+            admin = Admin.query.filter(adminId == Admin.adminId).first()
+            department = Departments.query.filter(departmentId == Departments.departmentId).first()
+            print("ddddddddddddddddddddddddddddddd" + departmentId)
+            return render_template('admin_all/department_message_manage.html', Dep=department, admin=admin)
+        else:
+            return 'what happened?'
+

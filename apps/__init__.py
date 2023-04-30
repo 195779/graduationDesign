@@ -9,6 +9,7 @@ from apps.gate.__init__ import gate_bp
 from apps.test.__init__ import test_bp
 from config import DevelopmentConfig
 
+
 from exts import db
 
 

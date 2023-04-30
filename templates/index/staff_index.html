@@ -3,7 +3,7 @@
      <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
-                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="index_1.html#"><i
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
                                 class="fa fa-bars"></i> </a>
                         <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
                             <div class="form-group">
@@ -123,6 +123,11 @@
                                         <strong class="font-bold" style="color: #fdffff">
                                             {{ staff.staffId }}
                                         </strong>
+                                        {% if staff.staffState  %}
+                                            <span class="label "  style= "background-color: #24cb02; margin-left: 10px; color: #f9f9de">在职</span>
+                                        {% else %}
+                                            <span class="label "  style= "background-color: #cb0219; margin-left: 10px; color: #f9f9de">离职</span>
+                                        {% endif %}
                                     </span>
                                     <span class="text-muted text-xs block" style="margin-top: 3px">
                                         <strong class="font-bold" style="color: #fdffff">企业职工</strong>
@@ -134,7 +139,7 @@
                                 </li>
                                 <li><a href="{{ url_for('staff_all.staff_profile') }}">个人资料</a>
                                 </li>
-                                <li><a href="../../static/mailbox.html">信箱</a>
+                                <li><a class="btn btn-primary btn-lg center-block" data-toggle="modal" data-target="#myModal">修改密码</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li><a href="{{ url_for('login.login') }}">安全退出</a>
@@ -209,5 +214,43 @@
 
             </div>
         </nav>
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- 修改密码弹出窗口 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                </div>
+                <form>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="old-password">旧密码：</label>
+                            <input type="password" class="form-control" id="old-password" name="old-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">新密码：</label>
+                            <input type="password" class="form-control" id="new-password" name="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">确认新密码：</label>
+                            <input type="password" class="form-control" id="confirm-password" name="confirm-password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 

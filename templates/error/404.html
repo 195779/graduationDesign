@@ -1,28 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>404 Page Not Found</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-  <div class="container">
-    <h1>404 Page Not Found</h1>
-    <p>The page you requested could not be found.</p>
-    <p>You will be redirected to the login page in <span id="countdown">5</span> seconds.</p>
-  </div>
+    <title>404 Page Not Found</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link href="../../static/font-awesome/css/font-awesome.css?v=4.3.0" rel="stylesheet">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script>
-    var timeLeft = 5;
-    var countdownTimer = setInterval(function() {
-      timeLeft--;
-      $("#countdown").html(timeLeft);
-      if (timeLeft == 0) {
-        clearInterval(countdownTimer);
-        window.location.href = "/login";
-      }
-    }, 1000);
-  </script>
+    <link href="../../static/css/animate.css" rel="stylesheet">
+    <link href="../../static/css/style.css?v=2.2.0" rel="stylesheet">
+</head>
+<body class="gray-bg">
+<div class="middle-box text-center animated fadeInDown">
+    <div class="main-wrapper error-wrapper">
+        <div class="error-box">
+            <h1>404</h1>
+            <h3><i class="fa fa-warning"></i> Oops! Page not found!</h3>
+            <p>The page you requested was not found.</p>
+            <p>You will be redirected to the login page in <span id="countdown">5</span> seconds.</p>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var timeLeft = 5;
+        var countdownTimer = setInterval(function () {
+            timeLeft--;
+            $("#countdown").html(timeLeft);
+            if (timeLeft == 0) {
+                clearInterval(countdownTimer);
+                window.location.href = "/login/";
+            }
+        }, 1000);
+    </script>
+</div>
 </body>
 </html>
 

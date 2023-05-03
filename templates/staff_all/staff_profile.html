@@ -15,44 +15,70 @@
                 </div>
                 <div class="card-box profile-header">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12 col-lg-12 col-sm-12 col-xl-12 col-xs-12">
                             <div class="profile-view">
                                 <div class="profile-img-wrap">
                                     <div class="profile-img">
-                                        <a href="#"><img class="avatar" src="../../static/img/profile_small.png" alt=""></a>
+                                        <a href="#"><img class="avatar" style="border-radius: 50%" src="../../{{ url_image }}" alt=""></a>
                                     </div>
                                 </div>
                                 <div class="profile-basic">
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        <div class="col-md-5 col-lg-5 col-sm-5 col-xl-5 col-xs-5">
                                             <div class="profile-info-left">
-                                                <h3 class="user-name m-t-0 mb-0">{{ staff_information.staffName }}</h3>
-                                                <small class="text-muted">部门：&nbsp; {{ Department.departmentName }}&nbsp;岗位：&nbsp; {{ Postion.positionName }} &nbsp; 岗位等级：{{ Postion.positionLevel }}</small>
-                                                <div class="staff-id">职工 ID : &nbsp; {{ staff.staffId }}</div>
-                                                <div class="staff-msg"><a href="#chat.html" class="btn btn-primary">Send Message</a></div>
+                                                <h3 class="staff-id">{{ staff_information.staffName }}</h3>
+                                                <li class='staff-id'>隶属部门：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ Department.departmentName }}</li>
+                                                <li class="staff-id">职务岗位：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ Postion.positionName }} </li>
+                                                <li class="staff-id">职务级别：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ Postion.positionLevel }}</li>
+                                                <li class="staff-id">职工 ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ staff.staffId }}</li>
+                                                {% if staff_information.staffGetFaceState %}
+                                                    <li class="staff-id">人脸录入权限：&nbsp;&nbsp;允许录入</li>
+                                                {% else %}
+                                                    <li class="staff-id">人脸录入权限：&nbsp;&nbsp;禁止录入</li>
+                                                {% endif %}
+                                                {% if staff_information.faceValueState %}
+                                                    <li class="staff-id">人脸录入状态：&nbsp;&nbsp;已经录入</li>
+                                                {% else %}
+                                                    <li class="staff-id">人脸录入状态：&nbsp;&nbsp;尚未录入</li>
+                                                {% endif %}
+                                                <li style="margin-top: 10px">
+                                                    {% if staff.staffState  %}
+                                                        <span class="label "  style= "background-color: #24cb02; margin-top: 18px; color: #f8f8f3">在职</span>
+                                                    {% else %}
+                                                        <span class="label "  style= "background-color: #cb0219; margin-top: 18px; color: #f9f9de">离职</span>
+                                                    {% endif %}
+                                                </li>
                                             </div>
                                         </div>
-                                        <div class="col-md-7">
+                                        <div class="col-md-7 col-lg-7 col-sm-7 col-xl-7 col-xs-7">
                                             <ul class="personal-info">
                                                 <li>
-                                                    <span class="title">联系方式:</span>
-                                                    <span class="text">{{ staff_information.staffPhoneNumber }}</span>
+                                                    <span class="title" style="color: #0D0A0A">联系方式:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffPhoneNumber }}</span>
                                                 </li>
                                                 <li>
-                                                    <span class="title">电子邮件地址:</span>
-                                                    <span class="text">{{ staff_information.staffEmailAddress }}</span>
+                                                    <span class="title" style="color: #0D0A0A">电子邮件地址:</span>
+                                                    <span class=staff-msg>{{ staff_information.staffEmailAddress }}</span>
                                                 </li>
                                                 <li>
-                                                    <span class="title">出生日期:</span>
-                                                    <span class="text">{{ staff_information.staffBirthday }}</span>
+                                                    <span class="title" style="color: #0D0A0A">出生日期:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffBirthday }}</span>
                                                 </li>
                                                 <li>
-                                                    <span class="title">籍贯:</span>
-                                                    <span class="text">{{ staff_information.staffCountry }}/{{ staff_information.staffNation }}</span>
+                                                    <span class="title" style="color: #0D0A0A">国籍:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffCountry }}</span>
                                                 </li>
                                                 <li>
-                                                    <span class="title">性别:</span>
-                                                    <span class="text">{{ staff_information.staffGender }}</span>
+                                                    <span class="title" style="color: #0D0A0A">民族:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffNation }}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="title" style="color: #0D0A0A">籍贯:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffOrigin }}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="title" style="color: #0D0A0A">性别:</span>
+                                                    <span class="staff-msg">{{ staff_information.staffGender }}</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -62,15 +88,18 @@
                         </div>
                     </div>
                 </div>
-				<div class="profile-tabs">
-					<ul class="nav nav-tabs nav-tabs-bottom">
-						<li class="nav-item"><a class="nav-link active" href="#about-cont" data-toggle="tab">About</a></li>
-						<li class="nav-item"><a class="nav-link" href="#bottom-tab2" data-toggle="tab">Profile</a></li>
-						<li class="nav-item"><a class="nav-link" href="#bottom-tab3" data-toggle="tab">Messages</a></li>
-					</ul>
+    <div class="profile-tabs">
+        <style>
+            .active{display:block}
+        </style>
+        <ul class="nav nav-tabs nav-tabs-bottom">
+            <li class="nav-item"><a class="nav-link " href="#about-cont" data-toggle="tab">About</a></li>
+            <li class="nav-item"><a class="nav-link " href="#bottom-tab2" onclick="editDiv()" data-toggle="tab">Profile</a></li>
+            <li class="nav-item"><a class="nav-link " href="#bottom-tab3" onclick="editDiv()" data-toggle="tab">Messages</a></li>
+        </ul>
 
-					<div class="tab-content">
-						<div class="tab-pane show active" id="about-cont">
+        <div class="tab-content show active">
+            <div class="tab-pane show active" id="about-cont">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-box">
@@ -81,16 +110,22 @@
                         </div>
                     </div>
                 </div>
-						</div>
-						<div class="tab-pane" id="bottom-tab2">
-							Tab content 2
-						</div>
-						<div class="tab-pane" id="bottom-tab3">
-							Tab content 3
-						</div>
-					</div>
-				</div>
+            </div>
+            <div class="tab-pane" id="bottom-tab2">
+                Tab content 2
+            </div>
+            <div class="tab-pane" id="bottom-tab3">
+                Tab content 3
+            </div>
+        </div>
+    </div>
             </div>
 
-
+    <script>
+        function editDiv(){
+            var about = document.getElementById("about-cont");
+            about.classList.remove('show')
+            about.classList.remove('active')
+        }
+    </script>
 {% endblock %}

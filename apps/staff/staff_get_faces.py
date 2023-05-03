@@ -33,16 +33,19 @@ def get_faces():
         限定一下上面逻辑的发生条件,不是POST方式,就是GET,GET请求页面
         :return:
     '''
-    if session['username'] is None or session['num'] is None:
+    if session.get('username') is None or session.get('num') is None:
         abort(404)
-    staff = Staff.query.filter_by(staffId=session['username']).first()
-    staff_information = staffInformation.query.filter_by(staffId=session['username']).first()
+
+    username = session.get('username')
+    staff = Staff.query.filter_by(staffId=username).first()
+    staff_information = staffInformation.query.filter_by(staffId=session.get('username')).first()
+    image_filename = "static/data/data_headimage_staff/" + username + '/head.jpg'
     if request.method == "POST":
         imgdata = request.form.get("face")
         print(imgdata)
         print('xxxxxxxxxx')
         imgdata = base64.b64decode(imgdata)
-        path = "static/data/data_faces_from_camera/" + session['username']
+        path = "static/data/data_faces_from_camera/" + session.get('username')
         up = get_faces_from_camera.Face_Register()
         if session['num'] == 0:
             pre_work_mkdir(path)
@@ -59,16 +62,16 @@ def get_faces():
         print(flag, session['num'])
         return {"result": flag, "code": session['num']}
 
-    return render_template("staff_all/get_faces.html", staff=staff, staff_information=staff_information)
+    return render_template("staff_all/get_faces.html", staff=staff, staff_information=staff_information, url_image=image_filename)
 
 
 @staff_bp.route('/upload_faces', methods=['POST', 'GET'], endpoint='staff_upload_faces')
 def upload_faces():
-    if session['username'] is None:
+    if session.get('username') is None:
         abort(404)
     try:
         path_images_from_camera = "static/data/data_faces_from_camera/"
-        path = path_images_from_camera + session['username']
+        path = path_images_from_camera + session.get('username')
         print(path)
         features_mean_personX = features_extraction.return_features_mean_personX(path)
         features = str(features_mean_personX[0])
@@ -76,17 +79,17 @@ def upload_faces():
             # range(1,128) 遍历 1-127的全部数字 i  加上前面已经加入的 0 ，
             # 将128维的特征向量（128个浮点数）全部从float类型转换为字符串类型，并用逗号隔开
             features = features + ',' + str(features_mean_personX[i])
-        face = faceValue.query.filter(faceValue.staffId == session['username']).first()
+        face = faceValue.query.filter(faceValue.staffId == session.get('username')).first()
         if face:
             face.staffFaceValue = features
             # 如果存在则更新
         else:
             # 不存在则添加
-            face = faceValue(staffId=session['username'], staffFaceValue=features)
+            face = faceValue(staffId=session.get('username'), staffFaceValue=features)
             db.session.add(face)
         db.session.commit()
         # print(" >> 特征均值 / The mean of features:", list(features_mean_personX), '\n')
-        staff_information = staffInformation.query.filter(staffInformation.staffId == session['username']).first()
+        staff_information = staffInformation.query.filter(staffInformation.staffId == session.get('username')).first()
         staff_information.faceValueState = True
         # 更改人脸信息录入的状态
         db.session.commit()

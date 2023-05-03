@@ -8,7 +8,7 @@ from apps.models.check_model import departmentAdmin
 def department_admin_index():
     if request.method == 'GET':
         if "username" in session:
-            username = session['username']
+            username = session.get('username')
             depAdmin = departmentAdmin.query.filter_by(departmentAdminId=username).first()
             return render_template('index/departmentAdmin_index.html', departmentAdmin=depAdmin)
         else:

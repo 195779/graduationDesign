@@ -8,7 +8,7 @@ from apps.models.check_model import gateAdmin
 def department_admin_index():
     if request.method == 'GET':
         if "username" in session:
-            username = session['username']
+            username = session.get('username')
             gate_admin = gateAdmin.query.filter_by(gateAdminId=username).first()
             return render_template('index/gate_index.html', gateAdmin=gate_admin)
         else:

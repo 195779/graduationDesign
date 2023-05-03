@@ -6,11 +6,11 @@ from apps.models.check_model import Admin, Departments, Position, staffInformati
 
 @admin_bp.route("/<departmentId>", methods=['POST', "GET"])
 def staff_manage(departmentId):
-    if session['username'] is None or departmentId is None:
+    if session.get('username') is None or departmentId is None:
         abort(404)
     else:
         if len(departmentId) == 3:
-            adminId = session['username']
+            adminId = session.get('username')
             admin = Admin.query.filter(adminId == Admin.adminId).first()
             department = Departments.query.filter(departmentId == Departments.departmentId).first()
             print("ddddddddddddddddddddddddddddddd" + departmentId)

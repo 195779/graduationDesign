@@ -289,7 +289,7 @@ table.table td h2 span {
 	margin-bottom: 20px;
 }
 .cal-icon:after {
-	background: transparent url("../img/calander.png") no-repeat scroll 0 0;
+	background: transparent url("../../static/assets/img/calander.png") no-repeat scroll 0 0;
 	bottom: 0;
 	content: "";
 	display: block;

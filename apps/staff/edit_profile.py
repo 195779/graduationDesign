@@ -2,10 +2,12 @@ import base64
 from datetime import datetime
 import os
 
-from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, abort, jsonify
+from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, abort, jsonify, \
+    json
 from apps.staff.__init__ import staff_bp
 from apps.models.check_model import Staff, faceValue, staffInformation, Position, Departments, Works
-from form import StaffForm
+from exts import db
+from form import StaffForm, EditPasswordForm
 
 
 def pre_work_mkdir(path_photos_from_camera):
@@ -17,23 +19,14 @@ def pre_work_mkdir(path_photos_from_camera):
         os.mkdir(path_photos_from_camera)
 
 
-@staff_bp.route('/edit_profile', methods=["GET", "POST"], endpoint='edit_profile')
-def edit_profile():
+@staff_bp.route('/submit_profile', methods=["POST"], endpoint='submit_profile')
+def submit_profile():
     if 'username' not in session:
         abort(404)
     else:
         form = StaffForm()
         username = session.get('username')
-        staff = Staff.query.filter(Staff.staffId == username).first()
         staff_information = staffInformation.query.filter(staffInformation.staffId == username).first()
-
-        staffPositionId = staff_information.staffPositionId
-        staffDepartmentId = staff_information.staffDepartmentId
-
-        staffPosition = Position.query.filter_by(positionId=staffPositionId).first()
-        staffDepartment = Departments.query.filter(Departments.departmentId == staffDepartmentId).first()
-
-        filename = "static/data/data_headimage_staff/" + username + '/head.jpg'
 
         if request.method == 'POST':
             if form.validate_on_submit():
@@ -73,6 +66,8 @@ def edit_profile():
                 # 更新备注
                 staff_information.staff_Remark = staffRemark
 
+                db.session.commit()
+
                 # 更新保存头像
                 staffImage = request.files.get('staffImage')
                 if staffImage:
@@ -80,20 +75,66 @@ def edit_profile():
                     staffImage.save(os.path.join("static/data/data_headimage_staff/" + username + '/head.jpg'))
 
                 print('post 成功')
-                post = 1
-                symbol = 1
+                session['post'] = '1'
+                session['symbol'] = '1'
             else:
-                post = 1
-                symbol = 0
+                session['post'] = '1'
+                session['symbol'] = '0'
                 print("post 失败")
                 print(form.errors)
 
-            filename = "static/data/data_headimage_staff/" + username + '/head.jpg'
-            return render_template('staff_all/edit_profile.html', url_image=filename, form=form, staff=staff,
-                                staffPosition=staffPosition, post=post, symbol=symbol,
-                                staffDepartment=staffDepartment.departmentName, staffInformation=staff_information)
+                # 将form对象转换为JSON字符串
+                form_data = json.dumps(form.data)
+                form_errors = json.dumps(form.errors)
+                # 将转换后的数据存储到session中
+                session['form_data'] = form_data
+                session['form_errors'] = form_errors
 
+            return redirect(url_for('staff_all.edit_profile'))
+
+
+@staff_bp.route('/edit_profile', methods=["GET"], endpoint='edit_profile')
+def edit_profile():
+    if 'username' not in session:
+        abort(404)
+    else:
         if request.method == 'GET':
+            form_editPassword = EditPasswordForm()
+
+            # 从session中获取存储的form数据
+            form_data = session.get('form_data')
+            form_errors = session.get('form_errors')
+            # 将JSON字符串转换为form对象
+            if form_data is not None:
+                form = StaffForm(data=json.loads(form_data))
+                form.form_errors = json.loads(form_errors)
+                # 清除session中的数据
+                session.pop('form_data', None)
+                session.pop('form_errors', None)
+            else:
+                form = StaffForm()
+
+            username = session.get('username')
+            staff = Staff.query.filter(Staff.staffId == username).first()
+            staff_information = staffInformation.query.filter(staffInformation.staffId == username).first()
+
+            staffPositionId = staff_information.staffPositionId
+            staffDepartmentId = staff_information.staffDepartmentId
+
+            staffPosition = Position.query.filter_by(positionId=staffPositionId).first()
+            staffDepartment = Departments.query.filter(Departments.departmentId == staffDepartmentId).first()
+
+            filename = "static/data/data_headimage_staff/" + username + '/head.jpg'
+
+            post = '0'
+            symbol = '0'
+            if session.get('post') and session['symbol']:
+                post = session['post']
+                symbol = session['symbol']
+                session.pop('post')
+                session.pop('symbol')
+
             return render_template('staff_all/edit_profile.html', url_image=filename, form=form, staff=staff,
-                                staffPosition=staffPosition,staffDepartment=staffDepartment.departmentName,
-                                staffInformation=staff_information)
+                                   form_password=form_editPassword, post=post, symbol=symbol,
+                                   staffPosition=staffPosition, staffDepartment=staffDepartment.departmentName,
+                                   staffInformation=staff_information)

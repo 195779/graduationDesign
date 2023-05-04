@@ -34,10 +34,7 @@ def handle_exception(e):
     return render_template('error/404.html'), 404
 
 
-@app.before_request
-def before_request():
-    if not app.url_map.bind('').match(request.path):
-        return render_template('../templates/error/404.html'), 404
+
 
 
 # python app.py  (app.run())

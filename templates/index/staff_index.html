@@ -1,253 +1,322 @@
 {% extends 'base/base.html' %}
- {% block top %}
-     <div class="row border-bottom">
-                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                    <div class="navbar-header">
-                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
-                                class="fa fa-bars"></i> </a>
-                        <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
-                            <div class="form-group">
-                                <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
-                                       id="top-search">
-                            </div>
-                        </form>
+{% block top %}
+    <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
+                        class="fa fa-bars"></i> </a>
+                <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                    <div class="form-group">
+                        <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
+                               id="top-search">
                     </div>
-                    <ul class="nav navbar-top-links navbar-right">
-                        <li id="datetime">
-                            <script>
-                                    setInterval("document.getElementById('datetime').innerHTML=new Date().toLocaleString();", 1000);
-                                </script>
-                        </li>
-                        <li>
-                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.staff_index') }}" title="返回首页"><i
+                </form>
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li id="datetime">
+                    <script>
+                        setInterval("document.getElementById('datetime').innerHTML=new Date().toLocaleString();", 1000);
+                    </script>
+                </li>
+                <li>
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.staff_index') }}"
+                                                                           title="返回首页"><i
                                 class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
-                        </li>
-                        <li class="dropdown">
-                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
-                                <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-messages">
-                                <li>
-                                    <div class="dropdown-messages-box">
-                                        <a href="profile.html" class="pull-left">
-                                            <img alt="image" class="img-circle" src="../../static/img/a7.jpg">
-                                        </a>
-                                        <div class="media-body">
-                                            <small class="pull-right">46小时前</small>
-                                            <strong>小四</strong> 项目已处理完结
-                                            <br>
-                                            <small class="text-muted">3天前 2014.11.8</small>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <div class="dropdown-messages-box">
-                                        <a href="profile.html" class="pull-left">
-                                            <img alt="image" class="img-circle" src="../../static/img/a4.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right text-navy">25小时前</small>
-                                            <strong>国民岳父</strong> 这是一条测试信息
-                                            <br>
-                                            <small class="text-muted">昨天</small>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <div class="text-center link-block">
-                                        <a href="mailbox.html">
-                                            <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
-                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-alerts">
-                                <li>
-                                    <a href="mailbox.html">
-                                        <div>
-                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
-                                            <span class="pull-right text-muted small">4分钟前</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="profile.html">
-                                        <div>
-                                            <i class="fa fa-qq fa-fw"></i> 3条新回复
-                                            <span class="pull-right text-muted small">12分钟钱</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <div class="text-center link-block">
-                                        <a href="notifications.html">
-                                            <strong>查看所有 </strong>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-
-
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                        <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
                         <li>
-                            <a href="{{ url_for('login.login') }}">
-                                <i class="fa fa-sign-out"></i> 退出
-                            </a>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="../../static/img/a7.jpg">
+                                </a>
+                                <div class="media-body">
+                                    <small class="pull-right">46小时前</small>
+                                    <strong>小四</strong> 项目已处理完结
+                                    <br>
+                                    <small class="text-muted">3天前 2014.11.8</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="dropdown-messages-box">
+                                <a href="profile.html" class="pull-left">
+                                    <img alt="image" class="img-circle" src="../../static/img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">25小时前</small>
+                                    <strong>国民岳父</strong> 这是一条测试信息
+                                    <br>
+                                    <small class="text-muted">昨天</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="mailbox.html">
+                                    <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
+                                </a>
+                            </div>
                         </li>
                     </ul>
-                </nav>
-            </div>
- {% endblock %}
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                        <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="mailbox.html">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
+                                    <span class="pull-right text-muted small">4分钟前</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="profile.html">
+                                <div>
+                                    <i class="fa fa-qq fa-fw"></i> 3条新回复
+                                    <span class="pull-right text-muted small">12分钟钱</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="notifications.html">
+                                    <strong>查看所有 </strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="{{ url_for('login.login') }}">
+                        <i class="fa fa-sign-out"></i> 退出
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
 {% block left_content %}
     <nav class="navbar-default navbar-static-side" role="navigation">
-            <div class="sidebar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li class="nav-header">
-                        <div class="dropdown profile-element">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
                             <span>
-                            <img alt="image" class="profile-img-circle" style="width: 64px; height: 64px; border-radius: 50%" src="../../{{ url_image }}"/>
+                            <img alt="image" class="profile-img-circle"
+                                 style="width: 64px; height: 64px; border-radius: 50%" src="../../{{ url_image }}"/>
                             </span>
-                            <a data-toggle="dropdown" class="dropdown-toggle">
+                        <a data-toggle="dropdown" class="dropdown-toggle">
                                 <span class="clear" style="margin-top: 5px; margin-left: 8px">
                                     <span class="block m-t-xs">
                                         <strong class="font-bold" style="color: #fdffff">
                                             {{ staff.staffId }}
                                         </strong>
-                                        {% if staff.staffState  %}
-                                            <span class="label "  style= "background-color: #24cb02; margin-left: 10px; color: #f9f9de">在职</span>
+                                        {% if staff.staffState %}
+                                            <span class="label "
+                                                  style="background-color: #24cb02; margin-left: 10px; color: #f9f9de">在职</span>
                                         {% else %}
-                                            <span class="label "  style= "background-color: #cb0219; margin-left: 10px; color: #f9f9de">离职</span>
+                                            <span class="label "
+                                                  style="background-color: #cb0219; margin-left: 10px; color: #f9f9de">离职</span>
                                         {% endif %}
                                     </span>
                                     <span class="text-muted text-xs block" style="margin-top: 3px">
                                         <strong class="font-bold" style="color: #fdffff">企业职工</strong>
                                         <b class="caret"></b></span>
                                 </span>
-                            </a>
-                            <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
-                                <li><a data-toggle="modal" data-target="#myImage">更换头像</a>
-                                </li>
-                                <li><a href="{{ url_for('staff_all.staff_profile') }}">个人资料</a>
-                                </li>
-                                <li><a data-toggle="modal" data-target="#myModal">修改密码</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li><a href="{{ url_for('login.login') }}">安全退出</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="logo-element">
-                            A+
-                        </div>
+                        </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
+                            <li><a data-toggle="modal" data-target="#myImage">更换头像</a>
+                            </li>
+                            <li><a href="{{ url_for('staff_all.staff_profile') }}">个人资料</a>
+                            </li>
+                            <li><a data-toggle="modal" data-target="#myModal">修改密码</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="{{ url_for('login.login') }}">安全退出</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="logo-element">
+                        A+
+                    </div>
 
-                    </li>
-                    <li class="active">
-                        <a href="#" style="color: #fdffff"><i class="fa fa-th-large"></i> <span class="nav-label">个人信息管理</span> <span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="{{ url_for('staff_all.staff_profile') }}" style="color: #fdffff">查看个人信息</a>
-                                <a href="{{ url_for('staff_all.edit_profile') }}" style="color: #fdffff">编辑个人信息</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="admin_index.html#" style="color: #fdffff" ><i class="fa fa fa-globe"></i> <span class="nav-label">个人考勤统计</span><span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="toastr_notifications.html" style="color: #fdffff">总况</a>
-                            </li>
-                            <li><a href="nestable_list.html" style="color: #fdffff">出勤/工时统计</a>
-                            </li>
-                            <li><a href="timeline_v2.html" style="color: #fdffff">迟到统计</a>
-                            </li>
-                            <li><a href="forum_main.html" style="color: #fdffff">早退统计</a>
-                            </li>
-                            <li><a href="code_editor.html" style="color: #fdffff">休假统计</a>
-                            </li>
-                            <li><a href="modal_window.html" style="color: #fdffff">出差统计</a>
-                            </li>
-                            <li><a href="validation.html" style="color: #fdffff">加班统计</a>
-                            </li>
-                        </ul>
-                    </li>
+                </li>
+                <li class="active">
+                    <a href="#" style="color: #fdffff"><i class="fa fa-th-large"></i> <span
+                            class="nav-label">个人信息管理</span> <span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{ url_for('staff_all.staff_profile') }}" style="color: #fdffff">查看个人信息</a>
+                            <a href="{{ url_for('staff_all.edit_profile') }}" style="color: #fdffff">编辑个人信息</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa fa-globe"></i> <span
+                            class="nav-label">个人考勤统计</span><span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="toastr_notifications.html" style="color: #fdffff">总况</a>
+                        </li>
+                        <li><a href="nestable_list.html" style="color: #fdffff">出勤/工时统计</a>
+                        </li>
+                        <li><a href="timeline_v2.html" style="color: #fdffff">迟到统计</a>
+                        </li>
+                        <li><a href="forum_main.html" style="color: #fdffff">早退统计</a>
+                        </li>
+                        <li><a href="code_editor.html" style="color: #fdffff">休假统计</a>
+                        </li>
+                        <li><a href="modal_window.html" style="color: #fdffff">出差统计</a>
+                        </li>
+                        <li><a href="validation.html" style="color: #fdffff">加班统计</a>
+                        </li>
+                    </ul>
+                </li>
 
-                    <li>
-                        <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">查看考勤设置</span><span
-                        ></span></a>
-                    </li>
-                    <li>
-                        <a href="mailbox.html" style="color: #fdffff"><i class="fa fa-envelope"></i> <span class="nav-label">请假/留言/公告</span><span
-                                class="label label-warning pull-right">16</span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="mailbox.html" style="color:#fdffff;">收件箱</a>
-                            </li>
-                            <li><a href="mail_compose.html" style="color:#fdffff;">查看公告</a>
-                            </li>
-                            <li><a href="xxxxxxx.html" style="color: #fdffff">申请休假</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="#" style="color: #fdffff">人脸信息</a>
-                            </li>
-                            <li><a href="{{ url_for('staff_all.staff_get_faces') }}" style="color: #fdffff">人脸录入</a>
-                            </li>
-                            <li><a href="{{ url_for('test_all.index') }}" style="color: #fdffff">测试异步加载界面</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                <li>
+                    <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-bar-chart-o"></i> <span
+                            class="nav-label">查看考勤设置</span><span
+                    ></span></a>
+                </li>
+                <li>
+                    <a href="mailbox.html" style="color: #fdffff"><i class="fa fa-envelope"></i> <span
+                            class="nav-label">请假/留言/公告</span><span
+                            class="label label-warning pull-right">16</span></a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="mailbox.html" style="color:#fdffff;">收件箱</a>
+                        </li>
+                        <li><a href="mail_compose.html" style="color:#fdffff;">查看公告</a>
+                        </li>
+                        <li><a href="xxxxxxx.html" style="color: #fdffff">申请休假</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-edit"></i> <span
+                            class="nav-label">人脸信息管理</span><span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li><a href="#" style="color: #fdffff">人脸信息</a>
+                        </li>
+                        <li><a href="{{ url_for('staff_all.staff_get_faces') }}" style="color: #fdffff">人脸录入</a>
+                        </li>
+                        <li><a href="{{ url_for('test_all.index') }}" style="color: #fdffff">测试异步加载界面</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
 
-            </div>
-        </nav>
+        </div>
+    </nav>
 
     <!-- 修改密码弹出窗口 -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="myModal" tabindex="-1" data-backdrop="static" role="dialog"
+         aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header ">
                     <h4 class="modal-title" id="myModalLabel">修改密码</h4>
                 </div>
-                <form>
+                <form id="form" method="post" action="{{ url_for('index.edit_password') }}"
+                      enctype="multipart/form-data">
+                    {{ form_password.csrf_token }}
                     <div class="modal-body">
                         <div class="form-group">
+                            <style>
+                                input:invalid {
+                                    border: 2px solid red;
+                                }
+
+                                input:valid {
+                                    border: 1px solid #c6c9c6;
+                                }
+
+                                input:invalid + span {
+                                    display: block;
+                                }
+
+                                input:valid + span {
+                                    display: none;
+                                }
+
+                                .error-message {
+                                    color: red;
+                                    font-size: 12px;
+                                    display: none;
+                                }
+                            </style>
                             <label for="old-password">旧密码：</label>
-                            <input type="password" class="form-control" id="old-password" name="old-password">
+                            {{ form_password.staffPassword(id='old_staffPassword', class='form-control') }}
+                            <span class="error-message">请输入正确的原密码</span>
                         </div>
                         <div class="form-group">
                             <label for="new-password">新密码：</label>
-                            <input type="password" class="form-control" id="new-password" name="new-password">
+                            {{ form_password.new_staffPassword1(class='form-control', pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$") }}
+                            <span class="error-message">密码必须包含至少一位大写字母、一位小写字母、一个数字，且6-20位</span>
                         </div>
                         <div class="form-group">
                             <label for="confirm-password">确认新密码：</label>
-                            <input type="password" class="form-control" id="confirm-password" name="confirm-password">
+                            {{ form_password.new_staffPassword2(class='form-control', pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$") }}
+                            <span class="error-message">必须与新密码一致</span>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary"  >确认修改</button>
+                        {{ form_password.submit(class='btn btn-primary' , value='确认修改') }}
                     </div>
                 </form>
+                <script>
+                    const form = document.querySelector('#form');
+                    const newPassword = document.querySelector('#new_staffPassword1');
+                    const confirmPassword = document.querySelector('#new_staffPassword2');
+                    const oldPassword = document.querySelector('#old_staffPassword');
+
+                    newPassword.addEventListener('input', function () {
+                        if (newPassword.validity.patternMismatch) {
+                            newPassword.setCustomValidity('密码必须包含至少一位大写字母、一位小写字母、一个数字，且6-20位');
+                        } else {
+                            newPassword.setCustomValidity('');
+                        }
+                    });
+
+                    confirmPassword.addEventListener('input', function () {
+                        if (confirmPassword.value !== newPassword.value) {
+                            confirmPassword.setCustomValidity('必须与新密码一致');
+                        } else {
+                            confirmPassword.setCustomValidity('');
+                        }
+                    });
+
+                    oldPassword.addEventListener('input', function () {
+                        if (oldPassword.value === '') {
+                            oldPassword.setCustomValidity('请输入正确的原密码')
+                        } else {
+                            oldPassword.setCustomValidity('')
+                        }
+                    })
+
+                </script>
             </div>
         </div>
     </div>
 
 
-        <!--修改头像弹出窗口-->
+    <!--修改头像弹出窗口-->
     <div class="modal fade" id="myImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -277,6 +346,19 @@
             </div>
         </div>
     </div>
+
+
+
+    {% if edit_password %}
+        <script>
+            window.onload = function () {
+                alert('{{ edit_password|safe }}');
+            };
+        </script>
+
+    {% endif %}
+
+
 
 {% endblock %}
 

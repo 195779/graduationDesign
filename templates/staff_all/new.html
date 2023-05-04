@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Password Change Form</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		input:invalid {
+			border: 2px solid red;
+		}
+
+		input:valid {
+			border: 2px solid green;
+		}
+
+		input:invalid + span {
+			display: block;
+		}
+
+		input:valid + span {
+			display: none;
+		}
+
+		.error-message {
+			color: red;
+			font-size: 12px;
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<h2>Password Change Form</h2>
+	<form id="password-change-form">
+		<div>
+			<label for="old-password">Old Password:</label>
+			<input class="form-control" type="password" id="old-password" name="old-password" required>
+		</div>
+		<div>
+			<label for="new-password">New Password:</label>
+			<input class="form-control" type="password" id="new-password" name="new-password" minlength="6" maxlength="20" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$" required>
+			<span class="error-message">Password must contain at least one uppercase letter, one lowercase letter, and one number.</span>
+		</div>
+		<div>
+			<label for="confirm-password">Confirm Password:</label>
+			<input class="form-control" type="password" id="confirm-password" name="confirm-password" minlength="6" maxlength="20" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$" required>
+			<span class="error-message">Password must match new password.</span>
+		</div>
+		<button type="submit">Submit</button>
+	</form>
+
+	<script>
+		const form = document.querySelector('#password-change-form');
+		const newPassword = document.querySelector('#new-password');
+		const confirmPassword = document.querySelector('#confirm-password');
+
+		newPassword.addEventListener('input', function() {
+			if (newPassword.validity.patternMismatch) {
+				newPassword.setCustomValidity('Password must contain at least one uppercase letter, one lowercase letter, and one number.');
+			} else {
+				newPassword.setCustomValidity('');
+			}
+		});
+
+		confirmPassword.addEventListener('input', function() {
+			if (confirmPassword.value !== newPassword.value) {
+				confirmPassword.setCustomValidity('Password must match new password.');
+			} else {
+				confirmPassword.setCustomValidity('');
+			}
+		});
+
+		form.addEventListener('submit', function(event) {
+			event.preventDefault();
+
+			if (form.checkValidity()) {
+				console.log('Form is valid');
+			} else {
+				console.log('Form is invalid');
+			}
+		});
+	</script>
+</body>
+</html>

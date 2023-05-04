@@ -7,6 +7,7 @@ from apps.models.check_model import Staff, faceValue, staffInformation
 from apps import get_faces_from_camera
 from apps import features_extraction
 from exts import db
+from form import EditPasswordForm
 
 
 def pre_work_mkdir(path_photos_from_camera):
@@ -35,7 +36,7 @@ def get_faces():
     '''
     if session.get('username') is None or session.get('num') is None:
         abort(404)
-
+    form_editPassword = EditPasswordForm()
     username = session.get('username')
     staff = Staff.query.filter_by(staffId=username).first()
     staff_information = staffInformation.query.filter_by(staffId=session.get('username')).first()
@@ -62,7 +63,8 @@ def get_faces():
         print(flag, session['num'])
         return {"result": flag, "code": session['num']}
 
-    return render_template("staff_all/get_faces.html", staff=staff, staff_information=staff_information, url_image=image_filename)
+    return render_template("staff_all/get_faces.html", staff=staff, form_password=form_editPassword,
+                        staff_information=staff_information, url_image=image_filename)
 
 
 @staff_bp.route('/upload_faces', methods=['POST', 'GET'], endpoint='staff_upload_faces')

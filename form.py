@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField, EmailField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DateField, EmailField, \
+    IntegerField, TextAreaField, validators
 from flask_wtf.file import FileRequired, FileAllowed, FileField
-from wtforms.validators import DataRequired, Length, ValidationError, InputRequired, Email
+from wtforms import PasswordField
+from wtforms.validators import DataRequired, Length, ValidationError, InputRequired, Email, Regexp, EqualTo
 
 
 # 系统登录
@@ -32,9 +34,11 @@ class StaffForm(FlaskForm):
 
 # 修改密码
 class EditPasswordForm(FlaskForm):
-    staffPassword = StringField('职工旧的密码', validators=[DataRequired(), Length(1, 20)])
-    new_staffPassword1 = StringField('职工新密码', validators=[DataRequired(), Length(1, 20)])
-    new_staffPassword2 = StringField('职工新密码', validators=[DataRequired(), Length(1, 20)])
+    staffPassword = PasswordField('职工旧的密码', validators=[Length(6, 20), DataRequired()]
+
+    )
+    new_staffPassword1 = PasswordField('职工新密码', validators=[Length(6, 20), DataRequired()]
+    )
+    new_staffPassword2 = PasswordField('职工新密码', validators=[Length(6, 20), DataRequired()]
+    )
     submit = SubmitField('提交')
-
-

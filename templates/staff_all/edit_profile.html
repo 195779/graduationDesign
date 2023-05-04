@@ -17,19 +17,12 @@
         <link rel="stylesheet" type="text/css" href="../../static/css2/style.css">
         <link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css">
         <script src="../../static/js2/jquery-3.2.1.min.js"></script>
-        <script src="../../static/js2/popper.min.js"></script>
-        <script src="../../static/js2/bootstrap.min.js"></script>
-        <script src="../../static/js2/jquery.slimscroll.js"></script>
-        <script src="../../static/js2/select2.min.js"></script>
-        <script src="../../static/js2/moment.min.js"></script>
-        <script src="../../static/js2/bootstrap-datetimepicker.min.js"></script>
-        <script src="../../static/js2/app.js"></script>
         <div class="row">
             <div class="col-sm-12" style="margin-top: 10px">
                 <h4 class="page-title">编辑个人信息</h4>
             </div>
         </div>
-        <form id="form" method="post" action="{{ url_for('staff_all.edit_profile') }}" enctype="multipart/form-data">
+        <form id="form" method="post" action="{{ url_for('staff_all.submit_profile') }}" enctype="multipart/form-data">
             {{ form.csrf_token }}
             <div class="card-box">
                 <h3 class="card-title">基本信息</h3>
@@ -195,11 +188,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">电子邮件地址</label>
                             {{ form.staffEmail(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffEmailAddress) }}
-                            {% if form.staffEmail.errors %}
-                                {% for error in form.staffEmail.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffEmail.id }}')
+                                        {% if key == 'staffEmail' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffEmail.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -267,8 +260,8 @@
 
 
 
-    {% if post %}
-        {% if symbol %}
+    {% if post=='1' %}
+        {% if symbol=='1' %}
             <script>
                 window.onload = function () {
                     alert('保存成功');
@@ -276,7 +269,7 @@
             </script>
         {% else %}
             <script>
-                var errors = "{{ form.errors|safe }}"
+                var errors = "{{ form.form_errors|safe }}"
                 window.onload = function () {
                     alert('保存失败: ' + errors);
                 };

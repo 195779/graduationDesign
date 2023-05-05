@@ -40,6 +40,8 @@ def staff_manage(departmentId):
 @admin_bp.route('/setState', methods=['POST'], endpoint='setState')
 def setState():
     selected_persons = request.json
-    #
+    for person in selected_persons:
+        staff_information = staffInformation.query.filter(person == staffInformation.staffId).first()
+
     result = {"status": "success", "message": "Selected persons updated successfully."}
     return jsonify(result), 200

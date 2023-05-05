@@ -133,6 +133,9 @@ class staffInformation(db.Model):
     informationState = db.Column(db.Boolean, nullable=False, default=False, comment='职工信息完善状态')
     faceValueState = db.Column(db.Boolean, nullable=False, default=False, comment='职工人脸信息完善状态')
     staffAddress = db.Column(db.Text, comment='家庭住址')
+    staffCheckState = db.Column(db.Integer, comment='非工作时间：0  出勤：{普通出勤：10 , 出差：11 ,  休假： 12  , 加班出勤： 13} ; '
+                                                    '  缺勤：{普通缺勤：20 , 普通迟到：21 ;  普通早退：22; '
+                                                    ' 加班缺勤：23  ;  加班迟到： 24 ;  加班早退： 25}')
     staff_Remark = db.Column(db.Text, comment="备注/Text任意长度字符类型")
 
     def __str__(self):

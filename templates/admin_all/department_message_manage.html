@@ -247,7 +247,8 @@
                         <h4 class="page-title">{{ Dep.departmentName }}职工信息</h4>
                     </div>
                     <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="#" class="btn btn-primary float-right btn-rounded"><i class="fa fa-plus"></i> Add Employee</a>
+                        <a href="#" class="btn btn-primary float-right btn-rounded" onclick="submitSelectedPersons()"><i class="glyphicon glyphicon-pencil"></i> 更改考勤状态</a>
+                        <a href="#" class="btn btn-primary float-right btn-rounded"><i class="glyphicon glyphicon-plus"></i> 添加职工</a>
                     </div>
                 </div>
                 <div class="row">
@@ -256,106 +257,76 @@
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
+                                        <th><input type="checkbox" id="select-all"></th>
                                         <th>姓名</th>
                                         <th>职工ID</th>
                                         <th>Email</th>
                                         <th>联系电话</th>
                                         <th>人脸录入权限</th>
                                         <th>岗位</th>
-                                        <th>今日考勤状态</th>
+                                        <th>考勤状态</th>
+                                        <th>查看详细信息</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                {% for i in range(staff_information_list|length) %}
                                     <tr>
+                                        <td><input type="checkbox" name="person" value="{{ staff_information_list[i].staffId }}"></td>
                                         <td>
-											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹增博</h2>
-										</td>
-                                        <td>195780</td>
-                                        <td><a href="#" class="__cf_email__" data-cfemail="fb9a979992959a88929694959288bb9e839a968b979ed5989496">[email&nbsp;protected]</a></td>
-                                        <td>13463971712</td>
-                                        <td><span class="custom-badge status-green">是</span></td>
+                                            <img width="28" height="28" style="border-radius: 50%" src="../../static/data/data_headimage_staff/{{ staff_information_list[i].staffId }}/head.jpg" class="rounded-circle" alt=""> <h2>{{ staff_information_list[i].staffName }}</h2>
+                                        </td>
+                                        <td>{{ staff_information_list[i].staffId }}</td>
+                                        <td><a class="__cf_email__" >{{ staff_information_list[i].staffEmailAddress }}</a></td>
+                                        <td><a>{{ staff_information_list[i].staffPhoneNumber }}</a></td>
+                                        {% if staff_information_list[i].staffGetFaceState %}
+                                            <td><span class="custom-badge status-green">是</span></td>
+                                        {% else %}
+                                            <td><span class="custom-badge status-red">无</span></td>
+                                        {% endif %}
                                         <td>
-                                            <span class="custom-badge status-blue">助理工程师</span>
+                                            <span class="custom-badge status-blue">{{ staff_position_list[i].positionName }}</span>
                                         </td>
                                         <td>
                                             <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="custom-badge status-green">出勤</span></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹汉宗</h2>
-										</td>
-                                        <td>195778</td>
-                                        <td><a href="#" class="__cf_email__" data-cfemail="0665746f75726f686761746970637546637e676b766a632865696b">[email&nbsp;protected]</a></td>
-                                        <td>19283445176</td>
-                                        <td><span class="custom-badge status-green">是</span></td>
 
-                                        <td>
-                                            <span class="custom-badge status-blue">助理工程师</span>
-                                        </td>
-                                        <td>
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="custom-badge status-red">缺勤</span></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                </div>
+                                                {% if staff_information_list[i].staffCheackState == 0 %}
+                                                    <span class="custom-badge status-grey">非工作时间</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 10 %}
+                                                    <span class="custom-badge status-green">今日出勤</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 11 %}
+                                                    <span class="custom-badge status-orange">今日出差</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 12 %}
+                                                    <span class="custom-badge status-blue">今日休假</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 13 %}
+                                                    <span class="custom-badge status-green">加班出勤</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 20 %}
+                                                    <span class="custom-badge status-red">今日缺勤</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 21 %}
+                                                    <span class="custom-badge status-red">今日迟到</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 22 %}
+                                                    <span class="custom-badge status-red">今日早退</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 23 %}
+                                                    <span class="custom-badge status-red">加班缺勤</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 24 %}
+                                                    <span class="custom-badge status-red">加班迟到</span></a>
+                                                {% endif %}
+                                                {% if staff_information_list[i].staffCheackState == 25 %}
+                                                    <span class="custom-badge status-red">加班早退</span></a>
+                                                {% endif %}
                                             </div>
                                         </td>
+                                        <td><button class="btn btn-primary custom-badge" id="{{ staff_information_list[i].staffId }}" >查看详细信息</button></td>
                                     </tr>
-									<tr>
-                                        <td>
-											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>曹轶明</h2>
-										</td>
-                                        <td>195779</td>
-                                        <td><a href="#" class="__cf_email__" data-cfemail="731e12010a1e16011a101f1633160b121e031f165d101c1e">[email&nbsp;protected]</a></td>
-                                        <td>13223416270</td>
-                                        <td><span class="custom-badge status-red">否</span></td>
-                                        <td>
-                                            <span class="custom-badge status-blue">技术员</span>
-                                        </td>
-                                        <td>
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="custom-badge status-grey">请假</span></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-									<tr>
-                                        <td>
-											<img width="28" height="28" src="../../static/assets/img/user.jpg" class="rounded-circle" alt=""> <h2>赵志华</h2>
-										</td>
-                                        <td>195768</td>
-                                        <td><a href="#" class="__cf_email__" data-cfemail="d7adb8b2b5a2a3bbb2a597b2afb6baa7bbb2f9b4b8ba">[email&nbsp;protected]</a></td>
-                                        <td>44445559999</td>
-                                        <td><span class="custom-badge status-red">否</span></td>
-                                        <td>
-                                            <span class="custom-badge status-blue">运行副职</span>
-                                        </td>
-                                        <td>
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="custom-badge status-orange">出差</span></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
 						</div>
@@ -366,7 +337,7 @@
         <script>
         // 发送 AJAX 请求获取部门列表数据
         $(document).ready(function() {
-    // 发送 AJAX 请求获取部门列表数据
+        // 发送 AJAX 请求获取部门列表数据
         $.ajax({
             url: '{{ url_for('index.departments2') }}',
             method: 'GET',
@@ -378,6 +349,52 @@
 });
         });
     </script>
+        <script>
+            // 获取“全选”复选框和所有人员复选框
+            const selectAllCheckbox = document.getElementById('select-all');
+            const personCheckboxes = document.getElementsByName('person');
+
+            // 当点击“全选”复选框时，将所有人员复选框的选中状态与“全选”复选框的选中状态同步
+            selectAllCheckbox.addEventListener('change', () => {
+                const isChecked = selectAllCheckbox.checked;
+                for (const checkbox of personCheckboxes) {
+                    checkbox.checked = isChecked;
+                }
+            });
+
+            // 定义函数，用于将选中的人员ID打包成列表并提交到后端函数
+            function submitSelectedPersons() {
+                // 获取选中的人员ID列表
+
+                const selectedPersons = [];
+                for (const checkbox of personCheckboxes) {
+                    if (checkbox.checked) {
+                        selectedPersons.push(checkbox.value);
+                    }
+                }
+
+                // 发送POST请求到后端接口
+                fetch('/backend/persons', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedPersons)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            alert(data.message);
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+}
+        </script>
         <div class="footer">
                 <div class="pull-right">
                     By：<a href="https://github.com/195779/graduationDesign" target="_blank">Alan's github

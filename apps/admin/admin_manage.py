@@ -2,6 +2,7 @@ from flask import render_template, request, session, redirect, url_for, abort, j
 from flask import Blueprint
 from apps.admin.__init__ import admin_bp
 from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff
+from exts import db
 
 
 @admin_bp.route("/<departmentId>", methods=['POST', "GET"])
@@ -37,11 +38,53 @@ def staff_manage(departmentId):
             return 'what happened?'
 
 
-@admin_bp.route('/setState', methods=['POST'], endpoint='setState')
-def setState():
+@admin_bp.route('/openFaceState', methods=['POST'], endpoint='openFaceState')
+def openFaceState():
     selected_persons = request.json
-    for person in selected_persons:
-        staff_information = staffInformation.query.filter(person == staffInformation.staffId).first()
+    if len(selected_persons) == 0:
+        result = {"status": "error", "message": "未选中职工"}
+    else:
+        for person in selected_persons:
+            print(str(type(person)), "dddddddddddddddddddddddddddddddddddddddddddddd")
+            staff_information = staffInformation.query.filter(person == staffInformation.staffId).first()
+            staff_information.staffGetFaceState = True
+        db.session.commit()
+        result = {"status": "success", "message": "已选中的职工人脸录入权限已打开"}
 
-    result = {"status": "success", "message": "Selected persons updated successfully."}
     return jsonify(result), 200
+
+
+@admin_bp.route('/closeFaceState', methods=['POST'], endpoint='closeFaceState')
+def closeFaceState():
+    selected_persons = request.json
+    if len(selected_persons) == 0:
+        result = {"status": "error", "message": "未选中职工"}
+    else:
+        for person in selected_persons:
+            print(str(type(person)), "dddddddddddddddddddddddddddddddddddddddddddddd")
+            staff_information = staffInformation.query.filter(person == staffInformation.staffId).first()
+            staff_information.staffGetFaceState = False
+        db.session.commit()
+        result = {"status": "success", "message": "已选中的职工人脸录入权限已关闭"}
+
+    return jsonify(result), 200
+
+
+@admin_bp.route('/setAttendance', methods=['POST'], endpoint='setAttendance')
+def setAttendance():
+    attendance = request.json
+    if len(attendance) != 2:
+        result = {'status': 'error', 'message': '发送数据长度不等于2：有误'}
+    else:
+        message = ''
+
+        staffId = attendance[0]
+        attendance_state = attendance[1]
+
+        staff_information = staffInformation.query.filter(staffId == staffInformation.staffId).first()
+
+
+
+
+        result = {'status': 'success', 'message': message}
+    return jsonify(result),200

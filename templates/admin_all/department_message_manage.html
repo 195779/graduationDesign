@@ -247,6 +247,8 @@
                 </ul>
             </nav>
         </div>
+
+
         <div class="content">
             <div class="row" style="margin-top: 10px">
                 <div class="col-sm-4 col-3">
@@ -277,15 +279,15 @@
                             <thead>
                             <tr>
                                 <th><input type="checkbox" id="select-all"></th>
-                                <th style="text-align: -webkit-center;">姓名</th>
-                                <th style="text-align: -webkit-center;">ID</th>
-                                <th style="text-align: -webkit-center;">Email</th>
+                                <th style="text-align: -webkit-center;">职工姓名</th>
+                                <th style="text-align: -webkit-center;">职工ID</th>
+                                <th style="text-align: -webkit-center;">电子邮箱</th>
                                 <th style="text-align: -webkit-center;">联系电话</th>
                                 <th style="text-align: -webkit-center;">人脸录入权限</th>
-                                <th style="text-align: -webkit-center;">岗位</th>
+                                <th style="text-align: -webkit-center;">职工职务</th>
                                 <th style="text-align: -webkit-center;">考勤状态</th>
-                                <th style="text-align: -webkit-center;">编辑考勤</th>
-                                <th style="text-align: -webkit-center;">职工信息</th>
+                                <th style="text-align: -webkit-center;">编辑考勤状态</th>
+                                <th style="text-align: -webkit-center;">编辑职务信息</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -311,11 +313,9 @@
                                                 class="glyphicon glyphicon-eye-close"></i> 无</span></td>
                                     {% endif %}
                                     <td>
-                                        <span class="custom-badge status-blue">{{ staff_position_list[i].positionName }}</span>
+                                        <span class="custom-badge status-blue" id="{{ staff_information_list[i].staffId }}position">{{ staff_position_list[i].positionName }}</span>
                                     </td>
                                     <td>
-                                        <div class="dropdown dropdown-action">
-
                                             {% if staff_information_list[i].staffCheckState == 0 %}
                                                 <span class="custom-badge status-grey" id="{{ staff_information_list[i].staffId }}State"><i
                                                 class="glyphicon glyphicon-headphones" ></i> 非工作时间</span>
@@ -334,33 +334,32 @@
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 13 %}
                                                 <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-sunglasses"></i> 加班出勤</span>
+                                                class="glyphicon glyphicon-leaf"></i> 加班出勤</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 20 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}"><i
-                                                class="glyphicon glyphicon-ice-lolly-tasted"></i> 今日缺勤</span>
+                                                class="glyphicon glyphicon-remove-circle"></i> 今日缺勤</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 21 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-alert"></i> 今日迟到</span>
+                                                class="glyphicon glyphicon-hourglass"></i> 今日迟到</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 22 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-dashboard"></i> 今日早退</span>
+                                                class="glyphicon glyphicon-glass"></i> 今日早退</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 23 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-bell"></i> 加班缺勤</span>
+                                                class="glyphicon glyphicon-warning-sign"></i> 加班缺勤</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 24 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-warning-sign"></i> 加班迟到</span>
+                                                class="glyphicon glyphicon-bell"></i> 加班迟到</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 25 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
                                                 class="glyphicon glyphicon-cutlery"></i> 加班早退</span>
                                             {% endif %}
-                                        </div>
                                     </td>
                                     <style>
                                         /* 下拉框默认隐藏 */
@@ -402,7 +401,7 @@
                                         <!-- 下拉框 -->
                                         <div class="dropdown-content dropdown-menu dropdown-menu" style="min-width: 130px; max-width: 130px; margin-top: 5px">
 
-                                            <div class="dropdown-item" id="state_break" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="state_break" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-grey"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -411,7 +410,7 @@
                                             </div>
 
 
-                                            <div class="dropdown-item" id="today_work" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_work" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-green"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -419,7 +418,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="today_out" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_out" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-orange"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -427,7 +426,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="today_holiday" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_holiday" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-blue"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -435,7 +434,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="add_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="add_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-green"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -443,7 +442,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="today_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -451,7 +450,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="today_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -459,7 +458,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="today_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="today_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -467,7 +466,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="add_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="add_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -475,7 +474,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="add_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="add_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -483,7 +482,7 @@
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="add_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, this.name)">
+                                            <div class="dropdown-item" id="add_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-red"
                                                     style="min-width: 110px; max-width: 110px;"><i
@@ -492,8 +491,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td><a class="btn btn-primary float-right btn-rounded" style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
-                                            class="glyphicon glyphicon-zoom-in"></i> <p>编辑信息</p></a></td>
+                                    <td><a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#edit_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ Dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>编辑职务信息</p></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -616,7 +615,7 @@
                             for (let i = 0; i < selectedPersons.length; i++) {
                                 var selectPersonSpan = document.getElementById(selectedPersons[i]+"Face");
                                 var newSpan = document.createElement('span');
-                                newSpan.innerHTML = "";
+                                newSpan.innerHTML = "<span id='" + selectedPersons[i] +"Face' class='custom-badge status-red'><i class='glyphicon glyphicon-eye-close'></i> 是</span>";
                                 selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
                             }
                             alert(data.message);
@@ -629,10 +628,20 @@
                     });
             }
             //  定义函数，用于修改人员的考勤状态
-            function setAttendance(state, staffId){
+            function setAttendance(state, event){
                 const attendance = [];
+                // console.log('name event:', event.currentTarget.getAttribute('name'));
+
+                var staffId = event.currentTarget.getAttribute('name')
+
                 attendance.push(state);
                 attendance.push(staffId);
+
+                //console.log(typeof staffId)
+                //console.log(typeof state)
+                //console.log(staffId)
+
+                attendance_string = JSON.stringify(attendance)
                 // 发送POST请求到后端接口
                 fetch('{{ url_for('admin_all.setAttendance') }}', {
                     method: 'POST',
@@ -645,20 +654,220 @@
                     .then(data => {
                         // 处理后端返回的JSON数据
                         if (data.status === 'success') {
-                            var selectPersonSpan = document.getElementById(attendance[1]+"State");
+                            var selectPersonSpan = document.getElementById(staffId+"State");
                             var newSpan = document.createElement('span');
-                            newSpan.innerHTML = "<span" + data.message + "</span>";
+                            newSpan.innerHTML = "<span " + data.message + "</span>";
+                            // console.log("<span " + data.message + "</span>")
                             selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
                             alert('考勤状态修改成功');
                         } else {
-                            alert('Error: ' + '未能修改考勤状态！！！' + data.message);
+                            alert('Error: ' + '未能修改考勤状态！！！' + staffId + " " +state + " " + data.message);
                         }
                     })
                     .catch(error => {
-                        alert('Error: ' + ' ERROR错误' + error.message);
+                        // console.log('staffId: ' + staffId + "  " + "State: " + state);
+                        alert('Error: ' + ' ERROR错误: '+ staffId + " State " + state  + " " + error.message);
                     });
             }
         </script>
+
+        <div class="modal fade" id="edit_message"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="edit_staff_message">编辑职工信息:</h4>
+                </div>
+                <form id="employee-form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="employee-id">职工ID（6位字符长度）：</label>
+                            <input type="text" class="form-control" id="employee-id" name="employee-id" maxlength="6" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee-name">职工姓名（1-20字符长度）：</label>
+                            <input type="text" class="form-control" id="employee-name" name="employee-name" maxlength="20" minlength="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">职工隶属部门：</label>
+                            <select class="form-control" id="department" name="department" required>
+                                <!-- JS 从后端获取部门信息，动态生成选项 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">职工职务：</label>
+                            <select class="form-control" id="position" name="position" required>
+                                <!-- JS 从后端获取职务信息，动态生成选项 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="employment-status">在职状态：</label>
+                            <select class="form-control" id="employment-status" name="employment-status" required>
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+        <script>
+
+            function openModal(staffId, staffName, departmentName){
+                console.log("staffId: " + staffId);
+                var position = document.getElementById(staffId+"position");
+                var position_value = position.textContent;
+
+                var title = document.getElementById('edit_staff_message');
+                title.textContent = '编辑职工信息:' + staffId;
+
+                var form_name = document.getElementById('employee-name');
+                form_name.value = staffName;
+
+                console.log("position_value: "+ position_value);
+                console.log('dep: ' + departmentName);
+
+                rowData = {
+                    employeeId : staffId,
+                    department : departmentName,
+                    position : position_value
+                };
+
+                const form = document.getElementById('employee-form');
+                form.elements['employee-id'].value = rowData.employeeId;
+
+
+                fetch('{{ url_for('admin_all.getDepartments') }}').then(response => response.json())
+                    .then(options => populateSelectOptions(document.getElementById('department'), options, departmentName))
+                    .catch(error => console.error(error));
+                fetch('{{ url_for('admin_all.getPositions') }}').then(response => response.json())
+                    .then(options => populateSelectOptions(document.getElementById('position'), options, position_value))
+                    .catch(error => console.error(error));
+
+            }
+
+
+            // 从后端获取部门信息和职务信息，动态生成选项
+            function populateSelectOptions(selectElement, options, name) {
+                selectElement.innerHTML = '';
+                for (let option of options) {
+                    //console.log(typeof option)
+                    //console.log("option: " +  option.toString())
+                    //console.log('depname: ' + name)
+
+                    let optionElement = document.createElement('option');
+
+                    const option_values = option.toString().split(",");
+                    const option_textContent = option_values[0];
+                    const option_id = option_values[1];
+                    if (option_values.length === 3){
+                        option_value = option_values[2];
+                        optionElement.value = option_value;
+                    }
+
+                    optionElement.id = option_id;
+                    optionElement.textContent = option_textContent;
+                    optionElement.style.color = "black";
+                    selectElement.appendChild(optionElement);
+
+                    if(name === option_textContent){
+                        //console.log('the name is :' + name + "  the option_textContent is : " + option_textContent)
+                        const option = document.getElementById(option_id);
+                        option.selected = true;
+                        //console.log('the id is : ' + option_id + "  the option_true_content is : " + option.textContent);
+                    }
+
+                }
+            }
+
+            // 获取表单数据，发送给后端
+            function submitForm(event) {
+                event.preventDefault();
+                let formElement = event.target;
+                let formData = new FormData(formElement);
+
+                position = document.getElementById('position');
+                // 表单默认传入的是position.options[position.selectedIndex].textContent.value, 而且与我设置的value还不一样
+                // textContent没有问题
+                formData.set('position', position.options[position.selectedIndex].textContent);
+
+                // 添加额外字段
+                const title = document.getElementById('edit_staff_message');
+                const title_values = title.textContent.toString().split(':');
+                const staffId_old = title_values[1];
+                formData.append("staffId_old", staffId_old);
+
+                fetch('{{ url_for('admin_all.edit_message') }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => console.error(error));
+            }
+
+            // 注册表单提交事件
+            let formElement = document.getElementById('employee-form');
+            formElement.addEventListener('submit', submitForm);
+
+        </script>
+
+
+        <div class="modal fade" id="add_staff"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="add_staff_message">添加职工:</h4>
+                </div>
+                <form id="employee-form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="add_employee-id">职工ID（6位字符长度）：</label>
+                            <input type="text" class="form-control" id="add_employee-id" name="add_employee-id" maxlength="6" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee-name">职工姓名（1-20字符长度）：</label>
+                            <input type="text" class="form-control" id="add_employee-name" name="add_employee-name" maxlength="20" minlength="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee-name">职工性别：</label>
+                            <select class="form-control" id="add_gender" name="add_gender" required>
+                                <!-- JS 从后端获取部门信息，动态生成选项 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">职工隶属部门：</label>
+                            <select class="form-control" id="add_department" name="add_department" required>
+                                <!-- JS 从后端获取部门信息，动态生成选项 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">职工职务：</label>
+                            <select class="form-control" id="add_position" name="add_position" required>
+                                <!-- JS 从后端获取职务信息，动态生成选项 -->
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >添加职工</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
         <div class="footer">
             <div class="pull-right">
                 By：<a href="https://github.com/195779/graduationDesign" target="_blank">Alan's github

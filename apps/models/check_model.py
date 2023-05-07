@@ -112,12 +112,12 @@ class Departments(db.Model):
 class staffInformation(db.Model):
     # 职工信息
     __table_name__ = 'staff_information'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment="职工ID，外键、主键、不为空、不重复")
     staffName = db.Column(db.String(20), nullable=False, comment='姓名 不允许为空')
     staffGetFaceState = db.Column(db.Boolean, nullable=False, default=False, comment='职工录入人脸图片权限')
     staffGender = db.Column(db.String(20), nullable=False,
-                            comment=' 性别 不允许为空 设置String字符串，在前端设置为仅允许选择填入“男”、 “女”、“其他” 这三个选项')
+                            comment=' 性别 不允许为空 设置String字符串，')
     staffCountry = db.Column(db.String(20), nullable=True, comment='国籍')
     staffNation = db.Column(db.String(20), nullable=True, comment='民族')
     staffOrigin = db.Column(db.String(20), nullable=True, comment='籍贯')
@@ -125,9 +125,9 @@ class staffInformation(db.Model):
     staffBirthday = db.Column(db.Date(), nullable=True, comment='出生日期')
     staffPhoneNumber = db.Column(db.String(11), nullable=True, comment='手机号')
     staffEmailAddress = db.Column(db.String(30), nullable=True, comment='邮箱地址')
-    staffState = db.Column(db.Boolean, nullable=False, comment='在职状态 不允许为空')
-    staffPositionId = db.Column(db.String(20), db.ForeignKey('position.positionId'), nullable=False, comment='岗位ID')
-    staffDepartmentId = db.Column(db.String(20), db.ForeignKey('departments.departmentId'), nullable=False, comment='部门ID')
+    staffState = db.Column(db.Boolean, nullable=False, default=True, comment='在职状态 不允许为空')
+    staffPositionId = db.Column(db.String(20), db.ForeignKey('position.positionId', onupdate='CASCADE'), nullable=False, comment='岗位ID')
+    staffDepartmentId = db.Column(db.String(20), db.ForeignKey('departments.departmentId', onupdate='CASCADE'), nullable=False, comment='部门ID')
     staff_create_updateDate = db.Column(db.DateTime(), nullable=False, default=datetime.now, comment='信息创建时间/更新时间')
     staff_create_updateId = db.Column(db.String(20), nullable=True, comment='创建/更新ID')
     informationState = db.Column(db.Boolean, nullable=False, default=False, comment='职工信息完善状态')
@@ -144,7 +144,7 @@ class staffInformation(db.Model):
 
 class faceValue(db.Model):
     __table_name__ = 'face_value'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment='职工ID 外键、主键、非空、不重复')
     staffFaceValue = db.Column(db.Text, comment='人脸特征向量/Text任意长度字符类型')
 
@@ -154,7 +154,7 @@ class faceValue(db.Model):
 
 class Set(db.Model):
     __table_name__ = 'set'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment='职工ID 外键、主键、非空、不重复')
     attendTime = db.Column(db.DateTime, comment='应签到时间')
     endTime = db.Column(db.DateTime, comment='应签退时间')
@@ -179,7 +179,7 @@ class Attendance(db.Model):
     __table_name__ = 'attendance'
     attendanceId = db.Column(db.String(50), primary_key=True, unique=True, nullable=False,
                              comment='出勤记录ID/主键/不重复/不为空/！！以当天Date日期+职工ID合成String作为出勤记录ID存入！！')
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), unique=False, nullable=False,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), unique=False, nullable=False,
                         comment='职工ID/外键/允许重复（1对多）/不为空')
     attendTime = db.Column(db.Time(), comment='签到打卡时间')
     endTime = db.Column(db.Time(), comment='签退打卡时间')
@@ -200,7 +200,7 @@ class Attendance(db.Model):
 
 class Works(db.Model):
     __table_name__ = 'works'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, unique=True, nullable=False,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, unique=True, nullable=False,
                         comment='职工ID/外键/主键/不重复/不为空')
     WorkState = db.Column(db.Integer, default=0, nullable=False, comment='工作状态')
     holidayTime = db.Column(db.Float, default=0.0, nullable=False, comment='工作总时长')
@@ -211,7 +211,7 @@ class Works(db.Model):
 
 class Holidays(db.Model):
     __table_name__ = 'holidays'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, unique=True, nullable=False,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, unique=True, nullable=False,
                         comment='职工ID/外键/主键/不重复/不为空')
     holidayState = db.Column(db.Boolean, default=False, nullable=False, comment='休假状态')
     holidayTime = db.Column(db.Float, default=0.0, nullable=False, comment='剩余假期总时长')
@@ -222,7 +222,7 @@ class Holidays(db.Model):
 
 class Adds(db.Model):
     __table_name__ = 'adds'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment='职工ID/主键/外键/不为空/不重复')
     addState = db.Column(db.Boolean, default=False, nullable=False, comment='加班状态')
     addTime = db.Column(db.Float, nullable=False, default=0.0, comment='加班总时长')
@@ -233,9 +233,9 @@ class Adds(db.Model):
 
 class Outs(db.Model):
     __table_name__ = 'outs'
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), primary_key=True, nullable=False, unique=True,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment='职工ID/主键/外键/不重复/不为空')
-    outState = db.Column(db.Boolean, default=False, nullable=False ,comment='职工出差状态')
+    outState = db.Column(db.Boolean, default=False, nullable=False, comment='职工出差状态')
     outTime = db.Column(db.Float, default=0.0, nullable=False, comment='职工出差总时长')
 
     def __str__(self):
@@ -246,7 +246,7 @@ class OvertimeRecord(db.Model):
     __table_name__ = 'overtime_record'
     addId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True,
                       comment='加班记录/主键/不为空/不重复')
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), nullable=False, comment='职工ID/主键/外键/不为空')
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId',  onupdate='CASCADE'), nullable=False, comment='职工ID/主键/外键/不为空')
     beginAddTime = db.Column(db.DateTime, nullable=True, comment='加班签到时间')
     endAddTime = db.Column(db.DateTime, nullable=True, comment='加班签退时间')
     workTime = db.Column(db.Float, nullable=True, comment='加班工作时间')
@@ -263,7 +263,7 @@ class OvertimeRecord(db.Model):
 class Sum(db.Model):
     __table_name__ = 'sum'
     sumId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='统计ID/主键/不为空/不重复')
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), nullable=False,
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), nullable=False,
                         comment='职工ID/外键/不为空')
     holidayFrequency = db.Column(db.Integer, default=0, nullable=False, comment='休假次数')
     attendFrequency = db.Column(db.Integer, default=0, nullable=False, comment='出勤次数')
@@ -285,7 +285,7 @@ class systemApply(db.Model):
     __table_name = 'system_apply'
     applyId = db.Column(db.String(20), primary_key=True, unique=True, nullable=False,
                         comment='留言记录ID/主键/不为空/不重复')
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), nullable=False, comment='职工ID/外键/不为空')
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), nullable=False, comment='职工ID/外键/不为空')
     applyMessage = db.Column(db.Text, nullable=True, comment='留言信息')
     replyMessage = db.Column(db.Text, nullable=True, comment='回复内容')
     applyTime = db.Column(db.DateTime, nullable=False, default=datetime.now, comment='留言时间')
@@ -300,7 +300,7 @@ class holidayApply(db.Model):
     __table_name__ = 'holiday_apply'
     applyId = db.Column(db.String(20), primary_key=True, unique=True, nullable=False,
                         comment='请假记录ID/主键/不为空/不重复')
-    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId'), nullable=False, comment='职工ID/外键/不为空')
+    staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), nullable=False, comment='职工ID/外键/不为空')
     applyMessage = db.Column(db.Text, nullable=True, comment='申请信息')
     replyMessage = db.Column(db.Text, nullable=True, comment='批复内容')
     applyTime = db.Column(db.DateTime, nullable=False, default=datetime.now, comment='申请时间')

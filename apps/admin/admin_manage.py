@@ -3,7 +3,8 @@ import os
 from flask import render_template, request, session, redirect, url_for, abort, jsonify
 from flask import Blueprint
 from apps.admin.__init__ import admin_bp
-from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff
+from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff, faceValue, Set, Outs, Works, \
+    Holidays, Adds
 from exts import db
 
 
@@ -31,11 +32,9 @@ def staff_manage(departmentId):
                 staff_position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
                 staff_position_list.append(staff_position)
 
-
-
             return render_template('admin_all/department_message_manage.html', Dep=department, admin=admin,
-                                staff_list=staff_list, staff_information_list=staff_information_list,
-                                staff_position_list=staff_position_list)
+                                   staff_list=staff_list, staff_information_list=staff_information_list,
+                                   staff_position_list=staff_position_list)
         else:
             return ''
 
@@ -228,7 +227,8 @@ def edit_message():
     # 修改头像图片保存的文件夹名称
     old_filename = "static/data/data_headimage_staff/" + employee_id_old
     new_filename = "static/data/data_headimage_staff/" + employee_id_new
-    os.rename(old_filename, new_filename)
+    if os.path.isdir(old_filename):
+        os.rename(old_filename, new_filename)
 
     return jsonify({'message': '职工职务信息已保存'}), 200
 
@@ -255,7 +255,104 @@ def getPositions():
     return jsonify(options)
 
 
+@admin_bp.route('/add_staff', methods=['POST'], endpoint='add_staff')
+def add_staff():
+    employee_id = request.form['add_employee-id']
+    employee_name = request.form['add_employee-name']
+    department_name = request.form['add_department']
+    employee_gender = request.form['add_gender']
+    position_name = request.form['position']
+    employee_password = request.form['add_employee-password']
+
+    # 职工ID、密码
+    staff = Staff()
+    staff_information = staffInformation()
+    staff.staffId = employee_id
+    staff.staffPassWord = employee_password
+    staff_information.staffId = employee_id
+
+    # 职工姓名
+    staff_information.staffName = employee_name
+
+    # 职工性别
+    if employee_gender == '0':
+        employee_gender = '男'
+    else:
+        employee_gender = '女'
+
+    staff_information.staffGender = employee_gender
+
+    # 职工职务
+    position = Position.query.filter(position_name == Position.positionName).first()
+    staff_information.staffPositionId = position.positionId
+
+    # 隶属部门
+    department = Departments.query.filter(department_name == Departments.departmentName).first()
+    staff_information.staffDepartmentId = department.departmentId
+
+    # 初始化人脸字段为空
+    staff_face = faceValue()
+    staff_face.staffId = employee_id
+
+    # 初始化考勤设置
+    staff_set = Set()
+    staff_set.staffId = employee_id
+
+    # 初始化工作状态
+    staff_works = Works()
+    staff_works.staffId = employee_id
+
+    # 初始化假期状态
+    staff_holidays = Holidays()
+    staff_holidays.staffId = employee_id
+
+    # 初始化加班状态
+    staff_adds = Adds()
+    staff_adds.staffId = employee_id
+
+    # 初始化出差状态
+    staff_outs = Outs()
+    staff_outs.staffId = employee_id
+
+    # 提交保存
+    db.session.add_all([staff, staff_information, staff_face, staff_set, staff_works,
+                        staff_holidays, staff_adds, staff_outs])
+    db.session.commit()
+
+    return jsonify({'message': '职工职务信息已保存'}), 200
 
 
+@admin_bp.route('/get_message', methods=['GET', 'POST'], endpoint='get_message')
+def get_message():
+    data = request.get_json()
+    staffId = data.get('staff_Id')
+    result_id = ['staff_id', 'staff_name', 'staff_gender', 'staff_department', 'staff_position', 'staff_face_status',
+                'staff_face_authority', 'staff_email', 'staff_phone', 'staff_attendance_status', 'staff_birthday',
+                'staff_country', 'staff_nation', 'staff_hometown', 'staff_address', 'staff_remark']
+    staff_information = staffInformation.query.filter(staffId == staffInformation.staffId).first()
+    position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
+    department = Departments.query.filter(staff_information.staffDepartmentId == Departments.departmentId).first()
 
+    staff_id = staffId
+    staff_name = staff_information.staffName
+    staff_gender = staff_information.staffGender
+    staff_department = department.departmentName
+    staff_position = position.positionName
+    staff_face_status = staff_information.faceValueState
+    staff_face_authority = staff_information.staffGetFaceState
+    staff_email = staff_information.staffEmailAddress
+    staff_phone = staff_information.staffPhoneNumber
+    staff_attendance_status = staff_information.staffCheckState
+    staff_birthday = staff_information.staffBirthday
+    staff_country = staff_information.staffCountry
+    staff_nation = staff_information.staffNation
+    staff_hometown = staff_information.staffOrigin
+    staff_address = staff_information.staffAddress
+    staff_remark = staff_information.staff_Remark
+    result_message = [staff_id, staff_name, staff_gender, staff_department, staff_position, staff_face_status,
+                    staff_face_authority, staff_email, staff_phone, staff_attendance_status, staff_birthday,
+                    staff_country, staff_nation, staff_hometown, staff_address, staff_remark]
 
+    options = dict(zip(result_id,result_message))
+
+    return jsonify(options)

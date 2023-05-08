@@ -263,7 +263,8 @@
                             class="glyphicon glyphicon-camera"></i> 开启人脸录入权限</a>
                     <a href="#" class="btn btn-primary float-right btn-rounded" onclick="submitSelectedPersons_close()"><i
                             class="glyphicon glyphicon-ban-circle"></i> 关闭人脸录入权限</a>
-                    <a href="#" class="btn btn-primary float-right btn-rounded"><i class="glyphicon glyphicon-plus"></i>
+                    <a href="#" onclick="openModal_add_staff('{{ Dep.departmentName }}')" class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#add_staff">
+                        <i class="glyphicon glyphicon-plus"></i>
                         添加职工</a>
                 </div>
             </div>
@@ -281,13 +282,13 @@
                                 <th><input type="checkbox" id="select-all"></th>
                                 <th style="text-align: -webkit-center;">职工姓名</th>
                                 <th style="text-align: -webkit-center;">职工ID</th>
-                                <th style="text-align: -webkit-center;">电子邮箱</th>
-                                <th style="text-align: -webkit-center;">联系电话</th>
+                                <th style="text-align: -webkit-center;">人脸录入状态</th>
                                 <th style="text-align: -webkit-center;">人脸录入权限</th>
                                 <th style="text-align: -webkit-center;">职工职务</th>
                                 <th style="text-align: -webkit-center;">考勤状态</th>
                                 <th style="text-align: -webkit-center;">编辑考勤状态</th>
                                 <th style="text-align: -webkit-center;">编辑职务信息</th>
+                                <th style="text-align: -webkit-center">查看完整信息</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -302,9 +303,15 @@
                                         <h2>{{ staff_information_list[i].staffName }}</h2>
                                     </td>
                                     <td>{{ staff_information_list[i].staffId }}</td>
-                                    <td><a class="__cf_email__">{{ staff_information_list[i].staffEmailAddress }}</a>
+                                    <td>
+                                        {% if staff_information_list[i].faceValueState %}
+                                            <span  class="custom-badge status-green"><i
+                                                class="glyphicon glyphicon-picture"></i> 已经录入</span>
+                                        {% else %}
+                                            <span  class="custom-badge status-red"><i
+                                                class="glyphicon glyphicon-remove-sign"></i> 尚未录入</span>
+                                        {% endif %}
                                     </td>
-                                    <td><a>{{ staff_information_list[i].staffPhoneNumber }}</a></td>
                                     {% if staff_information_list[i].staffGetFaceState %}
                                         <td><span id="{{ staff_information_list[i].staffId }}Face" class="custom-badge status-green"><i
                                                 class="glyphicon glyphicon-eye-open"></i> 是</span></td>
@@ -492,7 +499,11 @@
                                         </div>
                                     </td>
                                     <td><a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#edit_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ Dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
-                                            class="glyphicon glyphicon-zoom-in"></i> <p>编辑职务信息</p></a></td>
+                                            class="glyphicon glyphicon-pencil"></i> <p>编辑职务信息</p></a></td>
+                                    <td>
+                                        <a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ Dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>查看完整信息</p></a></td>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -827,35 +838,39 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="add_staff_message">添加职工:</h4>
                 </div>
-                <form id="employee-form">
+                <form id="add_employee-form">
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="add_employee-id">职工ID（6位字符长度）：</label>
                             <input type="text" class="form-control" id="add_employee-id" name="add_employee-id" maxlength="6" minlength="6" required>
                         </div>
                         <div class="form-group">
-                            <label for="employee-name">职工姓名（1-20字符长度）：</label>
+                            <label for="add_employee-name">职工姓名（1-20字符长度）：</label>
                             <input type="text" class="form-control" id="add_employee-name" name="add_employee-name" maxlength="20" minlength="1" required>
                         </div>
                         <div class="form-group">
-                            <label for="employee-name">职工性别：</label>
+                            <label for="add_employee-password">职工用户密码（1-20字符长度）：</label>
+                            <input type="text" class="form-control" id="add_employee-password" name="add_employee-password" maxlength="20" minlength="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_gender">职工性别：</label>
                             <select class="form-control" id="add_gender" name="add_gender" required>
-                                <!-- JS 从后端获取部门信息，动态生成选项 -->
+                                <option value="1">女</option>
+                                <option value="0">男</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="department">职工隶属部门：</label>
+                            <label for="add_department">职工隶属部门：</label>
                             <select class="form-control" id="add_department" name="add_department" required>
                                 <!-- JS 从后端获取部门信息，动态生成选项 -->
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="position">职工职务：</label>
+                            <label for="add_position">职工职务：</label>
                             <select class="form-control" id="add_position" name="add_position" required>
                                 <!-- JS 从后端获取职务信息，动态生成选项 -->
                             </select>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -866,7 +881,298 @@
         </div>
     </div>
 
+        <script>
+         // 从后端获取部门信息和职务信息，动态生成选项
+            function departmentSelectOptions(selectElement, options, name) {
+                selectElement.innerHTML = '';
+                for (var option of options) {
+                    console.log(typeof option)
+                    console.log("option: " +  option.toString())
+                    console.log('depname: ' + name)
 
+                    let add_department_optionElement = document.createElement('option');
+
+                    const option_values = option.toString().split(",");
+                    const option_textContent = option_values[0];
+                    const option_id = option_values[1];
+                    if (option_values.length === 3){
+                        option_value = option_values[2];
+                        add_department_optionElement.value = option_value;
+                    }
+
+                    add_department_optionElement.id = option_id;
+                    add_department_optionElement.textContent = option_textContent;
+                    add_department_optionElement.style.color = "black";
+                    selectElement.appendChild(add_department_optionElement);
+
+                    if(name === option_textContent){
+                        //console.log('the name is :' + name + "  the option_textContent is : " + option_textContent)
+                        const option = document.getElementById(option_id);
+                        option.selected = true;
+                        //console.log('the id is : ' + option_id + "  the option_true_content is : " + option.textContent);
+                    }
+
+                }
+            }
+
+
+         // 添加职工  没有初始默认职工职务  从后端获取职务信息，动态生成选项
+            function positionSelectOptions(selectElement, options) {
+                selectElement.innerHTML = '';
+                for (let option of options) {
+                    //console.log(typeof option)
+                    //console.log("option: " +  option.toString())
+
+
+                    let add_optionElement = document.createElement('option');
+
+                    const option_values = option.toString().split(",");
+                    const option_textContent = option_values[0];
+                    const option_id = option_values[1];
+                    if (option_values.length === 3){
+                        option_value = option_values[2];
+                        add_optionElement.value = option_value;
+                    }
+
+                    add_optionElement.id = option_id;
+                    add_optionElement.textContent = option_textContent;
+                    add_optionElement.style.color = "black";
+                    selectElement.appendChild(add_optionElement);
+                }
+            }
+
+        // 添加职工
+        function openModal_add_staff(departmentName){
+
+                console.log('OpenModal_dep: ' + departmentName);
+
+                fetch('{{ url_for('admin_all.getDepartments') }}').then(response => response.json())
+                    .then(options => departmentSelectOptions(document.getElementById('add_department'), options, departmentName))
+                    .catch(error => console.error(error));
+                fetch('{{ url_for('admin_all.getPositions') }}').then(response => response.json())
+                    .then(options => positionSelectOptions(document.getElementById('add_position'), options))
+                    .catch(error => console.error(error));
+
+            }
+            // 获取表单数据，发送给后端
+            function add_submitForm(event) {
+                event.preventDefault();
+                let add_formElement_submit = event.target;
+                let add_formData_submit = new FormData(add_formElement_submit);
+
+                position = document.getElementById('add_position');
+                // 表单默认传入的是position.options[position.selectedIndex].textContent.value, 而且与我设置的value还不一样
+                // textContent没有问题
+                add_formData_submit.set('position', position.options[position.selectedIndex].textContent);
+
+
+                fetch('{{ url_for('admin_all.add_staff') }}', {
+                    method: 'POST',
+                    body: add_formData_submit
+                }).then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => console.error(error));
+            }
+
+
+             // 注册表单提交事件
+            let add_formElement = document.getElementById('add_employee-form');
+            add_formElement.addEventListener('submit', add_submitForm);
+
+
+
+    </script>
+
+
+        <!-- 模态框 -->
+        <div class="modal fade" id="scan_message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width:70%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">职工信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工ID:</label></div>
+                            <div class="col-sm-8"><span id="staff_id"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工姓名:</label></div>
+                            <div class="col-sm-8"><span id="staff_name"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工性别:</label></div>
+                            <div class="col-sm-8"><span id="staff_gender"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工隶属部门:</label></div>
+                            <div class="col-sm-8"><span id="staff_department"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工职务:</label></div>
+                            <div class="col-sm-8"><span id="staff_position"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入权限:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_authority"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电子邮箱:</label></div>
+                            <div class="col-sm-8"><span id="staff_email"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电话号码:</label></div>
+                            <div class="col-sm-8"><span id="staff_phone"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工考勤状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_attendance_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工生日日期:</label></div>
+                            <div class="col-sm-8"><span id="staff_birthday"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工国籍:</label></div>
+                            <div class="col-sm-8"><span id="staff_country"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工民族:</label></div>
+                            <div class="col-sm-8"><span id="staff_nation"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工籍贯:</label></div>
+                            <div class="col-sm-8"><span id="staff_hometown"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工现住址:</label></div>
+                            <div class="col-sm-8"><span id="staff_address"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工备注信息:</label></div>
+                            <div class="col-sm-8"><span id="staff_remark"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            function staff_message_modal(options){
+                staff_id = document.getElementById('staff_id');
+                staff_id.textContent = options['staff_id'];
+
+                staff_name = document.getElementById('staff_name');
+                staff_name.textContent = options['staff_name'];
+
+                staff_gender = document.getElementById('staff_gender');
+                staff_gender.textContent = options['staff_gender'];
+
+                staff_department = document.getElementById('staff_department');
+                staff_department.textContent = options['staff_department'];
+
+                staff_position = document.getElementById('staff_position');
+                staff_position.textContent = options['staff_position'];
+
+                staff_face_status = document.getElementById('staff_face_status');
+                staff_face_status.textContent = options['staff_face_status'];
+
+                staff_face_authority = document.getElementById('staff_face_authority');
+                staff_face_authority.textContent = options['staff_face_authority'];
+
+                staff_email = document.getElementById('staff_email');
+                staff_email.textContent = options['staff_email'];
+
+                staff_phone = document.getElementById('staff_phone');
+                staff_phone.textContent = options['staff_phone'];
+
+                staff_attendance_status = document.getElementById('staff_attendance_status');
+
+                attendnce_status = options['staff_attendance_status']
+                if (attendnce_status === 0)
+                    attendnce_status = '非工作时间';
+                else if(attendnce_status === 10){
+                    attendnce_status = '今日出勤';
+                }
+                else if(attendnce_status === 11){
+                     attendnce_status = '今日出差';
+                }
+                else if(attendnce_status === 12){
+                     attendnce_status = '今日休假';
+                }
+                else if(attendnce_status === 13){
+                     attendnce_status = '加班出勤';
+                }
+                else if(attendnce_status === 20){
+                     attendnce_status = '今日缺勤';
+                }
+                else if(attendnce_status === 21){
+                     attendnce_status = '今日迟到';
+                }
+                else if(attendnce_status === 22){
+                     attendnce_status = '今日早退';
+                }
+                else if(attendnce_status === 23){
+                     attendnce_status = '加班缺勤';
+                }
+                else if(attendnce_status === 24){
+                     attendnce_status = '加班迟到';
+                }
+                else if(attendnce_status === 25){
+                     attendnce_status = '加班早退';
+                }
+
+                staff_attendance_status.textContent = attendnce_status;
+
+
+                staff_birthday = document.getElementById('staff_birthday');
+                staff_birthday.textContent = options['staff_birthday'];
+
+                staff_country = document.getElementById('staff_country');
+                staff_country.textContent = options['staff_country'];
+
+                staff_nation = document.getElementById('staff_nation');
+                staff_nation.textContent = options['staff_nation'];
+
+                staff_hometown = document.getElementById('staff_hometown');
+                staff_hometown.textContent = options['staff_hometown'];
+
+                staff_address = document.getElementById('staff_address');
+                staff_address.textContent = options['staff_address'];
+
+                staff_remark = document.getElementById('staff_remark');
+                staff_remark.textContent = options['staff_remark'];
+            }
+            function openModal_scan_staff(staffId, staffName, departmentName){
+                console.log('openModal_scan_staff')
+
+                fetch('{{ url_for('admin_all.get_message') }}',{
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify({
+                        staff_Id : staffId
+                    })
+                }).then(response => response.json())
+                    .then(options => {
+                        //console.log(options);
+
+                        staff_message_modal(options);
+                    })
+                    .catch(error => console.error(error));
+            }
+        </script>
 
         <div class="footer">
             <div class="pull-right">

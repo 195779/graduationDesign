@@ -58,14 +58,41 @@ class Staff(db.Model):
     def __str__(self):
         return self.staffId + "'s staffID"
 
+class Position(db.Model):
+    __table_name = 'position'
+    positionId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='岗位ID')
+    positionName = db.Column(db.String(20), unique=True, comment='岗位名称')
+    positionLevel = db.Column(db.Integer, comment='岗位等级')
+
+    position_staff_informations = db.relationship('staffInformation', backref='position', lazy='dynamic')
+    # 岗位---职工信息 1对多
+
+    def __str__(self):
+        return self.positonId + "'s positionID"
+
+
+class Departments(db.Model):
+    __tablename__ = 'departments'
+    departmentId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='部门ID/主键/不为空/不重复')
+    departmentName = db.Column(db.String(20), nullable=False, comment='部门名称')
+
+    departments_staff_informations = db.relationship('staffInformation', backref='departments', lazy='dynamic')
+    # 部门---职工信息 1对多
+    departments_departmentAdmin = db.relationship('departmentAdmin', backref='departments', lazy='dynamic')
+    # 部门---部门管理员 1 对 多
+
+    def __str__(self):
+        return self.departmentId + "'s departmentID"
+
 
 class departmentAdmin(db.Model):
     # 部门管理员登录
     __tale_name__ = "department_admin"
     departmentAdminId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True)
     departmentAdminPassWord = db.Column(db.String(20), server_default=text("'123456'"))
+    admin_departmentId = db.Column(db.String(20), db.ForeignKey('departments.departmentId', onupdate='CASCADE'),
+                        comment="部门ID，外键")
     loginTime = db.Column(db.DateTime, server_default=text('CURRENT_TIMESTAMP'))
-
     # id + password 完成登录（布置验证码的事情待办）
     # 全部使用String类型，字符长度不允许超过20
 
@@ -87,29 +114,7 @@ class gateAdmin(db.Model):
         return self.gateAdminId + "'s gateAdminID"
 
 
-class Position(db.Model):
-    __table_name = 'position'
-    positionId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='岗位ID')
-    positionName = db.Column(db.String(20), unique=True, comment='岗位名称')
-    positionLevel = db.Column(db.Integer, comment='岗位等级')
 
-    position_staff_informations = db.relationship('staffInformation', backref='position', lazy='dynamic')
-    # 岗位---职工信息 1对多
-
-    def __str__(self):
-        return self.positonId + "'s positionID"
-
-
-class Departments(db.Model):
-    __tablename__ = 'departments'
-    departmentId = db.Column(db.String(20), primary_key=True, nullable=False, unique=True, comment='部门ID/主键/不为空/不重复')
-    departmentName = db.Column(db.String(20), nullable=False, comment='部门名称')
-
-    departments_staff_informations = db.relationship('staffInformation', backref='departments', lazy='dynamic')
-    # 岗位---职工信息 1对多
-
-    def __str__(self):
-        return self.departmentId + "'s departmentID"
 
 
 class staffInformation(db.Model):

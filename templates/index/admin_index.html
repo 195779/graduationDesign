@@ -24,7 +24,7 @@
                                 </script>
                         </li>
                         <li>
-                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.admin_index') }}" title="返回首页"><i
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.admin_index', admin_username=admin.adminId) }}" title="返回首页"><i
                                 class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
                         </li>
                         <li class="dropdown">
@@ -137,7 +137,7 @@
                                 </span>
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs" style="background-color: #fdffff">
-                                <li><a href="../../static/form_avatar.html">修改头像</a>
+                                <li><a href="#">修改头像</a>
                                 </li>
                                 <li><a href="#">个人资料</a>
                                 </li>
@@ -462,11 +462,11 @@
     <script>
         // 发送 AJAX 请求获取部门列表数据
         $.ajax({
-            url: '{{ url_for('index.departments') }}',
+            url: '{{ url_for('index.departments', admin_username=admin.adminId) }}',
             method: 'GET',
             success: function(data) {
                 $.each(data, function(key, value) {
-                    $('#department-list').append("<li><a href='/admin/" + key +"'>"+value+'</a></li>');
+                    $('#department-list').append("<li><a href='/admin/" + '{{ admin.adminId }}/' + key +"'>"+value+'</a></li>');
         });
     }
 });

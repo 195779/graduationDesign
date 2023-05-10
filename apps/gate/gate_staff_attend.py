@@ -7,10 +7,14 @@ import numpy as np
 from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, Response, jsonify, \
     current_app, g
 
+from apps.Index.index_gate_admin import login_required
 from apps.gate.__init__ import gate_bp
 from apps.models.check_model import faceValue, gateAdmin, Staff
 from PIL import Image, ImageDraw, ImageFont
 import dlib
+
+
+
 
 
 # 本次签到的所有人员信息
@@ -298,47 +302,62 @@ def gen(camera, testId, all_featurs, all_Id):
 
 
 # 人脸识别view函数（视图函数）
-@gate_bp.route('/video_feed', endpoint="video_feed")
-def video_feed():
-    all_faces = faceValue.query.all()
+@login_required('gateAdmin_username')
+@gate_bp.route('<gateAdmin_username>/video_feed', endpoint="video_feed")
+def video_feed(gateAdmin_username):
+    if session.get(gateAdmin_username+'gateAdmin_username') is not None:
+        all_faces = faceValue.query.all()
 
-    all_features = []
-    all_Id = []
+        all_features = []
+        all_Id = []
 
-    for one_face in all_faces:
-        all_Id.append(one_face.staffId)
-        all_features.append(one_face.staffFaceValue)
+        for one_face in all_faces:
+            all_Id.append(one_face.staffId)
+            all_features.append(one_face.staffFaceValue)
 
-    return Response(gen(VideoCamera(), '001', all_features, all_Id),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
+        return Response(gen(VideoCamera(), '001', all_features, all_Id),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return redirect(url_for('login.login'))
 
 # 实时显示当前签到人员
-@gate_bp.route('/now_attend')
-def now_attend():
-    if attend_records:
-        for records in attend_records:
-            print(records)
-    global staffName_last
-    if staffName_last is None or staffName_last != staffName_first:
-        staffName_last = staffName_first
-        print("此时新来的签到人员为：" + str(staffName_first))
-    return jsonify(attend_records)
+@login_required('gateAdmin_username')
+@gate_bp.route('<gateAdmin_username>/now_attend')
+def now_attend(gateAdmin_username):
+    if session.get(gateAdmin_username + 'gateAdmin_username') is not None:
+        if attend_records:
+            for records in attend_records:
+                print(records)
+        global staffName_last
+        if staffName_last is None or staffName_last != staffName_first:
+            staffName_last = staffName_first
+            print("此时新来的签到人员为：" + str(staffName_first))
+        return jsonify(attend_records)
+    else:
+        return redirect(url_for('login.login'))
 
 
 # 开启签到
-@gate_bp.route('/staff_attend', methods=["POST", 'GET'], endpoint='staff_attend')
-def staff_attend():
-    # 开启签到后，开始单次的记录
-    global attend_records
-    attend_records = []
-    now = time.strftime("%Y-%m-%d %H:00:00", time.localtime())
-    session['now_time'] = now
-    gate_admin = gateAdmin.query.filter(gateAdmin.gateAdminId == session.get('username')).first()
-    return render_template("gate_admin_all/staff_attend.html", gateAdmin=gate_admin)
-
+@login_required('gateAdmin_username')
+@gate_bp.route('<gateAdmin_username>/staff_attend', methods=["POST", 'GET'], endpoint='staff_attend')
+def staff_attend(gateAdmin_username):
+    if session.get(gateAdmin_username + 'gateAdmin_username') is not None:
+        # 开启签到后，开始单次的记录
+        global attend_records
+        attend_records = []
+        now = time.strftime("%Y-%m-%d %H:00:00", time.localtime())
+        session['now_time'] = now
+        gate_admin = gateAdmin.query.filter(gateAdmin.gateAdminId == session.get('staff_username')).first()
+        return render_template("gate_admin_all/staff_attend.html", gateAdmin=gate_admin)
+    else:
+        return redirect(url_for('login.login'))
 
 # 停止签到
-@gate_bp.route('/stop_records', methods=['POST'], endpoint='stop_records')
-def stop_records():
-    return redirect(url_for('index.gate_admin_index'))
+@login_required('gateAdmin_username')
+@gate_bp.route('/<gateAdmin_username>/stop_records', methods=['POST'], endpoint='stop_records')
+def stop_records(gateAdmin_username):
+    if session.get(gateAdmin_username + 'gateAdmin_username') is not None:
+        return redirect(url_for('index.gate_admin_index', gateAdmin_username=gateAdmin_username))
+    else:
+        return redirect(url_for('login.login'))
+

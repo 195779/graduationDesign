@@ -31,16 +31,16 @@ def login_index():
                     flash("系统管理员用户 " + post_username + " 不存在")
                     return render_template('login/login.html', form=form)
                 if user_password == post_password:
-                    session['username'] = post_username
-                    session['loginTime'] = user_loginTime
-                    session['num'] = 0
+                    session[user_username+'admin_username'] = post_username
+                    session[user_username+'admin_loginTime'] = user_loginTime
+                    # session['num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
                         db.session.commit()
                     except Exception as e:
                         print("\033[0;37;43mThere is an issue adding contact into db. {0}\033[0m".format(e))
-                    return redirect(url_for("index.admin_index"))
+                    return redirect(url_for("index.admin_index", admin_username=user_username))
                 else:
                     flash("系统管理员 " + user_username + " 登录：密码输入错误")
                     return render_template('login/login.html', form=form)
@@ -54,16 +54,16 @@ def login_index():
                     flash("企业职工用户 " + post_username + " 不存在")
                     return render_template('login/login.html', form=form)
                 if user_password == post_password:
-                    session['username'] = post_username
-                    session['loginTime'] = user_loginTime
-                    session['num'] = 0
+                    session[user_username+'staff_username'] = post_username
+                    session[user_username+'staff_loginTime'] = user_loginTime
+                    session[user_username+'staff_num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
                         db.session.commit()
                     except Exception as e:
                         print("\033[0;37;43mThere is an issue adding contact into db. {0}\033[0m".format(e))
-                    return redirect(url_for("index.staff_index"))
+                    return redirect(url_for('index.staff_index', staff_username=user_username))
                     #
                 else:
                     flash("企业职工 " + user_username + " 登录：密码输入错误")
@@ -78,16 +78,16 @@ def login_index():
                     flash("部门管理员用户 " + post_username + " 不存在")
                     return render_template('login/login.html', form=form)
                 if user_password == post_password:
-                    session['username'] = post_username
-                    session['loginTime'] = user_loginTime
-                    session['num'] = 0
+                    session[user_username+'depAdmin_username'] = post_username
+                    session[user_username+'depAdmin_loginTime'] = user_loginTime
+                    # session['depAdmin_num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
                         db.session.commit()
                     except Exception as e:
                         print("\033[0;37;43mThere is an issue adding contact into db. {0}\033[0m".format(e))
-                    return redirect(url_for("index.department_admin_index"))
+                    return redirect(url_for("index.department_admin_index", depAdmin_username=user_username))
                     #
                 else:
                     flash("部门管理员用户 " + user_username + " 登录：密码输入错误")
@@ -102,16 +102,16 @@ def login_index():
                     flash("闸机用户 " + post_username + " 不存在")
                     return render_template('login/login.html', form=form)
                 if user_password == post_password:
-                    session['username'] = post_username
-                    session['loginTime'] = user_loginTime
-                    session['num'] = 0
+                    session[user_username+'gateAdmin_username'] = post_username
+                    session[user_username+'gateAdmin_loginTime'] = user_loginTime
+                    # session['gateAdmin_num'] = 0
                     try:
                         # 更新登录时间
                         user.loginTime = user_loginTime
                         db.session.commit()
                     except Exception as e:
                         print("\033[0;37;43mThere is an issue adding contact into db. {0}\033[0m".format(e))
-                    return redirect(url_for("index.gate_admin_index"))
+                    return redirect(url_for("index.gate_admin_index", gateAdmin_username=user_username))
                     #
                 else:
                     flash("闸机用户 " + user_username + " 登录：密码输入错误")

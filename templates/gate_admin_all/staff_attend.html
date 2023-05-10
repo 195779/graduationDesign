@@ -37,7 +37,7 @@
 {% block content %}
     <div class="container">
         <div class="div-a">
-            <input type="image" src="{{ url_for('gate_all.video_feed') }}" id="video" name="face">
+            <input type="image" src="{{ url_for('gate_all.video_feed', gateAdmin_username=gateAdmin.gateAdminId) }}" id="video" name="face">
         </div>
         <div class="div-c"></div>
         <div class="div-b">
@@ -48,7 +48,7 @@
                 <h4 id="result"></h4>
                 <br>
                 <br>
-                <form action="{{ url_for('gate_all.stop_records') }}" method="post">
+                <form action="{{ url_for('gate_all.stop_records', gateAdmin_username=gateAdmin.gateAdminId) }}" method="post">
                     <input type="submit" class="btn btn-primary" value="停止签到">
                 </form>
             </table>
@@ -98,7 +98,7 @@
 
         function getApi() {
             setTimeout(getApi, 1000);
-            $.get("{{ url_for('gate_all.now_attend') }}",
+            $.get("{{ url_for('gate_all.now_attend', gateAdmin_username=gateAdmin.gateAdminId) }}",
                 function (res) {
                     console.log(res);
                     var len = res.length - 1;
@@ -107,7 +107,7 @@
         }
 
         function stop() {
-            $.get("{{ url_for('gate_all.stop_records') }}");
+            $.get("{{ url_for('gate_all.stop_records', gateAdmin_username=gateAdmin.gateAdminId) }}");
         }
     </script>
 {% endblock %}

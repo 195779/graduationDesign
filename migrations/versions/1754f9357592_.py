@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c316ae4751b1
+Revision ID: 1754f9357592
 Revises: 
-Create Date: 2023-05-08 16:24:50.209018
+Create Date: 2023-05-09 15:27:17.679290
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c316ae4751b1'
+revision = '1754f9357592'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,13 +24,6 @@ def upgrade():
     sa.Column('loginTime', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True, comment='上次登录时间'),
     sa.PrimaryKeyConstraint('adminId'),
     sa.UniqueConstraint('adminId')
-    )
-    op.create_table('department_admin',
-    sa.Column('departmentAdminId', sa.String(length=20), nullable=False),
-    sa.Column('departmentAdminPassWord', sa.String(length=20), server_default=sa.text("'123456'"), nullable=True),
-    sa.Column('loginTime', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.PrimaryKeyConstraint('departmentAdminId'),
-    sa.UniqueConstraint('departmentAdminId')
     )
     op.create_table('departments',
     sa.Column('departmentId', sa.String(length=20), nullable=False, comment='部门ID/主键/不为空/不重复'),
@@ -93,6 +86,15 @@ def upgrade():
     sa.ForeignKeyConstraint(['staffId'], ['staff.staffId'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('attendanceId'),
     sa.UniqueConstraint('attendanceId')
+    )
+    op.create_table('department_admin',
+    sa.Column('departmentAdminId', sa.String(length=20), nullable=False),
+    sa.Column('departmentAdminPassWord', sa.String(length=20), server_default=sa.text("'123456'"), nullable=True),
+    sa.Column('admin_departmentId', sa.String(length=20), nullable=True, comment='部门ID，外键'),
+    sa.Column('loginTime', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.ForeignKeyConstraint(['admin_departmentId'], ['departments.departmentId'], onupdate='CASCADE'),
+    sa.PrimaryKeyConstraint('departmentAdminId'),
+    sa.UniqueConstraint('departmentAdminId')
     )
     op.create_table('face_value',
     sa.Column('staffId', sa.String(length=20), nullable=False, comment='职工ID 外键、主键、非空、不重复'),
@@ -174,7 +176,6 @@ def upgrade():
     sa.Column('staffCountry', sa.String(length=20), nullable=True, comment='国籍'),
     sa.Column('staffNation', sa.String(length=20), nullable=True, comment='民族'),
     sa.Column('staffOrigin', sa.String(length=20), nullable=True, comment='籍贯'),
-    sa.Column('staffAge', sa.Integer(), nullable=True, comment='年龄'),
     sa.Column('staffBirthday', sa.Date(), nullable=True, comment='出生日期'),
     sa.Column('staffPhoneNumber', sa.String(length=11), nullable=True, comment='手机号'),
     sa.Column('staffEmailAddress', sa.String(length=30), nullable=True, comment='邮箱地址'),
@@ -186,7 +187,7 @@ def upgrade():
     sa.Column('informationState', sa.Boolean(), server_default='0', nullable=True, comment='职工信息完善状态'),
     sa.Column('faceValueState', sa.Boolean(), server_default='0', nullable=True, comment='职工人脸信息完善状态'),
     sa.Column('staffAddress', sa.Text(), nullable=True, comment='家庭住址'),
-    sa.Column('staffCheckState', sa.Integer(), nullable=True, server_default=sa.text('0'), comment='非工作时间：0  出勤：{普通出勤：10 , 出差：11 ,  休假： 12  , 加班出勤： 13} ;   缺勤：{普通缺勤：20 , 普通迟到：21 ;  普通早退：22;  加班缺勤：23  ;  加班迟到： 24 ;  加班早退： 25}'),
+    sa.Column('staffCheckState', sa.Integer(), server_default=sa.text('0'), nullable=True, comment='非工作时间：0  出勤：{普通出勤：10 , 出差：11 ,  休假： 12  , 加班出勤： 13} ;   缺勤：{普通缺勤：20 , 普通迟到：21 ;  普通早退：22;  加班缺勤：23  ;  加班迟到： 24 ;  加班早退： 25}'),
     sa.Column('staff_Remark', sa.Text(), nullable=True, comment='备注/Text任意长度字符类型'),
     sa.ForeignKeyConstraint(['staffDepartmentId'], ['departments.departmentId'], onupdate='CASCADE'),
     sa.ForeignKeyConstraint(['staffId'], ['staff.staffId'], onupdate='CASCADE'),
@@ -247,6 +248,7 @@ def downgrade():
     op.drop_table('holidays')
     op.drop_table('holiday_apply')
     op.drop_table('face_value')
+    op.drop_table('department_admin')
     op.drop_table('attendance')
     op.drop_table('adds')
     op.drop_table('system_announcement')
@@ -254,6 +256,5 @@ def downgrade():
     op.drop_table('position')
     op.drop_table('gate_admin')
     op.drop_table('departments')
-    op.drop_table('department_admin')
     op.drop_table('admin')
     # ### end Alembic commands ###

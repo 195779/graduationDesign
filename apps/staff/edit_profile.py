@@ -8,6 +8,7 @@ from apps.staff.__init__ import staff_bp
 from apps.models.check_model import Staff, faceValue, staffInformation, Position, Departments, Works
 from exts import db
 from form import StaffForm, EditPasswordForm
+from apps.Index.index_staff import login_required
 
 
 def pre_work_mkdir(path_photos_from_camera):
@@ -19,14 +20,12 @@ def pre_work_mkdir(path_photos_from_camera):
         os.mkdir(path_photos_from_camera)
 
 
-@staff_bp.route('/submit_profile', methods=["POST"], endpoint='submit_profile')
-def submit_profile():
-    if 'username' not in session:
-        abort(404)
-    else:
+@login_required('<staff_username>')
+@staff_bp.route('/<staff_username>/submit_profile', methods=["POST"], endpoint='submit_profile')
+def submit_profile(staff_username):
+    if session.get(staff_username + 'staff_username') is not None:
         form = StaffForm()
-        username = session.get('username')
-        staff_information = staffInformation.query.filter(staffInformation.staffId == username).first()
+        staff_information = staffInformation.query.filter(staffInformation.staffId == staff_username).first()
 
         if request.method == 'POST':
             if form.validate_on_submit():
@@ -71,15 +70,15 @@ def submit_profile():
                 # 更新保存头像
                 staffImage = request.files.get('staffImage')
                 if staffImage:
-                    pre_work_mkdir("static/data/data_headimage_staff/" + username)
-                    staffImage.save(os.path.join("static/data/data_headimage_staff/" + username + '/head.jpg'))
+                    pre_work_mkdir("static/data/data_headimage_staff/" + staff_username)
+                    staffImage.save(os.path.join("static/data/data_headimage_staff/" + staff_username + '/head.jpg'))
 
                 print('post 成功')
-                session['post'] = '1'
-                session['symbol'] = '1'
+                session[staff_username+'post'] = '1'
+                session[staff_username+'symbol'] = '1'
             else:
-                session['post'] = '1'
-                session['symbol'] = '0'
+                session[staff_username+'post'] = '1'
+                session[staff_username+'symbol'] = '0'
                 print("post 失败")
                 print(form.errors)
 
@@ -87,36 +86,34 @@ def submit_profile():
                 form_data = json.dumps(form.data)
                 form_errors = json.dumps(form.errors)
                 # 将转换后的数据存储到session中
-                session['form_data'] = form_data
-                session['form_errors'] = form_errors
+                session[staff_username+'form_data'] = form_data
+                session[staff_username+'form_errors'] = form_errors
 
-            return redirect(url_for('staff_all.edit_profile'))
-
-
-@staff_bp.route('/edit_profile', methods=["GET"], endpoint='edit_profile')
-def edit_profile():
-    if 'username' not in session:
-        abort(404)
+            return redirect(url_for('staff_all.edit_profile', staff_username=staff_username))
     else:
+        return redirect(url_for('login.login'))
+
+@login_required('<staff_username>')
+@staff_bp.route('/<staff_username>/edit_profile', methods=["GET"], endpoint='edit_profile')
+def edit_profile(staff_username):
+    if session.get(staff_username + 'staff_username') is not None:
         if request.method == 'GET':
             form_editPassword = EditPasswordForm()
-
             # 从session中获取存储的form数据
-            form_data = session.get('form_data')
-            form_errors = session.get('form_errors')
+            form_data = session.get(staff_username+'form_data')
+            form_errors = session.get(staff_username+'form_errors')
             # 将JSON字符串转换为form对象
             if form_data is not None:
                 form = StaffForm(data=json.loads(form_data))
                 form.form_errors = json.loads(form_errors)
                 # 清除session中的数据
-                session.pop('form_data', None)
-                session.pop('form_errors', None)
+                session.pop(staff_username+'form_data', None)
+                session.pop(staff_username+'form_errors', None)
             else:
                 form = StaffForm()
 
-            username = session.get('username')
-            staff = Staff.query.filter(Staff.staffId == username).first()
-            staff_information = staffInformation.query.filter(staffInformation.staffId == username).first()
+            staff = Staff.query.filter(Staff.staffId == staff_username).first()
+            staff_information = staffInformation.query.filter(staffInformation.staffId == staff_username).first()
 
             staffPositionId = staff_information.staffPositionId
             staffDepartmentId = staff_information.staffDepartmentId
@@ -124,17 +121,19 @@ def edit_profile():
             staffPosition = Position.query.filter_by(positionId=staffPositionId).first()
             staffDepartment = Departments.query.filter(Departments.departmentId == staffDepartmentId).first()
 
-            filename = "static/data/data_headimage_staff/" + username + '/head.jpg'
+            filename = "static/data/data_headimage_staff/" + staff_username + '/head.jpg'
 
             post = '0'
             symbol = '0'
-            if session.get('post') and session['symbol']:
-                post = session['post']
-                symbol = session['symbol']
-                session.pop('post')
-                session.pop('symbol')
+            if session.get(staff_username+'post') and session[staff_username+'symbol']:
+                post = session[staff_username+'post']
+                symbol = session[staff_username+'symbol']
+                session.pop(staff_username+'post')
+                session.pop(staff_username+'symbol')
 
             return render_template('staff_all/edit_profile.html', url_image=filename, form=form, staff=staff,
                                    form_password=form_editPassword, post=post, symbol=symbol,
                                    staffPosition=staffPosition, staffDepartment=staffDepartment.departmentName,
                                    staffInformation=staff_information)
+    else:
+        return redirect(url_for('login.login'))

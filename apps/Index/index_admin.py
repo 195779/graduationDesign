@@ -4,42 +4,67 @@ from apps.Index.__init__ import index_bp
 from apps.models.check_model import Admin, Departments
 
 
-@index_bp.route('/admin_index', methods=["POST", "GET"], endpoint='admin_index')
-def admin_index():
-    if request.method == 'GET':
-        if 'username' in session:
-            username = session.get('username')
+def login_required(route_part):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if route_part + 'admin_username' in session:
+                return func(*args, **kwargs)
+            else:
+                return redirect(url_for('login.login'))
+
+        wrapper.__name__ = func.__name__
+        wrapper.__doc__ = func.__doc__
+        wrapper.__module__ = func.__module__
+        wrapper.route_part = route_part
+        return wrapper
+
+    return decorator
+
+
+@login_required('<admin_username>')
+@index_bp.route('/<admin_username>/admin_index', methods=["POST", "GET"], endpoint='admin_index')
+def admin_index(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        if request.method == 'GET':
+            username = admin_username
             admin = Admin.query.filter_by(adminId=username).first()
             return render_template('index/admin_index.html', admin=admin)
         else:
             return redirect(url_for('login.login'))
     else:
-        return "not post now"
+        return redirect(url_for('login.login'))
 
 
-@index_bp.route('/departments', endpoint='departments')
-def get_departments():
-    departments = Departments.query.all()
-    Id_data = []
-    Name_data = []
-    for department in departments:
-        Id_data.append(department.departmentId)
-        Name_data.append(department.departmentName)
-    Data = dict(zip(Id_data, Name_data))
-    return Data
+@login_required('<admin_username>')
+@index_bp.route('/<admin_username>/departments', endpoint='departments')
+def get_departments(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        departments = Departments.query.all()
+        Id_data = []
+        Name_data = []
+        for department in departments:
+            Id_data.append(department.departmentId)
+            Name_data.append(department.departmentName)
+        Data = dict(zip(Id_data, Name_data))
+        return Data
+    else:
+        return redirect(url_for('login.login'))
 
 
-@index_bp.route('/departments2', endpoint='departments2')
-def get_departments2():
-    departments = Departments.query.all()
-    Id_data = []
-    Name_data = []
-    for department in departments:
-        Id_data.append(department.departmentId)
-        Name_data.append(department.departmentName)
-    Data = dict(zip(Id_data, Name_data))
-    return Data
-
+@login_required('<admin_username>')
+@index_bp.route('/<admin_username>/departments2', endpoint='departments2')
+def get_departments2(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        departments = Departments.query.all()
+        Id_data = []
+        Name_data = []
+        for department in departments:
+            Id_data.append(department.departmentId)
+            Name_data.append(department.departmentName)
+        Data = dict(zip(Id_data, Name_data))
+        return Data
+    else:
+        return redirect(url_for('login.login'))
 
 """  
 执行重定向redirect函数函数后 跳转执行下面的user_index函数，

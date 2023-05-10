@@ -19,7 +19,7 @@
                                 </script>
                         </li>
                         <li>
-                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.department_admin_index') }}" title="返回首页"><i
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.department_admin_index', depAdmin_username=departmentAdmin.departmentAdminId) }}" title="返回首页"><i
                                 class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
                         </li>
                         <li class="dropdown">
@@ -118,23 +118,23 @@
                             <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
                             </span>
                             <a data-toggle="dropdown" class="dropdown-toggle" href="admin_index.html#">
-                                <span class="clear">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
                                     <span class="block m-t-xs">
-                                        <strong class="font-bold">
-                                            {{ departmentAdmin.departemntAdminId }}
+                                        <strong class="font-bold" style="color: #fdffff">
+                                            {{ departmentAdmin.departmentAdminId}}
                                         </strong>
                                     </span>
-                                    <span class="text-muted text-xs block">
-                                        部门管理员
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">{{ dep.departmentName }} | 部门管理员</strong>
                                         <b class="caret"></b></span>
                                 </span>
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="../../static/form_avatar.html">修改头像</a>
+                                <li><a href="#">修改头像</a>
                                 </li>
-                                <li><a href="../../static/profile.html">个人资料</a>
+                                <li><a href="#">个人资料</a>
                                 </li>
-                                <li><a href="../../static/mailbox.html">信箱</a>
+                                <li><a href="#">信箱</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li><a href="{{ url_for('login.login') }}">安全退出</a>

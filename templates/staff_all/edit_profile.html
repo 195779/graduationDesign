@@ -13,16 +13,16 @@
 
 
     <div class="content">
-        <link rel="stylesheet" type="text/css" href="../../static/css2/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="../../static/css2/style.css">
-        <link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css">
+        <!--link rel="stylesheet" type="text/css" href="../../static/css2/font-awesome.min.css"-->
+        <!--link rel="stylesheet" type="text/css" href="../../static/css2/style.css"-->
+        <!--link rel="stylesheet" type="text/css" href="../../static/css2/select2.min.css"-->
         <script src="../../static/js2/jquery-3.2.1.min.js"></script>
         <div class="row">
             <div class="col-sm-12" style="margin-top: 10px">
                 <h4 class="page-title">编辑个人信息</h4>
             </div>
         </div>
-        <form id="form" method="post" action="{{ url_for('staff_all.submit_profile') }}" enctype="multipart/form-data">
+        <form id="form" method="post" action="{{ url_for('staff_all.submit_profile', staff_username=staff.staffId) }}" enctype="multipart/form-data">
             {{ form.csrf_token }}
             <div class="card-box">
                 <h3 class="card-title">基本信息</h3>
@@ -42,11 +42,11 @@
                                     <div class="form-group form-focus focused">
                                         <label class="focus-label">姓名</label>
                                         {{ form.staffName(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffName ) }}
-                                        {% if form.staffName.errors %}
-                                            {% for error in form.staffName.errors %}
+                                        {% if form.form_errors %}
+                                            {% for key, value in form.form_errors.items() %}
                                                 <script>
-                                                    {% if error %}
-                                                        show_error('{{ error|safe }}', '{{ form.staffName.id }}')
+                                                    {% if key == 'staffName' %}
+                                                        show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffName.id }}')
                                                     {% endif %}
                                                 </script>
                                             {% endfor %}
@@ -97,11 +97,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">性别</label>
                             {{ form.staffGender(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffGender ) }}
-                            {% if form.staffGender.errors %}
-                                {% for error in form.staffGender.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffGender.id }}')
+                                        {% if key == 'staffGender' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffGender.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -113,15 +113,15 @@
                             <label class="focus-label">出生日期</label>
                             <div class="cal-icon">
                                 {{ form.staffBirthday(class="form-control floating datetimepicker", style="margin-top: 5px", value=staffInformation.staffBirthday.day|string+"/"+staffInformation.staffBirthday.month|string+'/'+staffInformation.staffBirthday.year|string) }}
-                                {% if form.staffBirthday.errors %}
-                                    {% for error in form.staffBirthday.errors %}
-                                        <script>
-                                            {% if error %}
-                                                show_error('{{ error|safe }}', '{{ form.staffBirthday.id }}')
-                                            {% endif %}
-                                        </script>
-                                    {% endfor %}
-                                {% endif %}
+                                {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
+                                    <script>
+                                        {% if key == 'staffBirthday' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffBirthday.id }}')
+                                        {% endif %}
+                                    </script>
+                                {% endfor %}
+                            {% endif %}
                             </div>
                         </div>
                     </div>
@@ -129,11 +129,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">国籍</label>
                             {{ form.staffCountry(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffCountry) }}
-                            {% if form.staffCountry.errors %}
-                                {% for error in form.staffCountry.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffCountry.id }}')
+                                        {% if key == 'staffCountry' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffCountry.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -144,11 +144,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">民族</label>
                             {{ form.staffNation( style="margin-top: 5px", class="form-control floating", value=staffInformation.staffNation) }}
-                            {% if form.staffNation.errors %}
-                                {% for error in form.staffNation.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffNation.id }}')
+                                        {% if key == 'staffNation' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffNation.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -159,11 +159,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">籍贯</label>
                             {{ form.staffHomeTown(style="margin-top: 5px", class="form-control floating", value=staffInformation.staffOrigin) }}
-                            {% if form.staffHomeTown.errors %}
-                                {% for error in form.staffHomeTown.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffHomeTown.id }}')
+                                        {% if key == 'staffHomeTown' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffHomeTown.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -203,11 +203,11 @@
                         <div class="form-group form-focus focused">
                             <label class="focus-label">联系方式</label>
                             {{ form.staffPhoneNumber( style="margin-top: 5px", class="form-control floating", value=staffInformation.staffPhoneNumber) }}
-                            {% if form.staffPhoneNumber.errors %}
-                                {% for error in form.staffPhoneNumber.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffPhoneNumber.id }}')
+                                        {% if key == 'staffPhoneNumber' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffPhoneNumber.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -221,11 +221,11 @@
                             <textarea id="{{ form.staffAddress.id }}" name="{{ form.staffAddress.name }}"
                                       class="form-control floating"
                                       style="width: 100%;margin-top: 5px; height: 100%">{{ staffInformation.staffAddress }}</textarea>
-                            {% if form.staffAddress.errors %}
-                                {% for error in form.staffAddress.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffAddress.id }}')
+                                        {% if key == 'staffAddress' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffAddress.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}
@@ -239,11 +239,11 @@
                             <textarea id="{{ form.staffRemark.id }}" name="{{ form.staffRemark.name }}"
                                       class="form-control floating"
                                       style="width: 100%; margin-top: 5px;height: 100%">{{ staffInformation.staff_Remark }}</textarea>
-                            {% if form.staffRemark.errors %}
-                                {% for error in form.staffRemark.errors %}
+                            {% if form.form_errors %}
+                                {% for key, value in form.form_errors.items() %}
                                     <script>
-                                        {% if error %}
-                                            show_error('{{ error|safe }}', '{{ form.staffRemark.id }}')
+                                        {% if key == 'staffRemark' %}
+                                            show_error('{{ key|safe }} {{ value[0]|safe }}', '{{ form.staffRemark.id }}')
                                         {% endif %}
                                     </script>
                                 {% endfor %}

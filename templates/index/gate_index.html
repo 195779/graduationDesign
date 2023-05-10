@@ -19,7 +19,7 @@
                                 </script>
                         </li>
                         <li>
-                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.gate_admin_index') }}" title="返回首页"><i
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.gate_admin_index', gateAdmin_username=gateAdmin.gateAdminId) }}" title="返回首页"><i
                                 class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
                         </li>
                         <li class="dropdown">
@@ -160,7 +160,7 @@
                         <a href="admin_index.html#"><i class="fa fa-edit"></i> <span class="nav-label">人脸识别签到</span><span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="{{ url_for('gate_all.staff_attend') }}">人脸签到</a>
+                            <li><a href="{{ url_for('gate_all.staff_attend', gateAdmin_username=gateAdmin.gateAdminId) }}">人脸签到</a>
                             </li>
                         </ul>
                     </li>

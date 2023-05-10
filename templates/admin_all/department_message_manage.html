@@ -158,7 +158,7 @@
                         </script>
                     </li>
                     <li>
-                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.admin_index') }}"
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.admin_index', admin_username=admin.adminId) }}"
                                                                            title="返回首页"><i
                                 class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
                     </li>
@@ -541,11 +541,11 @@
             $(document).ready(function () {
                 // 发送 AJAX 请求获取部门列表数据
                 $.ajax({
-                    url: '{{ url_for('index.departments2') }}',
+                    url: '{{ url_for('index.departments2', admin_username=admin.adminId) }}',
                     method: 'GET',
                     success: function (data) {
                         $.each(data, function (key, value) {
-                            $('#department-list2').append("<li><a href='/admin/" + key + "'>" + value + '</a></li>');
+                            $('#department-list2').append("<li><a href='/admin/"+ '{{ admin.adminId }}/' + key + "'>" + value + '</a></li>');
                         });
                     }
                 });
@@ -575,7 +575,7 @@
                 }
 
                 // 发送POST请求到后端接口
-                fetch('{{ url_for('admin_all.openFaceState') }}', {
+                fetch('{{ url_for('admin_all.openFaceState', admin_username=admin.adminId) }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -612,7 +612,7 @@
                 }
 
                 // 发送POST请求到后端接口
-                fetch('{{ url_for('admin_all.closeFaceState') }}', {
+                fetch('{{ url_for('admin_all.closeFaceState', admin_username=admin.adminId) }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -654,7 +654,7 @@
 
                 attendance_string = JSON.stringify(attendance)
                 // 发送POST请求到后端接口
-                fetch('{{ url_for('admin_all.setAttendance') }}', {
+                fetch('{{ url_for('admin_all.setAttendance', admin_username=admin.adminId) }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -754,10 +754,10 @@
                 form.elements['employee-id'].value = rowData.employeeId;
 
 
-                fetch('{{ url_for('admin_all.getDepartments') }}').then(response => response.json())
+                fetch('{{ url_for('admin_all.getDepartments', admin_username=admin.adminId) }}').then(response => response.json())
                     .then(options => populateSelectOptions(document.getElementById('department'), options, departmentName))
                     .catch(error => console.error(error));
-                fetch('{{ url_for('admin_all.getPositions') }}').then(response => response.json())
+                fetch('{{ url_for('admin_all.getPositions', admin_username=admin.adminId) }}').then(response => response.json())
                     .then(options => populateSelectOptions(document.getElementById('position'), options, position_value))
                     .catch(error => console.error(error));
 
@@ -814,7 +814,7 @@
                 const staffId_old = title_values[1];
                 formData.append("staffId_old", staffId_old);
 
-                fetch('{{ url_for('admin_all.edit_message') }}', {
+                fetch('{{ url_for('admin_all.edit_message', admin_username=admin.adminId) }}', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())
@@ -946,10 +946,10 @@
 
                 console.log('OpenModal_dep: ' + departmentName);
 
-                fetch('{{ url_for('admin_all.getDepartments') }}').then(response => response.json())
+                fetch('{{ url_for('admin_all.getDepartments', admin_username=admin.adminId) }}').then(response => response.json())
                     .then(options => departmentSelectOptions(document.getElementById('add_department'), options, departmentName))
                     .catch(error => console.error(error));
-                fetch('{{ url_for('admin_all.getPositions') }}').then(response => response.json())
+                fetch('{{ url_for('admin_all.getPositions', admin_username=admin.adminId) }}').then(response => response.json())
                     .then(options => positionSelectOptions(document.getElementById('add_position'), options))
                     .catch(error => console.error(error));
 
@@ -966,7 +966,7 @@
                 add_formData_submit.set('position', position.options[position.selectedIndex].textContent);
 
 
-                fetch('{{ url_for('admin_all.add_staff') }}', {
+                fetch('{{ url_for('admin_all.add_staff', admin_username=admin.adminId) }}', {
                     method: 'POST',
                     body: add_formData_submit
                 }).then(response => response.json())
@@ -1085,10 +1085,20 @@
                 staff_position.textContent = options['staff_position'];
 
                 staff_face_status = document.getElementById('staff_face_status');
-                staff_face_status.textContent = options['staff_face_status'];
+                if (options['staff_face_status'] === true){
+                    staff_face_status.textContent = '已经录入';
+                }
+                else{
+                    staff_face_status.textContent = '尚未录入';
+                }
 
                 staff_face_authority = document.getElementById('staff_face_authority');
-                staff_face_authority.textContent = options['staff_face_authority'];
+                if (options['staff_face_authority'] === true){
+                    staff_face_authority.textContent = '允许录入';
+                }
+                else{
+                    staff_face_authority.textContent = '禁止录入';
+                }
 
                 staff_email = document.getElementById('staff_email');
                 staff_email.textContent = options['staff_email'];
@@ -1156,7 +1166,7 @@
             function openModal_scan_staff(staffId, staffName, departmentName){
                 console.log('openModal_scan_staff')
 
-                fetch('{{ url_for('admin_all.get_message') }}',{
+                fetch('{{ url_for('admin_all.get_message', admin_username=admin.adminId) }}',{
                      method: 'POST',
                      headers: {
                          'Content-Type': 'application/json'

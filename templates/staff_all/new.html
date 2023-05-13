@@ -4,80 +4,42 @@
 	<title>Password Change Form</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style>
-		input:invalid {
-			border: 2px solid red;
-		}
 
-		input:valid {
-			border: 2px solid green;
-		}
 
-		input:invalid + span {
-			display: block;
-		}
-
-		input:valid + span {
-			display: none;
-		}
-
-		.error-message {
-			color: red;
-			font-size: 12px;
-			display: none;
-		}
-	</style>
 </head>
 <body>
-	<h2>Password Change Form</h2>
-	<form id="password-change-form">
-		<div>
-			<label for="old-password">Old Password:</label>
-			<input class="form-control" type="password" id="old-password" name="old-password" required>
-		</div>
-		<div>
-			<label for="new-password">New Password:</label>
-			<input class="form-control" type="password" id="new-password" name="new-password" minlength="6" maxlength="20" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$" required>
-			<span class="error-message">Password must contain at least one uppercase letter, one lowercase letter, and one number.</span>
-		</div>
-		<div>
-			<label for="confirm-password">Confirm Password:</label>
-			<input class="form-control" type="password" id="confirm-password" name="confirm-password" minlength="6" maxlength="20" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$" required>
-			<span class="error-message">Password must match new password.</span>
-		</div>
-		<button type="submit">Submit</button>
-	</form>
 
-	<script>
-		const form = document.querySelector('#password-change-form');
-		const newPassword = document.querySelector('#new-password');
-		const confirmPassword = document.querySelector('#confirm-password');
+<!-- 引入 Bootstrap 和 jQuery -->
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-		newPassword.addEventListener('input', function() {
-			if (newPassword.validity.patternMismatch) {
-				newPassword.setCustomValidity('Password must contain at least one uppercase letter, one lowercase letter, and one number.');
-			} else {
-				newPassword.setCustomValidity('');
-			}
-		});
+<!-- 引入 datetimepicker 插件 -->
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css">
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
 
-		confirmPassword.addEventListener('input', function() {
-			if (confirmPassword.value !== newPassword.value) {
-				confirmPassword.setCustomValidity('Password must match new password.');
-			} else {
-				confirmPassword.setCustomValidity('');
-			}
-		});
+<!-- 设置时间选择器的输入框 -->
+<div class="form-group">
+    <label for="timepicker">选择时间</label>
+    <input type="text" class="form-control" id="timepicker" name="timepicker" required>
+</div>
 
-		form.addEventListener('submit', function(event) {
-			event.preventDefault();
+<!-- 使用 datetimepicker 插件设置时间选择器 -->
+<script>
+    $('#timepicker').datetimepicker({
+        datepicker: false, // 不显示日期选择器
+        format: 'H:i:s', // 时间格式为 时:分:秒
+        step: 5, // 时间间隔为 5 分钟
+        icons: {
+            up: "glyphicon glyphicon-chevron-up",
+            down: "glyphicon glyphicon-chevron-down",
+            previous: 'glyphicon glyphicon-chevron-left',
+            next: 'glyphicon glyphicon-chevron-right'
+        } // 使用 Bootstrap 图标
+    });
+</script>
 
-			if (form.checkValidity()) {
-				console.log('Form is valid');
-			} else {
-				console.log('Form is invalid');
-			}
-		});
-	</script>
+
+
 </body>
 </html>

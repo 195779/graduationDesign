@@ -117,7 +117,7 @@
                             <span>
                             <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
                             </span>
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="admin_index.html#">
+                            <a data-toggle="dropdown"  class="dropdown-toggle dropdown-btn" href="admin_index.html#">
                                 <span class="clear" style="margin-top: 5px; margin-left: 8px">
                                     <span class="block m-t-xs">
                                         <strong class="font-bold" style="color: #fdffff">
@@ -129,14 +129,14 @@
                                         <b class="caret"></b></span>
                                 </span>
                             </a>
-                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="#">修改头像</a>
+                            <ul class="dropdown-content dropdown-menu dropdown-menu animated fadeInRight m-t-xs">
+                                <li class="dropdown-item"><a href="#">修改头像</a>
                                 </li>
-                                <li><a href="#">个人资料</a>
+                                <li class="dropdown-item"><a href="#">个人资料</a>
                                 </li>
-                                <li><a href="#">信箱</a>
+                                <li class="dropdown-item"><a href="#">信箱</a>
                                 </li>
-                                <li class="divider"></li>
+                                <li class="divider dropdown-item"></li>
                                 <li><a href="{{ url_for('login.login') }}">安全退出</a>
                                 </li>
                             </ul>
@@ -147,8 +147,14 @@
 
                     </li>
                     <li class="active">
-                        <a href="admin_index.html"><i class="fa fa-th-large"></i> <span class="nav-label">本部门职工管理</span> <span
+                        <a href="#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门职工管理</span> <span
                                 class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="{{ url_for('depAdmin_all.dep_staff_manage', depAdmin_username=departmentAdmin.departmentAdminId, departmentId=dep.departmentId) }}">本部门职工个人信息</a>
+                            </li>
+                            <li><a href="#">本部门职工人脸信息</a>
+                            </li>
+                        </ul>
                     </li>
                     <li>
                         <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门考勤统计</span><span

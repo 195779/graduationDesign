@@ -1,0 +1,995 @@
+{% extends 'index/departmentAdmin_index.html' %}
+
+{% block left_content %}
+    <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                            <img alt="image" class="img-circle" src="../../static/img/profile_small.png"/>
+                            </span>
+                            <a data-toggle="dropdown"  class="dropdown-toggle dropdown-btn" href="admin_index.html#">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold" style="color: #fdffff">
+                                            {{ departmentAdmin.departmentAdminId}}
+                                        </strong>
+                                    </span>
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">{{ dep.departmentName }} | 部门管理员</strong>
+                                        <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu animated fadeInRight m-t-xs">
+                                <li class="dropdown-item"><a href="#">修改头像</a>
+                                </li>
+                                <li class="dropdown-item"><a href="#">个人资料</a>
+                                </li>
+                                <li class="dropdown-item"><a href="#">信箱</a>
+                                </li>
+                                <li class="divider dropdown-item"></li>
+                                <li><a href="{{ url_for('login.login') }}">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            A+
+                        </div>
+
+                    </li>
+                    <li class="active">
+                        <a href="#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门职工管理</span> <span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="{{ url_for('depAdmin_all.dep_staff_manage', depAdmin_username=departmentAdmin.departmentAdminId, departmentId=dep.departmentId) }}">本部门职工个人信息</a>
+                            </li>
+                            <li><a href="#">本部门职工人脸信息</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门考勤统计</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="toastr_notifications.html">总况</a>
+                            </li>
+                            <li><a href="nestable_list.html">出勤/工时统计</a>
+                            </li>
+                            <li><a href="timeline_v2.html">迟到统计</a>
+                            </li>
+                            <li><a href="forum_main.html">早退统计</a>
+                            </li>
+                            <li><a href="code_editor.html">休假统计</a>
+                            </li>
+                            <li><a href="modal_window.html">出差统计</a>
+                            </li>
+                            <li><a href="validation.html">加班统计</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">本部门职工考勤设置</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="graph_echarts.html">出勤设置</a>
+                            </li>
+                            <li><a href="graph_flot.html">休假设置</a>
+                            </li>
+                            <li><a href="graph_morris.html">出差设置</a>
+                            </li>
+                            <li><a href="graph_rickshaw.html">加班设置</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
+                                class="label label-warning pull-right">16</span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="mailbox.html">收件箱</a>
+                            </li>
+                            <li><a href="mail_compose.html">发布公告</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="form_basic.html">人脸信息</a>
+                            </li>
+                            <li><a href="form_validate.html">？人脸签到？</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+{% endblock %}
+
+{% block content %}
+        <div class="content">
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-4 col-3">
+                    <h4>
+                        <span class="page-title" style="color: #048ef1;">{{ dep.departmentName }}</span>
+                        <span class="page-sub-title" style="color:grey;">职工信息</span>
+                    </h4>
+                </div>
+                <div class="col-sm-8 col-9 text-right m-b-20">
+
+                    <a  class="btn btn-primary float-right btn-rounded" onclick="submitSelectedPersons_open()"><i
+                            class="glyphicon glyphicon-camera"></i> 开启人脸录入权限</a>
+                    <a  class="btn btn-primary float-right btn-rounded" onclick="submitSelectedPersons_close()"><i
+                            class="glyphicon glyphicon-ban-circle"></i> 关闭人脸录入权限</a>
+                    <a  onclick="openModal_attend_add_staff('{{ dep.departmentName }}')" class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#attend_add_staff_all" >
+                        <i class="glyphicon glyphicon-pencil"></i>
+                        编辑多人出勤/加班设置</a>
+                    <a  onclick="openModal_holiday_out_staff('{{ dep.departmentName }}')" class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#holiday_out_staff_all">
+                        <i class="glyphicon glyphicon-pencil"></i>
+                        编辑多人休假/出差设置</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <style>
+                            ::-webkit-scrollbar {
+                                display: none;
+                            }
+                        </style>
+                        <table class="table table-striped custom-table" style="::webkit-scrollbar">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th style="text-align: -webkit-center;">职工姓名</th>
+                                <th style="text-align: -webkit-center;">职工ID</th>
+                                <th style="text-align: -webkit-center;">人脸录入状态</th>
+                                <th style="text-align: -webkit-center;">人脸录入权限</th>
+                                <th style="text-align: -webkit-center;">职工职务</th>
+                                <th style="text-align: -webkit-center;">考勤状态</th>
+                                <th style="text-align: -webkit-center;">更改考勤状态</th>
+                                <th style="text-align: -webkit-center;">查看考勤记录</th>
+                                <th style="text-align: -webkit-center">查看完整信息</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in range(staff_information_list|length) %}
+                                <tr id="{{ staff_information_list[i].staffId }}">
+                                    <td>
+                                        <input type="checkbox" name="person" value="{{ staff_information_list[i].staffId }}"></td>
+                                    <td>
+                                        <img width="28" height="28" style="border-radius: 50%"
+                                             src="../../static/data/data_headimage_staff/{{ staff_information_list[i].staffId }}/head.jpg"
+                                             class="rounded-circle" alt="">
+                                        <h2>{{ staff_information_list[i].staffName }}</h2>
+                                    </td>
+                                    <td>{{ staff_information_list[i].staffId }}</td>
+                                    <td>
+                                        {% if staff_information_list[i].faceValueState %}
+                                            <span  class="custom-badge status-green"><i
+                                                class="glyphicon glyphicon-picture"></i> 已经录入</span>
+                                        {% else %}
+                                            <span  class="custom-badge status-red"><i
+                                                class="glyphicon glyphicon-remove-sign"></i> 尚未录入</span>
+                                        {% endif %}
+                                    </td>
+                                    {% if staff_information_list[i].staffGetFaceState %}
+                                        <td><span id="{{ staff_information_list[i].staffId }}Face" class="custom-badge status-green"><i
+                                                class="glyphicon glyphicon-eye-open"></i> 是</span></td>
+                                    {% else %}
+                                        <td><span id="{{ staff_information_list[i].staffId }}Face" class="custom-badge status-red"><i
+                                                class="glyphicon glyphicon-eye-close"></i> 无</span></td>
+                                    {% endif %}
+                                    <td>
+                                        <span class="custom-badge status-blue" id="{{ staff_information_list[i].staffId }}position">{{ staff_position_list[i].positionName }}</span>
+                                    </td>
+                                    <td>
+                                            {% if staff_information_list[i].staffCheckState == 0 %}
+                                                <span class="custom-badge status-grey" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-headphones" ></i> 非工作时间</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 10 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-ok-sign"></i> 今日出勤</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 11 %}
+                                                <span class="custom-badge status-orange" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-globe"></i> 今日出差</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 12 %}
+                                                <span class="custom-badge status-blue" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-shopping-cart"></i> 今日休假</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 13 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 加班出勤</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 20 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}"><i
+                                                class="glyphicon glyphicon-remove-circle"></i> 今日缺勤</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 21 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-hourglass"></i> 今日迟到</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 22 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-glass"></i> 今日早退</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 23 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-warning-sign"></i> 加班缺勤</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 24 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-bell"></i> 加班迟到</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 25 %}
+                                                <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-cutlery"></i> 加班早退</span>
+                                            {% endif %}
+                                    </td>
+                                    <style>
+                                        .dropdown-content {
+                                            display: none;
+                                        }
+
+                                        /* 下拉框可见时的样式 */
+                                        .show {
+                                            display: block;
+                                            flex-direction: column;
+                                        }
+
+                                        .show_btn{
+                                            display: flex;
+                                            flex-direction: column;
+                                        }
+
+                                        .dropdown {
+                                            position: relative;
+                                        }
+
+                                        .dropdown-menu {
+                                            position: absolute;
+                                            z-index: 1000; /* 设置一个比其他元素更大的值 */
+                                            display: none; /* 隐藏下拉框 */
+                                        }
+                                        .dropdown-content {
+                                            position: static;
+                                            top: 100%;
+                                            left: 0;
+                                            z-index: 1;
+                                            background-color: #fff;
+                                            border: 1px solid #ddd;
+                                            padding: 10px;
+                                        }
+                                    </style>
+                                    <td id="dropdown_td">
+
+                                        <div  class="dropdown btn btn-primary btn-rounded dropdown-toggle dropdown-btn" style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px" data-toggle="dropdown">
+                                            <i class="glyphicon glyphicon-edit"></i> <p>更改考勤状态</p></div>
+
+
+                                        <!-- 下拉框 -->
+                                        <div class="dropdown-content dropdown-menu dropdown-menu" style="min-width: 130px; max-width: 130px; margin-top: 5px">
+
+                                            <div class="dropdown-item" id="state_break" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-grey"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-headphones"></i> 非工作时间
+                                                </span>
+                                            </div>
+
+
+                                            <div class="dropdown-item" id="today_work" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-green"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-ok-sign"></i> 今日出勤
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="today_out" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-orange"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-globe"></i> 今日出差
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="today_holiday" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-blue"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-shopping-cart"></i> 今日休假
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="add_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-green"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-leaf"></i> 加班出勤
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="today_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-remove-circle"></i> 今日缺勤
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="today_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-hourglass"></i> 今日迟到
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="today_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-glass"></i> 今日早退
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="add_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-warning-sign"></i> 加班缺勤
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="add_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-bell"></i> 加班迟到
+                                                </span>
+                                            </div>
+
+                                            <div class="dropdown-item" id="add_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
+                                                <span
+                                                    class="custom-badge status-red"
+                                                    style="min-width: 110px; max-width: 110px;"><i
+                                                    class="glyphicon glyphicon-cutlery"></i> 加班早退
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><a href="{{ url_for('depAdmin_all.staff_records',  depAdmin_username=departmentAdmin.departmentAdminId, staff_username=staff_information_list[i].staffId) }}" class="btn btn-primary float-right btn-rounded"   id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-list"></i> <p>查看考勤记录</p></a></td>
+                                    <td>
+                                        <a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>查看完整信息</p></a></td>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script>
+            // 获取按钮和下拉框
+            var dropdownBtns = document.querySelectorAll('.dropdown-btn');
+
+            dropdownBtns.forEach(function (dropdownBtn) {
+                // 给每个按钮添加点击事件监听器
+                dropdownBtn.addEventListener('click', function () {
+                    var dropdownContent = this.nextElementSibling;
+                    dropdownContent.classList.toggle('show');
+                    dropdownBtn.classList.toggle('show_btn');
+                });
+            });
+
+            window.addEventListener('click', function (event) {
+                // 遍历所有下拉框，隐藏所有的下拉框
+                dropdownBtns.forEach(function (dropdownBtn) {
+                    var dropdownContent = dropdownBtn.nextElementSibling;
+                    if (dropdownContent.classList.contains('show') && !event.target.matches('.dropdown-btn')) {
+                        dropdownContent.classList.remove('show');
+                    }
+                });
+            });
+        </script>
+        <script src="../../static/js/jquery-2.1.1.min.js"></script>
+
+
+
+    <div id="attend_add_staff_all" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="edit_attend_add_set_all">编辑考勤/加班设置</h4>
+                </div>
+
+                <form id="attend_add_staff_all_form">
+                    <div class="modal-body col-sm-12">
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <link rel="stylesheet"
+                                      href="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+                                <!-- 导入 Bootstrap 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                                <!-- 导入 Bootstrap-datepicker 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+                                <label for="start-date-all">设置考勤起始日期</label>
+                                <div class="input-group date" id="start-date-all-picker">
+                                    <input type="text" placeholder="选择考勤起始日期  年-月-日" class="form-control"
+                                           id="start-date-all" name="start-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" required>
+                                    <script>
+                                        const datepicker_start = document.getElementById("start-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_start).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-date-all">设置考勤结束日期</label>
+                                <div class="input-group date" id="end-date-all-picker">
+                                    <input type="text" placeholder="选择考勤结束日期  年-月-日" class="form-control"
+                                           id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="end-date-all" required>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end = document.getElementById("end-date-all");
+                                    // 创建日期选择器
+                                    $(datepicker_end).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 引入 datetimepicker 插件 -->
+                                <link rel="stylesheet"
+                                      href="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css">
+                                <script src="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
+                                <label for="start-datetime-all">设置考勤应签到时刻</label>
+                                <div class="input-group date" id="start-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签到时刻 时:分:秒" class="form-control"
+                                           id="start-datetime-all" name="start-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" required>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#start-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-datetime-all">设置考勤应签退时刻</label>
+                                <div class="input-group date" id="end-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="end-datetime-all" name="end-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" required>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#end-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <style>
+                            hr {
+                                border: red;
+                                border-top: 1px solid #e30d0d;
+                                margin: 20px 0;
+                            }
+                        </style>
+                        <hr>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="add-date-all">设置加班日期</label>
+                                <div class="input-group date" id="add-date-all-picker">
+                                    <input type="text" placeholder="选择加班日期  年-月-日" class="form-control"
+                                           id="add-date-all" name="add-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_add = document.getElementById("add-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_add).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="add-datetime-all">设置加班应签到时刻</label>
+                                <div class="input-group date" id="add-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="add-datetime-all" name="add-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#add-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="modal-footer">
+                        <button id="cancel_attend_add" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+        <script>
+            // 获取“全选”复选框和所有人员复选框
+            const selectAllCheckbox = document.getElementById('select-all');
+            const personCheckboxes = document.getElementsByName('person');
+
+            // 当点击“全选”复选框时，将所有人员复选框的选中状态与“全选”复选框的选中状态同步
+            selectAllCheckbox.addEventListener('change', () => {
+                const isChecked = selectAllCheckbox.checked;
+                for (const checkbox of personCheckboxes) {
+                    checkbox.checked = isChecked;
+                }
+            });
+
+            // 定义函数，用于将选中的人员ID打包成列表并提交到后端函数，打开他们的人脸录入权限
+            function submitSelectedPersons_open() {
+                // 获取选中的人员ID列表
+                const selectedPersons = [];
+                for (const checkbox of personCheckboxes) {
+                    if (checkbox.checked) {
+                        selectedPersons.push(checkbox.value);
+                    }
+                }
+
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('depAdmin_all.openFaceState', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedPersons)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            for (let i = 0; i < selectedPersons.length; i++) {
+                                var selectPersonSpan = document.getElementById(selectedPersons[i]+"Face");
+                                var newSpan = document.createElement('span');
+                                newSpan.innerHTML = "<span id='" + selectedPersons[i] +"Face' class='custom-badge status-green'><i class='glyphicon glyphicon-eye-open'></i> 是</span>";
+                                selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
+                            }
+                            alert(data.message);
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能修改人脸录入权限！！！' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + ' 未选中职工！！！' + error.message);
+                    });
+            }
+             // 定义函数，用于将选中的人员ID打包成列表并提交到后端函数，关闭他们的人脸录入权限
+            function submitSelectedPersons_close() {
+                // 获取选中的人员ID列表
+                const selectedPersons = [];
+                for (const checkbox of personCheckboxes) {
+                    if (checkbox.checked) {
+                        selectedPersons.push(checkbox.value);
+                    }
+                }
+
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('depAdmin_all.closeFaceState', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedPersons)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            for (let i = 0; i < selectedPersons.length; i++) {
+                                var selectPersonSpan = document.getElementById(selectedPersons[i]+"Face");
+                                var newSpan = document.createElement('span');
+                                newSpan.innerHTML = "<span id='" + selectedPersons[i] +"Face' class='custom-badge status-red'><i class='glyphicon glyphicon-eye-close'></i> 是</span>";
+                                selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
+                            }
+                            alert(data.message);
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能修改人脸录入权限！！！' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + ' 未选中职工！！！' + error.message);
+                    });
+            }
+            function simulateClick(){
+                document.getElementById('cancel_attend_add').click();
+            }
+            // 定义函数，用于编辑选中人员的考勤/加班设置
+            function openModal_attend_add_staff(departmentName){
+                // 获取选中的人员ID列表
+                const selectedPersons = [];
+                for (const checkbox of personCheckboxes) {
+                    if (checkbox.checked) {
+                        selectedPersons.push(checkbox.value);
+                    }
+                }
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('depAdmin_all.selectPersons', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedPersons)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            console.log("成功： "+data.message)
+                            document.getElementById('edit_attend_add_set_all').style.color = 'black';
+                        document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：';
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能选中职工！！！' + data.message);
+                            document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：未选中职工，3秒后自动关闭此窗口';
+                            document.getElementById('edit_attend_add_set_all').style.color = 'red';
+                            setTimeout(simulateClick, 3000) // 延迟 3 秒后执行点击事件
+                            // edit_attend_add_set_all
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + ' 未选中职工！！！' + error.message);
+                        document.getElementById('edit_attend_add_set_all').style.color = 'red';
+                        document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：未选中职工，3秒后自动关闭此窗口';
+                        setTimeout(simulateClick, 3000) // 延迟 3 秒后执行点击事件
+                        // edit_attend_add_set_all
+                    });
+            }
+
+            // 获取表单数据，发送给后端
+            function submitForm(event) {
+                event.preventDefault();
+                let formElement = event.target;
+                let formData = new FormData(formElement);
+
+                fetch('{{ url_for('depAdmin_all.edit_attend_add_set', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => console.error(error));
+            }
+            var formElement_attend_add = document.getElementById('attend_add_staff_all_form');
+            formElement_attend_add.addEventListener('submit', submitForm);
+
+
+
+            // 定义函数 用于编辑选中人员的出差/休假设置
+            function openModal_holiday_out_staff(departmentName){
+                // 获取选中的人员ID列表
+                const selectedPersons = [];
+                for (const checkbox of personCheckboxes) {
+                    if (checkbox.checked) {
+                        selectedPersons.push(checkbox.value);
+                    }
+                }
+
+            }
+            //  定义函数，用于修改人员的考勤状态
+            function setAttendance(state, event){
+                const attendance = [];
+                // console.log('name event:', event.currentTarget.getAttribute('name'));
+
+                var staffId = event.currentTarget.getAttribute('name')
+
+                attendance.push(state);
+                attendance.push(staffId);
+
+                //console.log(typeof staffId)
+                //console.log(typeof state)
+                //console.log(staffId)
+
+                attendance_string = JSON.stringify(attendance)
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('depAdmin_all.setAttendance', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(attendance)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            var selectPersonSpan = document.getElementById(staffId+"State");
+                            var newSpan = document.createElement('span');
+                            newSpan.innerHTML = "<span " + data.message + "</span>";
+                            // console.log("<span " + data.message + "</span>")
+                            selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
+                            alert('考勤状态修改成功');
+                        } else {
+                            alert('Error: ' + '未能修改考勤状态！！！' + staffId + " " +state + " " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        // console.log('staffId: ' + staffId + "  " + "State: " + state);
+                        alert('Error: ' + ' ERROR错误: '+ staffId + " State " + state  + " " + error.message);
+                    });
+            }
+        </script>
+
+        <!-- 模态框 -->
+        <div class="modal fade" id="scan_message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width:70%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">职工信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工ID:</label></div>
+                            <div class="col-sm-8"><span id="staff_id"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工姓名:</label></div>
+                            <div class="col-sm-8"><span id="staff_name"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工性别:</label></div>
+                            <div class="col-sm-8"><span id="staff_gender"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工隶属部门:</label></div>
+                            <div class="col-sm-8"><span id="staff_department"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工职务:</label></div>
+                            <div class="col-sm-8"><span id="staff_position"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入权限:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_authority"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电子邮箱:</label></div>
+                            <div class="col-sm-8"><span id="staff_email"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电话号码:</label></div>
+                            <div class="col-sm-8"><span id="staff_phone"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工考勤状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_attendance_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工生日日期:</label></div>
+                            <div class="col-sm-8"><span id="staff_birthday"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工国籍:</label></div>
+                            <div class="col-sm-8"><span id="staff_country"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工民族:</label></div>
+                            <div class="col-sm-8"><span id="staff_nation"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工籍贯:</label></div>
+                            <div class="col-sm-8"><span id="staff_hometown"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工现住址:</label></div>
+                            <div class="col-sm-8"><span id="staff_address"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工备注信息:</label></div>
+                            <div class="col-sm-8"><span id="staff_remark"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            function staff_message_modal(options){
+                staff_id = document.getElementById('staff_id');
+                staff_id.textContent = options['staff_id'];
+
+                staff_name = document.getElementById('staff_name');
+                staff_name.textContent = options['staff_name'];
+
+                staff_gender = document.getElementById('staff_gender');
+                staff_gender.textContent = options['staff_gender'];
+
+                staff_department = document.getElementById('staff_department');
+                staff_department.textContent = options['staff_department'];
+
+                staff_position = document.getElementById('staff_position');
+                staff_position.textContent = options['staff_position'];
+
+                staff_face_status = document.getElementById('staff_face_status');
+                if (options['staff_face_status'] === true){
+                    staff_face_status.textContent = '已经录入';
+                }
+                else{
+                    staff_face_status.textContent = '尚未录入';
+                }
+
+                staff_face_authority = document.getElementById('staff_face_authority');
+                if (options['staff_face_authority'] === true){
+                    staff_face_authority.textContent = '允许录入';
+                }
+                else{
+                    staff_face_authority.textContent = '禁止录入';
+                }
+
+                staff_email = document.getElementById('staff_email');
+                staff_email.textContent = options['staff_email'];
+
+                staff_phone = document.getElementById('staff_phone');
+                staff_phone.textContent = options['staff_phone'];
+
+                staff_attendance_status = document.getElementById('staff_attendance_status');
+
+                attendnce_status = options['staff_attendance_status']
+                if (attendnce_status === 0)
+                    attendnce_status = '非工作时间';
+                else if(attendnce_status === 10){
+                    attendnce_status = '今日出勤';
+                }
+                else if(attendnce_status === 11){
+                     attendnce_status = '今日出差';
+                }
+                else if(attendnce_status === 12){
+                     attendnce_status = '今日休假';
+                }
+                else if(attendnce_status === 13){
+                     attendnce_status = '加班出勤';
+                }
+                else if(attendnce_status === 20){
+                     attendnce_status = '今日缺勤';
+                }
+                else if(attendnce_status === 21){
+                     attendnce_status = '今日迟到';
+                }
+                else if(attendnce_status === 22){
+                     attendnce_status = '今日早退';
+                }
+                else if(attendnce_status === 23){
+                     attendnce_status = '加班缺勤';
+                }
+                else if(attendnce_status === 24){
+                     attendnce_status = '加班迟到';
+                }
+                else if(attendnce_status === 25){
+                     attendnce_status = '加班早退';
+                }
+
+                staff_attendance_status.textContent = attendnce_status;
+
+
+                staff_birthday = document.getElementById('staff_birthday');
+                staff_birthday.textContent = options['staff_birthday'];
+
+                staff_country = document.getElementById('staff_country');
+                staff_country.textContent = options['staff_country'];
+
+                staff_nation = document.getElementById('staff_nation');
+                staff_nation.textContent = options['staff_nation'];
+
+                staff_hometown = document.getElementById('staff_hometown');
+                staff_hometown.textContent = options['staff_hometown'];
+
+                staff_address = document.getElementById('staff_address');
+                staff_address.textContent = options['staff_address'];
+
+                staff_remark = document.getElementById('staff_remark');
+                staff_remark.textContent = options['staff_remark'];
+            }
+            function openModal_scan_staff(staffId, staffName, departmentName){
+                console.log('openModal_scan_staff')
+
+                fetch('{{ url_for('depAdmin_all.get_message', depAdmin_username=departmentAdmin.departmentAdminId) }}',{
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify({
+                        staff_Id : staffId
+                    })
+                }).then(response => response.json())
+                    .then(options => {
+                        //console.log(options);
+                        staff_message_modal(options);
+                    })
+                    .catch(error => console.error(error));
+            }
+        </script>
+{% endblock %}

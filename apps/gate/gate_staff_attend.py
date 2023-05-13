@@ -347,7 +347,7 @@ def staff_attend(gateAdmin_username):
         attend_records = []
         now = time.strftime("%Y-%m-%d %H:00:00", time.localtime())
         session['now_time'] = now
-        gate_admin = gateAdmin.query.filter(gateAdmin.gateAdminId == session.get('staff_username')).first()
+        gate_admin = gateAdmin.query.filter(gateAdmin.gateAdminId == session.get(gateAdmin_username+'gateAdmin_username')).first()
         return render_template("gate_admin_all/staff_attend.html", gateAdmin=gate_admin)
     else:
         return redirect(url_for('login.login'))

@@ -4,6 +4,7 @@ from flask import current_app
 from apps.Index.__init__ import index_bp
 from apps.Login.__init__ import login_bp
 from apps.admin.__init__ import admin_bp
+from apps.dep.__init__ import depAdmin_bp
 from apps.staff.__init__ import staff_bp
 from apps.gate.__init__ import gate_bp
 from apps.test.__init__ import test_bp
@@ -26,6 +27,7 @@ def create_app():
     app.register_blueprint(gate_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(test_bp)
+    app.register_blueprint(depAdmin_bp)
     return app
 
 

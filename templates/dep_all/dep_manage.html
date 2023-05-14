@@ -127,9 +127,11 @@
                     <a  onclick="openModal_attend_add_staff('{{ dep.departmentName }}')" class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#attend_add_staff_all" >
                         <i class="glyphicon glyphicon-pencil"></i>
                         编辑多人出勤/加班设置</a>
+
                     <a  onclick="openModal_holiday_out_staff('{{ dep.departmentName }}')" class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#holiday_out_staff_all">
                         <i class="glyphicon glyphicon-pencil"></i>
                         编辑多人休假/出差设置</a>
+
                 </div>
             </div>
             <div class="row">
@@ -152,7 +154,8 @@
                                 <th style="text-align: -webkit-center;">考勤状态</th>
                                 <th style="text-align: -webkit-center;">更改考勤状态</th>
                                 <th style="text-align: -webkit-center;">查看考勤记录</th>
-                                <th style="text-align: -webkit-center">查看完整信息</th>
+                                <th style="text-align: -webkit-center">编辑出勤/加班设置</th>
+                                <th style="text-align: -webkit-center">编辑休假/出差设置</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -160,11 +163,11 @@
                                 <tr id="{{ staff_information_list[i].staffId }}">
                                     <td>
                                         <input type="checkbox" name="person" value="{{ staff_information_list[i].staffId }}"></td>
-                                    <td>
+                                    <td data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ dep.departmentName }}') ">
                                         <img width="28" height="28" style="border-radius: 50%"
                                              src="../../static/data/data_headimage_staff/{{ staff_information_list[i].staffId }}/head.jpg"
                                              class="rounded-circle" alt="">
-                                        <h2>{{ staff_information_list[i].staffName }}</h2>
+                                        <h2><a>{{ staff_information_list[i].staffName }}</a></h2>
                                     </td>
                                     <td>{{ staff_information_list[i].staffId }}</td>
                                     <td>
@@ -369,8 +372,12 @@
                                     <td><a href="{{ url_for('depAdmin_all.staff_records',  depAdmin_username=departmentAdmin.departmentAdminId, staff_username=staff_information_list[i].staffId) }}" class="btn btn-primary float-right btn-rounded"   id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
                                             class="glyphicon glyphicon-list"></i> <p>查看考勤记录</p></a></td>
                                     <td>
-                                        <a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
-                                            class="glyphicon glyphicon-zoom-in"></i> <p>查看完整信息</p></a></td>
+                                        <a id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_attend_add_single(this.id,this.name,'{{ dep.departmentName }}') " class="btn btn-primary float-right btn-rounded"  data-toggle="modal" data-target="#attend_add_staff_all_single"   style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>编辑出勤/加班设置</p></a></td>
+                                    </td>
+                                    <td>
+                                        <a id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_holiday_out_single(this.id,this.name,'{{ dep.departmentName }}') " class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#holiday_out_staff_all_single"   style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>编辑休假/出差设置</p></a></td>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -431,14 +438,13 @@
                                 <div class="input-group date" id="start-date-all-picker">
                                     <input type="text" placeholder="选择考勤起始日期  年-月-日" class="form-control"
                                            id="start-date-all" name="start-date-all" data-provide="datepicker"
-                                           data-date-format="yyyy-mm-dd" required>
+                                           data-date-format="yyyy-mm-dd" >
                                     <script>
                                         const datepicker_start = document.getElementById("start-date-all");
                                         // 创建日期选择器
                                         $(datepicker_start).datepicker({
                                             format: "yyyy-mm-dd",  // 设置日期格式
                                             todayHighlight: true,  // 设置当天日期高亮显示
-
                                             autoclose: true       // 设置选择日期后自动关闭
                                         });
                                     </script>
@@ -452,7 +458,7 @@
                                 <div class="input-group date" id="end-date-all-picker">
                                     <input type="text" placeholder="选择考勤结束日期  年-月-日" class="form-control"
                                            id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
-                                           name="end-date-all" required>
+                                           name="end-date-all" >
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -478,7 +484,7 @@
                                 <div class="input-group date" id="start-datetime-all-picker">
                                     <input type="text" placeholder="考勤应签到时刻 时:分:秒" class="form-control"
                                            id="start-datetime-all" name="start-datetime-all" data-provide="timepicker"
-                                           data-show-meridian="false" data-minute-step="1" required>
+                                           data-show-meridian="false" data-minute-step="1" >
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-time"></span>
                                     </span>
@@ -502,7 +508,7 @@
                                 <div class="input-group date" id="end-datetime-all-picker">
                                     <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
                                            id="end-datetime-all" name="end-datetime-all" data-provide="timepicker"
-                                           data-show-meridian="false" data-minute-step="1" required>
+                                           data-show-meridian="false" data-minute-step="1" >
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-time"></span>
                                     </span>
@@ -522,14 +528,6 @@
                                 </script>
                             </div>
                         </div>
-                        <style>
-                            hr {
-                                border: red;
-                                border-top: 1px solid #e30d0d;
-                                margin: 20px 0;
-                            }
-                        </style>
-                        <hr>
                         <div class="modal-row">
                             <div class="form-group col-sm-6">
                                 <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
@@ -588,6 +586,386 @@
         </div>
     </div>
 
+    <div id="holiday_out_staff_all" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="edit_holiday_out_set_all">编辑休假/出差设置</h4>
+                </div>
+
+                <form id="holiday_out_staff_all_form">
+                    <div class="modal-body col-sm-12">
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <label for="holiday-start-date-all">设置休假起始日期</label>
+                                <div class="input-group date" id="holiday-start-date-all-picker">
+                                    <input type="text" placeholder="选择休假起始日期  年-月-日" class="form-control"
+                                           id="holiday-start-date-all" name="holiday-start-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start_holiday = document.getElementById("holiday-start-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_start_holiday).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="holiday-end-date-all">设置休假结束日期</label>
+                                <div class="input-group date" id="holiday-end-date-all-picker">
+                                    <input type="text" placeholder="选择休假结束日期  年-月-日" class="form-control"
+                                           id="holiday-end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="holiday-end-date-all" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end_holiday = document.getElementById("holiday-end-date-all");
+                                    // 创建日期选择器
+                                    $(datepicker_end_holiday).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="out-start-date-all">设置出差起始日期</label>
+                                <div class="input-group date" id="out-start-date-all-picker">
+                                    <input type="text" placeholder="选择出差起始日期  年-月-日" class="form-control"
+                                           id="out-start-date-all" name="out-start-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start_out = document.getElementById("out-start-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_start_out).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="out-end-date-all">设置出差结束日期</label>
+                                <div class="input-group date" id="out-end-date-all-picker">
+                                    <input type="text" placeholder="选择出差结束日期  年-月-日" class="form-control"
+                                           id="out-end-date-all" name="out-end-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_end_out = document.getElementById("out-end-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_end_out).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="modal-footer">
+                        <button id="cancel_holiday_out" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+     <div id="attend_add_staff_all_single" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="edit_attend_add_set_all_single">编辑考勤/加班设置</h4>
+                </div>
+
+                <form id="attend_add_staff_all_form_single">
+                    <div class="modal-body col-sm-12">
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="start-date-all-single">设置考勤起始日期</label>
+                                <div class="input-group date" id="start-date-all-picker">
+                                    <input type="text" placeholder="选择考勤起始日期  年-月-日" class="form-control"
+                                           id="start-date-all-single" name="start-date-all-single" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start_single = document.getElementById("start-date-all-single");
+                                        // 创建日期选择器
+                                        $(datepicker_start_single).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-date-all-single">设置考勤结束日期</label>
+                                <div class="input-group date" id="end-date-all-picker-single">
+                                    <input type="text" placeholder="选择考勤结束日期  年-月-日" class="form-control"
+                                           id="end-date-all-single" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="end-date-all-single" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end_single = document.getElementById("end-date-all-single");
+                                    // 创建日期选择器
+                                    $(datepicker_end_single).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <label for="start-datetime-all-single">设置考勤应签到时刻</label>
+                                <div class="input-group date" id="start-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签到时刻 时:分:秒" class="form-control"
+                                           id="start-datetime-all-single" name="start-datetime-all-single" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#start-datetime-all-single').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-datetime-all-single">设置考勤应签退时刻</label>
+                                <div class="input-group date" id="end-datetime-all-picker-single">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="end-datetime-all-single" name="end-datetime-all-single" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#end-datetime-all-single').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="add-date-all-single">设置加班日期</label>
+                                <div class="input-group date" id="add-date-all-picker-single">
+                                    <input type="text" placeholder="选择加班日期  年-月-日" class="form-control"
+                                           id="add-date-all-single" name="add-date-all-single" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_add_single = document.getElementById("add-date-all-single");
+                                        // 创建日期选择器
+                                        $(datepicker_add_single).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="add-datetime-all-single">设置加班应签到时刻</label>
+                                <div class="input-group date" id="add-datetime-all-picker-single">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="add-datetime-all-single" name="add-datetime-all-single" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#add-datetime-all-single').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="modal-footer">
+                        <button id="cancel_attend_add_single" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="holiday_out_staff_all_single" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="edit_holiday_out_set_all_single">编辑休假/出差设置</h4>
+                </div>
+
+                <form id="holiday_out_staff_all_form_single">
+                    <div class="modal-body col-sm-12">
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <label for="holiday-start-date-all-single">设置休假起始日期</label>
+                                <div class="input-group date" id="holiday-start-date-all-picker-single">
+                                    <input type="text" placeholder="选择休假起始日期  年-月-日" class="form-control"
+                                           id="holiday-start-date-all-single" name="holiday-start-date-all-single" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start_holiday_single = document.getElementById("holiday-start-date-all-single");
+                                        // 创建日期选择器
+                                        $(datepicker_start_holiday_single).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="holiday-end-date-all-single">设置休假结束日期</label>
+                                <div class="input-group date" id="holiday-end-date-all-picker-single">
+                                    <input type="text" placeholder="选择休假结束日期  年-月-日" class="form-control"
+                                           id="holiday-end-date-all-single" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="holiday-end-date-all-single" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end_holiday_single = document.getElementById("holiday-end-date-all-single");
+                                    // 创建日期选择器
+                                    $(datepicker_end_holiday_single).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="out-start-date-all-single">设置出差起始日期</label>
+                                <div class="input-group date" id="out-start-date-all-picker-single">
+                                    <input type="text" placeholder="选择出差起始日期  年-月-日" class="form-control"
+                                           id="out-start-date-all-single" name="out-start-date-all-single" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start_out_single = document.getElementById("out-start-date-all-single");
+                                        // 创建日期选择器
+                                        $(datepicker_start_out_single).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="out-end-date-all-single">设置出差结束日期</label>
+                                <div class="input-group date" id="out-end-date-all-picker-single">
+                                    <input type="text" placeholder="选择出差结束日期  年-月-日" class="form-control"
+                                           id="out-end-date-all-single" name="out-end-date-all-single" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_end_out_single = document.getElementById("out-end-date-all-single");
+                                        // 创建日期选择器
+                                        $(datepicker_end_out_single).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
+
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="modal-footer">
+                        <button id="cancel_holiday_out_single" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
         <script>
@@ -677,8 +1055,11 @@
                         alert('Error: ' + ' 未选中职工！！！' + error.message);
                     });
             }
-            function simulateClick(){
+            function simulateClick_attend_add(){
                 document.getElementById('cancel_attend_add').click();
+            }
+            function simulateClick_holiday_out(){
+                document.getElementById('cancel_holiday_out').click();
             }
             // 定义函数，用于编辑选中人员的考勤/加班设置
             function openModal_attend_add_staff(departmentName){
@@ -703,12 +1084,12 @@
                         if (data.status === 'success') {
                             console.log("成功： "+data.message)
                             document.getElementById('edit_attend_add_set_all').style.color = 'black';
-                        document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：';
+                            document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：';
                         } else {
                             alert('Error: ' + ' 返回数据错误/未能选中职工！！！' + data.message);
                             document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：未选中职工，3秒后自动关闭此窗口';
                             document.getElementById('edit_attend_add_set_all').style.color = 'red';
-                            setTimeout(simulateClick, 3000) // 延迟 3 秒后执行点击事件
+                            setTimeout(simulateClick_attend_add, 3000) // 延迟 3 秒后执行点击事件
                             // edit_attend_add_set_all
                         }
                     })
@@ -716,13 +1097,13 @@
                         alert('Error: ' + ' 未选中职工！！！' + error.message);
                         document.getElementById('edit_attend_add_set_all').style.color = 'red';
                         document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：未选中职工，3秒后自动关闭此窗口';
-                        setTimeout(simulateClick, 3000) // 延迟 3 秒后执行点击事件
+                        setTimeout(simulateClick_attend_add, 3000) // 延迟 3 秒后执行点击事件
                         // edit_attend_add_set_all
                     });
             }
 
-            // 获取表单数据，发送给后端
-            function submitForm(event) {
+            // 获取表单数据，发送给后端  出勤/加班
+            function submitForm_attend_add(event) {
                 event.preventDefault();
                 let formElement = event.target;
                 let formData = new FormData(formElement);
@@ -732,25 +1113,138 @@
                     body: formData
                 }).then(response => response.json())
                     .then(data => {
+                        if (data.stauts === 'success'){
+                            console.log(data.message)
+                        }
                         alert(data.message);
-                        location.reload();
+                        if(data.status === 'success'){
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error(error));
+            }
+            // 获取表单数据，发送给后端 休假/出差
+            function submitForm_holiday_out(event) {
+                event.preventDefault();
+                let formElement = event.target;
+                let formData = new FormData(formElement);
+
+                fetch('{{ url_for('depAdmin_all.edit_holiday_out_set', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.stauts === 'success'){
+                            console.log(data.message)
+                        }
+                        alert(data.message);
+                        if(data.status === 'success'){
+                            location.reload();
+                        }
                     })
                     .catch(error => console.error(error));
             }
             var formElement_attend_add = document.getElementById('attend_add_staff_all_form');
-            formElement_attend_add.addEventListener('submit', submitForm);
+            formElement_attend_add.addEventListener('submit', submitForm_attend_add);
+            var formElement_holiday_out = document.getElementById('holiday_out_staff_all_form');
+            formElement_holiday_out.addEventListener('submit', submitForm_holiday_out);
 
+            // 获取表单数据，发送给后端  出勤/加班
+            function submitForm_attend_add_single(event) {
+                event.preventDefault();
+                let formElement = event.target;
+                let formData = new FormData(formElement);
 
+                const title = document.getElementById('edit_attend_add_set_all_single');
+                const title_values = title.textContent.toString().split(':');
+                const staffId = title_values[1];
+                formData.append("staffId", staffId);
+
+                fetch('{{ url_for('depAdmin_all.edit_attend_add_set_single', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.stauts === 'success'){
+                            console.log(data.message)
+                        }
+                        alert(data.message);
+                        if(data.status === 'success'){
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error(error));
+            }
+            // 获取表单数据，发送给后端 休假/出差
+            function submitForm_holiday_out_single(event) {
+                event.preventDefault();
+                let formElement = event.target;
+                let formData = new FormData(formElement);
+
+                const title = document.getElementById('edit_holiday_out_set_all_single');
+                const title_values = title.textContent.toString().split(':');
+                const staffId = title_values[1];
+                formData.append("staffId", staffId);
+
+                fetch('{{ url_for('depAdmin_all.edit_holiday_out_set_single', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.stauts === 'success'){
+                            console.log(data.message)
+                        }
+                        alert(data.message);
+                        if(data.status === 'success'){
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error(error));
+            }
+            var formElement_attend_add_single = document.getElementById('attend_add_staff_all_form_single');
+            formElement_attend_add_single.addEventListener('submit', submitForm_attend_add_single);
+            var formElement_holiday_out_single = document.getElementById('holiday_out_staff_all_form_single');
+            formElement_holiday_out_single.addEventListener('submit', submitForm_holiday_out_single);
 
             // 定义函数 用于编辑选中人员的出差/休假设置
             function openModal_holiday_out_staff(departmentName){
-                // 获取选中的人员ID列表
+               // 获取选中的人员ID列表
                 const selectedPersons = [];
                 for (const checkbox of personCheckboxes) {
                     if (checkbox.checked) {
                         selectedPersons.push(checkbox.value);
                     }
                 }
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('depAdmin_all.selectPersons', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedPersons)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            console.log("成功： "+data.message)
+                            document.getElementById('edit_holiday_out_set_all').style.color = 'black';
+                        document.getElementById('edit_holiday_out_set_all').textContent = '编辑休假/出差设置：';
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能选中职工！！！' + data.message);
+                            document.getElementById('edit_holiday_out_set_all').textContent = '编辑休假/出差设置：未选中职工，3秒后自动关闭此窗口';
+                            document.getElementById('edit_holiday_out_set_all').style.color = 'red';
+                            setTimeout(simulateClick_holiday_out, 3000) // 延迟 3 秒后执行点击事件
+                            // edit_attend_add_set_all
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + ' 未选中职工！！！' + error.message);
+                        document.getElementById('edit_attend_add_set_all').style.color = 'red';
+                        document.getElementById('edit_attend_add_set_all').textContent = '编辑考勤/加班设置：未选中职工，3秒后自动关闭此窗口';
+                        setTimeout(simulateClick_holiday_out, 3000) // 延迟 3 秒后执行点击事件
+                        // edit_attend_add_set_all
+                    });
 
             }
             //  定义函数，用于修改人员的考勤状态
@@ -974,7 +1468,7 @@
                 staff_remark.textContent = options['staff_remark'];
             }
             function openModal_scan_staff(staffId, staffName, departmentName){
-                console.log('openModal_scan_staff')
+               // console.log('openModal_scan_staff')
 
                 fetch('{{ url_for('depAdmin_all.get_message', depAdmin_username=departmentAdmin.departmentAdminId) }}',{
                      method: 'POST',
@@ -988,6 +1482,74 @@
                     .then(options => {
                         //console.log(options);
                         staff_message_modal(options);
+                    })
+                    .catch(error => console.error(error));
+            }
+            function staff_message_modal_attend_add(options){
+                var attend_start_date_single = document.getElementById('start-date-all-single');
+                attend_start_date_single.value = options['start-date-all-single'];
+                var attend_end_date_single = document.getElementById('end-date-all-single');
+                attend_end_date_single.value = options['end-date-all-single'];
+                var attend_start_datetime_single = document.getElementById('start-datetime-all-single');
+                attend_start_datetime_single.value = options['start-datetime-all-single'];
+                var attend_end_datetime_single = document.getElementById('end-datetime-all-single');
+                attend_end_datetime_single.value = options['end-datetime-all-single'];
+
+                var add_start_date_single = document.getElementById('add-date-all-single');
+                add_start_date_single.value = options['add-date-all-single'];
+                var add_start_datetime_single = document.getElementById('add-datetime-all-single');
+                add_start_datetime_single.value = options['add-datetime-all-single'];
+            }
+            function staff_message_modal_holiday_out(options){
+                var holiday_start_date_single = document.getElementById('holiday-start-date-all-single');
+                holiday_start_date_single.value = options['holiday-start-date-all-single'];
+                var holiday_end_date_single = document.getElementById('holiday-end-date-all-single');
+                holiday_end_date_single.value = options['holiday-end-date-all-single'];
+                var out_start_date_single = document.getElementById('out-start-date-all-single');
+                out_start_date_single.value = options['out-start-date-all-single'];
+                var out_end_date_single = document.getElementById('out-end-date-all-single');
+                out_end_date_single.value = options['out-end-date-all-single'];
+            }
+            function openModal_attend_add_single(staffId, staffName, departmentName){
+               // console.log('openModal_attend_add_single')
+
+                var title = document.getElementById('edit_attend_add_set_all_single');
+                title.textContent = '编辑考勤/加班设置:' + staffId;
+
+                fetch('{{ url_for('depAdmin_all.get_message_attend_add_set_single', depAdmin_username=departmentAdmin.departmentAdminId) }}',{
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify({
+                        staff_Id : staffId
+                    })
+                }).then(response => response.json())
+                    .then(options => {
+                        //console.log(options);
+                        //console.log('what in attend_add?');
+                        staff_message_modal_attend_add(options);
+                    })
+                    .catch(error => console.error(error));
+            }
+            function openModal_holiday_out_single(staffId, staffName, departmentName){
+               // console.log('openModal_holiday_out_single')
+
+                var title = document.getElementById('edit_holiday_out_set_all_single');
+                title.textContent = '编辑休假/出差设置:' + staffId;
+
+                fetch('{{ url_for('depAdmin_all.get_message_holiday_out_set_single', depAdmin_username=departmentAdmin.departmentAdminId) }}',{
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify({
+                        staff_Id : staffId
+                    })
+                }).then(response => response.json())
+                    .then(options => {
+                        //console.log(options);
+                        staff_message_modal_holiday_out(options);
                     })
                     .catch(error => console.error(error));
             }

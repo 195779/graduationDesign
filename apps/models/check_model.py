@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, time
 
 from sqlalchemy import text
 
@@ -163,10 +163,14 @@ class Set(db.Model):
     __table_name__ = 'set'
     staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, nullable=False, unique=True,
                         comment='职工ID 外键、主键、非空、不重复')
-    attendTime = db.Column(db.DateTime, comment='应签到时间')
-    endTime = db.Column(db.DateTime, comment='应签退时间')
-    beginAttendDate = db.Column(db.Date(), comment='考勤起始日期')
-    endAttendDate = db.Column(db.Date(), comment='考勤结束日期')
+
+    attendTime = db.Column(db.DateTime, default=datetime(1900, 1, 1, 0, 0, 0),
+                           comment='应签到时间+1900-1-1')
+    endTime = db.Column(db.DateTime, default=datetime(1900, 1, 1, 0, 0, 0),
+                        comment='应签退时间+1900-1-1')
+    beginAttendDate = db.Column(db.Date(), default=date(1900, 1, 1), comment='考勤起始日期')
+    endAttendDate = db.Column(db.Date(), default=date(1900, 1, 1), comment='考勤结束日期')
+
     holidayState = db.Column(db.Boolean,  server_default='0', comment='请假状态/默认没有请假FALSE/不能为空')
     beginHolidayDate = db.Column(db.Date(), comment='请假起始日期')
     endHolidayDate = db.Column(db.Date(), comment='请假结束日期')

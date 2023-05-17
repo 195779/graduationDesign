@@ -6,10 +6,9 @@ import cv2
 import numpy as np
 from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, Response, jsonify, \
     current_app, g
-
 from apps.Index.index_gate_admin import login_required
 from apps.gate.__init__ import gate_bp
-from apps.models.check_model import faceValue, gateAdmin, Staff
+from apps.models.check_model import faceValue, gateAdmin, Staff, staffInformation, Set, Works, Sum, Holidays, Adds, Attendance
 from PIL import Image, ImageDraw, ImageFont
 import dlib
 
@@ -399,13 +398,30 @@ def now_attend(gateAdmin_username):
         # print(records)
         global staffName_last
         if staffName_last is None or staffName_last != staffName_first:
-            # A 用户签到成功后，如果一直在这刷脸签到则 此 if 不执行
-            # A离开 B过来签到成功， 则 A或者 除了B之外的任何人 再次来这刷脸， 则此if 可以执行
+            # A 用户签到成功后，如果一直在这刷脸签到（1-1的情况）则 此 if 不执行
 
             staffName_last = staffName_first
             print("此时新来的签到人员为：" + str(staffName_first))
 
-            # 在这里，可以对已经识别到的 Name 进行 处理
+            # 在这里，可以对已经识别到的 Name(ID) 进行 处理
+            # 如果一个用户一直在摄像头前晃荡，只记录他第一次的签到时间（即每次从 0 - 1 的时候如果识别到的人名更新了则进行数据库处理）
+            staff_information = staffInformation.query.filter(staffName_first == staffInformation.staffId).first()
+            set = Set.query.filter(staffName_first == Set.staffId).first()
+
+            # 当前时间要与 set 时间做比较
+            # 当前日期要与 set 日期做比较
+            # 要找到该职工 在当前日期的 考勤记录
+            # 向此考勤记录中更新/填写数据
+            # 要向Works工作表更新数据
+            # 要向information表更新出勤状态数据
+            # 如果是休假/出差状态（Holidays 和 Outs） ： 要提醒现在非正常出勤时间
+
+            # 如果是加班状态：
+            # 要找到当前日期的加班记录，要更新/填写数据
+            # 要向ADD表更新数据
+            # 要向information表更新数据
+
+
 
         if len(attend_records) >= 50:
             del attend_records[:25]

@@ -1,21 +1,24 @@
+import time
 from flask import render_template, request
 from flask_script import Manager
 from flask_migrate import MigrateCommand, Migrate
 from apps import create_app
+from apps.models.check_model import Staff
 from exts import db
+from flask_apscheduler import APScheduler
 
-app = create_app()
+scheduler = APScheduler()
+
+app = create_app(scheduler)
 manager = Manager(app)
 
 # 创建数据库的命令
 migrate = Migrate(app=app, db=db)
 manager.add_command('db', MigrateCommand)
 
-
 if __name__ == '__main__':
     print(app.url_map)
     print(app.secret_key)
-    # app.run()
     manager.run()
 
 
@@ -34,8 +37,13 @@ def handle_exception(e):
     return render_template('error/404.html'), 404
 
 
-
-
+@scheduler.task('interval', id='do_job_1', seconds=3)
+def job1():
+    with scheduler.app.app_context():
+        staffs = Staff.query.all()
+        for staff in staffs:
+            print(staff.staffId)
+    print('Job 1 executed')
 
 # python app.py  (app.run())
 # python app.py runserver -h host -p port (manager.run())

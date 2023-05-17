@@ -19,6 +19,8 @@ class Config:
     SQLALCHEMY_ECHO = True
     # 不需要commit 自动保存, 默认False(防止忘记写commit提交)
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SCHEDULER_TIMEZONE = 'Asia/Shanghai'  # 配置时区
+    SCHEDULER_API_ENABLED = True  # 添加API
 
 
 class DevelopmentConfig(Config):

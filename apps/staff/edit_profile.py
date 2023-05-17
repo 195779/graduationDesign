@@ -131,8 +131,13 @@ def edit_profile(staff_username):
                 session.pop(staff_username+'post')
                 session.pop(staff_username+'symbol')
 
+            edit_password = None
+            if session.get(staff_username + 'edit_password') is not None:
+                edit_password = session.get(staff_username + 'edit_password')
+                session.pop(staff_username + 'edit_password')
+
             return render_template('staff_all/edit_profile.html', url_image=filename, form=form, staff=staff,
-                                   form_password=form_editPassword, post=post, symbol=symbol,
+                                   form_password=form_editPassword, post=post, symbol=symbol, edit_password=edit_password,
                                    staffPosition=staffPosition, staffDepartment=staffDepartment.departmentName,
                                    staffInformation=staff_information)
     else:

@@ -26,9 +26,15 @@ def staff_profile(staff_username):
             staffDepartmentId = staff_information.staffDepartmentId
             staffPostion = Position.query.filter_by(positionId=staffPositionId).first()
             staffDepartment = Departments.query.filter(Departments.departmentId == staffDepartmentId).first()
+
+            edit_password = None
+            if session.get(staff_username + 'edit_password') is not None:
+                edit_password = session.get(staff_username + 'edit_password')
+                session.pop(staff_username + 'edit_password')
+
             return render_template('staff_all/staff_profile.html',
                                 staff=staff, staff_information=staff_information, Postion=staffPostion,
-                                form_password=form_editPassword,
+                                form_password=form_editPassword, edit_password=edit_password,
                                 url_image=image_filename, Department=staffDepartment)
         else:
             return render_template('login/login.html')

@@ -32,7 +32,6 @@ def get_faces(staff_username):
             4、调用face_reconginition的load_image-file读取文件
             5、调用 face-recognition的face_encodings对脸部进行编码
             6、利用bson和pickle模块组合把脸部编码数据变成128位bitdata数据
-            7、利用mongo.db.myface.insert_one插入数据,存储到mongodb里面
             上面是逻辑,但逻辑发生在post方式上,不发生在get,
             限定一下上面逻辑的发生条件,不是POST方式,就是GET,GET请求页面
             :return:
@@ -41,31 +40,43 @@ def get_faces(staff_username):
         form_editPassword = EditPasswordForm()
         staff = Staff.query.filter_by(staffId=staff_username).first()
         staff_information = staffInformation.query.filter_by(staffId=staff_username).first()
+
+        # 用户本人头像的图片路径
         image_filename = "static/data/data_headimage_staff/" + staff_username + '/head.jpg'
+
         if request.method == "POST":
             imgdata = request.form.get("face")
-            print(imgdata)
-            print('xxxxxxxxxx')
+            # print(imgdata)
+            # print('xxxxxxxxxx')
             imgdata = base64.b64decode(imgdata)
+
+            # 存储本地文件夹的路径
             path = "static/data/data_faces_from_camera/" + staff_username
+
             up = get_faces_from_camera.Face_Register()
             if session[staff_username + 'staff_num'] == 0:
                 pre_work_mkdir(path)
             if session[staff_username + 'staff_num'] == 7:
                 session[staff_username + 'staff_num'] = 0
             session[staff_username + 'staff_num'] += 1
+
+            # 记录存储的人脸图片完整路径名称
             current_face_path = path + "/" + str(session[staff_username + 'staff_num']) + '.jpg'
+
             with open(current_face_path, "wb") as f:
                 f.write(imgdata)
+                # 写入图片数据
+
             flag = up.single_pocess(current_face_path)
-            # 进行上传图片的正确姿势
+            # 获取 已经写入图片是否符合要求的 状态
+
             if flag != 'right':
                 session[staff_username + 'staff_num'] -= 1
             print(flag, session[staff_username + 'staff_num'])
             return {"result": flag, "code": session[staff_username + 'staff_num']}
 
         return render_template("staff_all/get_faces.html", staff=staff, form_password=form_editPassword,
-                               staff_information=staff_information, url_image=image_filename)
+                            staff_information=staff_information, url_image=image_filename)
     else:
         return redirect(url_for('login.login'))
 

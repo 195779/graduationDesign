@@ -213,11 +213,11 @@ class Works(db.Model):
     __table_name__ = 'works'
     staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), primary_key=True, unique=True, nullable=False,
                         comment='职工ID/外键/主键/不重复/不为空')
-    WorkState = db.Column(db.Integer, server_default=text('0'),  comment='工作状态')
-    holidayTime = db.Column(db.Float, server_default=text('0.0'),  comment='工作总时长')
+    workState = db.Column(db.Integer, server_default=text('0'),  comment='工作状态')
+    workTime = db.Column(db.Float, server_default=text('0.0'),  comment='工作总时长')
 
     def __str__(self):
-        return self.staffId + " is : " + str(self.WorkState) + "in WorkState"
+        return self.staffId + " is : " + str(self.workState) + "in WorkState"
 
 
 class Holidays(db.Model):
@@ -335,4 +335,10 @@ class systemAnnouncement(db.Model):
     def __str__(self):
         return self.publishId + "is one of the systemAnnouncementId"
 
+
+class attendanceAps(db.Model):
+    _table_name = 'attendance_aps'
+    attendanceApsId = db.Column(db.String(20), nullable=False, unique=True, primary_key=True,
+                                comment='APS 函数ID/主键/非空/唯一值')
+    execute_time = db.Column(db.DateTime, nullable=True, comment='上一次执行时间')
 

@@ -1,6 +1,5 @@
-from flask import Flask
 
-from flask import current_app
+from flask import Flask
 
 from apps.Index.__init__ import index_bp
 from apps.Login.__init__ import login_bp
@@ -13,6 +12,8 @@ from config import DevelopmentConfig
 
 
 from exts import db
+
+
 
 
 def create_app(scheduler):

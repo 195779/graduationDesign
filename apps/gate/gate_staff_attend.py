@@ -1,7 +1,7 @@
 import base64
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import cv2
 import numpy as np
@@ -409,7 +409,7 @@ def now_attend(gateAdmin_username):
             staff_information = staffInformation.query.filter(staffName_first == staffInformation.staffId).first()
             set = Set.query.filter(staffName_first == Set.staffId).first()
             current_date = datetime.now().date()
-            current_time = datetime.now().time()
+            current_datetime = datetime.now()
             attendanceId = current_date.strftime('%Y-%m-%d') + set.staffId
             attendance = Attendance.query.filter(attendanceId == Attendance.attendanceId).first()
             # 当前时间要与 set 时间做比较
@@ -442,30 +442,65 @@ def now_attend(gateAdmin_username):
 
                     # 定时函数的处理：
                     # 在 begin + 1 处已经设置好定时函数检测 如有状态 0 的职工，则改为 状态2 迟到
-                    # 在 end + 1   处已经设置好定时函数检测 如有状态 1 的职工，则此职工正常出勤忘记了签退                  设置为6 完成出勤 按应签退时间计算工时
-                    #    end + 1                          如有状态 2 的职工，则此职工迟到且忘记了签退                   设置为2  迟到    按应签退时间计算工时
+                    # 在 end + 1   处已经设置好定时函数检测 如有状态 1 的职工，则此职工正常出勤忘记了签退                 设置为6 完成出勤 按应签退时间计算工时
+                    #    end + 1                          如有状态 2 的职工，如果已经签到 则此职工迟到且忘记了签退       设置为2  迟到    按应签退时间计算工时
+                    #                                                       如果没有签到 则此职工今日缺勤              设置为8  今日缺勤 缺勤次数+1
                     #    end + 1                          如有状态 4 的职工，则正常出勤+临时出门+在end+1之前一直没回来   设置为3  早退    按离开时间计算工时
                     #    end + 1                          如有状态 5 的职工，则早上迟到+临时出门+在end+1之前一直没回来   设置为7  迟到    按离开时间计算工时
 
                     # 状态流转：
                     # 在 0      begin-1  < time < begin+1                            / 签到状态改为 1   正常出勤     记录签到时间
-                    # 在 2      time > begin+1                                       / 签到状态已经在定时函数中改为2  已经迟到   在此要记录迟到的签到时间
+                    # 在 2      time > begin+1  且签到时间为空                        / 签到状态已经在定时函数中改为2  已经迟到   在此要记录迟到的签到时间
                     # 在 1      time < end-1                                         / 签到状态改为 4   临时出门      记录离开时间
                     # 在 1      end-1 < time < end+1                                 / 签到状态改为 6   完成出勤      记录签退时间/记录工作时长
                     # 在 1      time > end+1                                         / 签到状态已经在定时函数里改为6  给用户显示一下默认完成签退
                     # 在 4      time < end+1 则在应签退后一小时内回来了                / 签到状态改为 1   正常出勤      不做时长处理
                     # 在 4      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数里改为3   算作早退 这里给用户显示一下  定时函数已经以临时出门的离开时间为结束时间计算工时
-                    # 在 2      time < end - 1                                       / 签到状态改为 5   临时出门|迟到  记录离开时间
-                    # 在 2      end-1 < time < end+1                                 / 签到状态保持 2   迟到           记录工作时长
-                    # 在 2      time > end+1                                         / 签到状态保持 2   迟到|未签退   定时函数按应签退时间计算工作时长
-                    # 在 5      time < end+1 在应签退后一小时内回来了                  / 签到状态保持 2   迟到          不做时长处理
-                    # 在 5      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数中改为7   迟到|早退 这里给用户显示一下 定时函数已经以临时出门的离开时间为结束时间计算工时
+                    # 在 2      time < end - 1  且已经签到                            / 签到状态改为 5   临时出门|迟到  记录离开时间
+                    # 在 2      end-1 < time < end+1   且已经签到                     / 签到状态保持 2   迟到           记录工作时长
+                    # 在 2      time > end+1     且已签到                             / 签到状态在定时函数中保持2       迟到|未签退   定时函数按应签退时间计算工作时长
+                    # 在 2      time > end+1     且未签到                             / 签到状态在定时函数中更改为8      按缺勤处理
+                    # 在 5      time < end+1 在应签退后一小时内回来了                  / 签到状态保持 2   迟到            不做时长处理
+                    # 在 5      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数中改为7    |早退 这里给用户显示一下 定时函数已经以临时出门的离开时间为结束时间计算工时
 
                     # 综上：
                     # 对临时出门并且在end+1之前回来的都正常按签到/签退计算工时（所以请理性摸鱼）；对临时出门以后到end+1一直没回来的都算作早退，当天工时会有减少
 
+                    # 生成begin-1 和 begin+1
+                    attendTime = set.attendTime.time()
+                    endTime = set.endTime.time()
+                    dt_attend = datetime.combine(datetime.min, attendTime)
+                    dt_plus_one_hour_attend = dt_attend + timedelta(hours=1)
+                    dt_sub_one_hour_attend = dt_attend - timedelta(hours=1)
+                    result_attend_time_plus = dt_plus_one_hour_attend.time()
+                    result_attend_time_sub = dt_sub_one_hour_attend.time()
+                    begin_time_plus = datetime.combine(current_date, result_attend_time_plus)
+                    begin_time_sub = datetime.combine(current_date, result_attend_time_sub)
+                    # 生成 end+1 和 end-1
+                    dt_end = datetime.combine(datetime.min, endTime)
+                    dt_plus_one_hour_end = dt_end + timedelta(hours=1)
+                    dt_sub_one_hour_end = dt_end - timedelta(hours=1)
+                    result_end_time_plus = dt_plus_one_hour_end.time()
+                    result_end_time_sub = dt_sub_one_hour_end.time()
+                    end_time_plus = datetime.combine(current_date, result_end_time_plus)
+                    end_time_sub = datetime.combine(current_date, result_end_time_sub)
 
+                    # 今日未出勤 + 现在来签到 + 时间满足签到区间 :  状态改为正常出勤 1  记录签到时间
+                    if attendance.attendState == 0 and begin_time_sub <= current_datetime < begin_time_plus :
+                        attendance.attendState = 1
+                        attendance.attendTime = current_datetime.time()
+                        staff_information.staffCheckState = 10
+                        # 今日出勤（工作中）
 
+                    # 今日已迟到 + 还未签到 + 现在来签到 ： 状态改为保持为迟到 2 记录签到时间
+                    elif attendance.attendState == 2 and current_datetime > begin_time_plus and attendance.attendTime is None:
+                        attendance.attendState = 2
+                        attendance.attendTime = current_datetime.time()
+                        staff_information.staffCheckState = 21
+                        # 今日迟到（工作中）
+
+                    # 今日正常出勤 + 临时出门 ： 状态改为 正常出勤|临时出门 4 记录离开时间
+                    elif attendance.attendState == 1 and
 
 
         if len(attend_records) >= 50:

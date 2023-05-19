@@ -140,9 +140,10 @@ class staffInformation(db.Model):
     informationState = db.Column(db.Boolean,  server_default='0', comment='职工信息完善状态')
     faceValueState = db.Column(db.Boolean, server_default='0', comment='职工人脸信息完善状态')
     staffAddress = db.Column(db.Text, comment='家庭住址')
-    staffCheckState = db.Column(db.Integer, server_default=text('0'), nullable=True, comment='非工作时间：0  出勤：{普通出勤：10 , 出差：11 ,  休假： 12  , 加班出勤： 13} ; '
-                                                    '  缺勤：{普通缺勤：20 , 普通迟到：21 ;  普通早退：22; '
-                                                    ' 加班缺勤：23  ;  加班迟到： 24 ;  加班早退： 25}')
+    staffCheckState = db.Column(db.Integer, server_default=text('0'), nullable=True, comment='今日尚未出勤：0  出勤：{今日出勤（工作中）：10 , 今日出差：11 ,  今日休假： 12  ,'
+                                                                                            ' 加班出勤（工作中）： 13 ,  今日出勤（已完成工作） 14  加班出勤（已完成工作）15 } ; '
+                                                    '  缺勤：{今日缺勤：20 , 今日迟到（工作中）：21 ;  今日早退：22; 今日迟到（未出勤）27  今日迟到|早退 28   今日迟到（已完成工作）29  ' 
+                                                    ' 今日加班缺勤：23  ;  今日加班迟到（工作中）： 24 ; 今日加班迟到（未出勤）30 ;  }')
     staff_Remark = db.Column(db.Text, comment="备注/Text任意长度字符类型")
 
     def __str__(self):
@@ -194,6 +195,7 @@ class Attendance(db.Model):
                         comment='职工ID/外键/允许重复（1对多）/不为空')
     attendTime = db.Column(db.Time(), comment='签到打卡时间')
     endTime = db.Column(db.Time(), comment='签退打卡时间')
+    leaveTime = db.Column(db.Time(), comment='临时离开的时间')
     workTime = db.Column(db.Time(), comment='工作时间')
     attendDate = db.Column(db.DateTime(), server_default=text('CURRENT_TIMESTAMP'), comment='记录日期')
     attendImage = db.Column(db.LargeBinary(65536), nullable=True, comment='签到拍照打卡截图')

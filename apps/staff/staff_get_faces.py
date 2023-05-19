@@ -1,7 +1,7 @@
 import base64
 import os
 
-from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, abort
+from flask import Flask, request, make_response, redirect, render_template, url_for, flash, session, abort, jsonify
 
 from apps.Index.index_staff import login_required
 from apps.staff.__init__ import staff_bp
@@ -75,6 +75,7 @@ def get_faces(staff_username):
             print(flag, session[staff_username + 'staff_num'])
             return {"result": flag, "code": session[staff_username + 'staff_num']}
 
+
         return render_template("staff_all/get_faces.html", staff=staff, form_password=form_editPassword,
                             staff_information=staff_information, url_image=image_filename)
     else:
@@ -141,3 +142,15 @@ def delete_face(staff_username):
         return redirect(url_for('staff_all.staff_get_faces'))
     else:
         return redirect(url_for('login.login'))
+
+
+@login_required('<staff_username>')
+@staff_bp.route('/<staff_username>/staff_get_authority', methods=['POST', 'GET'], endpoint='staff_get_authority')
+def staff_get_authority(staff_username):
+    if session.get(staff_username + 'staff_username') is not None:
+        staff_information = staffInformation.query.filter(staffInformation.staffId == staff_username).first()
+        if staff_information.staffGetFaceState:
+            return jsonify('opened')
+        else:
+            return jsonify('closed')
+    return redirect(url_for("login.login"))

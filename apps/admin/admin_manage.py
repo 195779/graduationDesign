@@ -5,8 +5,7 @@ from flask import Blueprint
 
 from apps.Index.index_admin import login_required
 from apps.admin.__init__ import admin_bp
-from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff, faceValue, Set, Outs, Works, \
-    Holidays, Adds
+from apps.models.check_model import Admin, Departments, Position, staffInformation, Staff, faceValue, Set, Outs, Works, Holidays, Adds
 from exts import db
 
 

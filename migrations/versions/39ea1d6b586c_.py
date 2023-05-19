@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1754f9357592
+Revision ID: 39ea1d6b586c
 Revises: 
-Create Date: 2023-05-09 15:27:17.679290
+Create Date: 2023-05-18 17:09:26.909409
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1754f9357592'
+revision = '39ea1d6b586c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,12 @@ def upgrade():
     sa.Column('loginTime', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True, comment='上次登录时间'),
     sa.PrimaryKeyConstraint('adminId'),
     sa.UniqueConstraint('adminId')
+    )
+    op.create_table('attendance_aps',
+    sa.Column('attendanceApsId', sa.String(length=20), nullable=False, comment='APS 函数ID/主键/非空/唯一值'),
+    sa.Column('execute_time', sa.DateTime(), nullable=True, comment='上一次执行时间'),
+    sa.PrimaryKeyConstraint('attendanceApsId'),
+    sa.UniqueConstraint('attendanceApsId')
     )
     op.create_table('departments',
     sa.Column('departmentId', sa.String(length=20), nullable=False, comment='部门ID/主键/不为空/不重复'),
@@ -150,8 +156,8 @@ def upgrade():
     )
     op.create_table('set',
     sa.Column('staffId', sa.String(length=20), nullable=False, comment='职工ID 外键、主键、非空、不重复'),
-    sa.Column('attendTime', sa.DateTime(), nullable=True, comment='应签到时间'),
-    sa.Column('endTime', sa.DateTime(), nullable=True, comment='应签退时间'),
+    sa.Column('attendTime', sa.DateTime(), nullable=True, comment='应签到时间+1900-1-1'),
+    sa.Column('endTime', sa.DateTime(), nullable=True, comment='应签退时间+1900-1-1'),
     sa.Column('beginAttendDate', sa.Date(), nullable=True, comment='考勤起始日期'),
     sa.Column('endAttendDate', sa.Date(), nullable=True, comment='考勤结束日期'),
     sa.Column('holidayState', sa.Boolean(), server_default='0', nullable=True, comment='请假状态/默认没有请假FALSE/不能为空'),
@@ -227,8 +233,8 @@ def upgrade():
     )
     op.create_table('works',
     sa.Column('staffId', sa.String(length=20), nullable=False, comment='职工ID/外键/主键/不重复/不为空'),
-    sa.Column('WorkState', sa.Integer(), server_default=sa.text('0'), nullable=True, comment='工作状态'),
-    sa.Column('holidayTime', sa.Float(), server_default=sa.text('0.0'), nullable=True, comment='工作总时长'),
+    sa.Column('workState', sa.Integer(), server_default=sa.text('0'), nullable=True, comment='工作状态'),
+    sa.Column('workTime', sa.Float(), server_default=sa.text('0.0'), nullable=True, comment='工作总时长'),
     sa.ForeignKeyConstraint(['staffId'], ['staff.staffId'], onupdate='CASCADE'),
     sa.PrimaryKeyConstraint('staffId'),
     sa.UniqueConstraint('staffId')
@@ -256,5 +262,6 @@ def downgrade():
     op.drop_table('position')
     op.drop_table('gate_admin')
     op.drop_table('departments')
+    op.drop_table('attendance_aps')
     op.drop_table('admin')
     # ### end Alembic commands ###

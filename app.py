@@ -40,13 +40,14 @@ def execute_task():
             current_date_month = datetime.now().date().strftime("%m")
             sum_Id = current_date_year + '-' + current_date_month + '-' + set.staffId
             sum = Sum.query.filter(sum_Id == Sum.sumId).first()
+            staff_information = staffInformation.query.filter(set.staffId == staffInformation.staffId).first()
 
             # 在对休假日期与出差日期的设置中已经保证了其不会出现日期重叠
             # 如果休假/出差日期 与 正常出勤日期重叠， 则只执行休假/出差的情况即可
             # 休假/出差
             if set.endHolidayDate >= current_date >= set.beginHolidayDate:
                 attendance.holidayState = True
-                staffInformation.staffCheckState = 12
+                staff_information.staffCheckState = 12
                 # 设置休假状态
                 attendance.workTime = time(hour=8, minute=0, second=0)
                 # 工作时长直接拉满
@@ -60,8 +61,13 @@ def execute_task():
                     sum.workSumTime = sum.workSumTime + float_time
                 else:
                     sum.workSumTime = float_time
+
                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                #  work = Works.query.filter(set.staffId == Works.staffId).first()
+                work = Works.query.filter(set.staffId == Works.staffId).first()
+                if work.workTime is None:
+                    work.workTime = float_time
+                else:
+                    work.workTime = work.workTime + float_time
 
                 # 从年度总剩余休假时长中减去休假时长
                 holiday = Holidays.query.filter(set.staffId == Holidays.staffId).first()
@@ -76,10 +82,11 @@ def execute_task():
             elif set.endOutDate >= current_date >= set.beginOutDate:
                 # 出差
                 attendance.outState = True
-                staffInformation.staffCheckState = 11
+                staff_information.staffCheckState = 11
                 # 设置出差状态
                 attendance.workTime = time(hour=8, minute=0, second=0)
                 # 工作时长直接拉满
+
                 # 将今天的工作时间存入本月工作时间记录
                 float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
                 # 转换为以小时为整数的浮点数
@@ -89,8 +96,13 @@ def execute_task():
                     sum.workSumTime = sum.workSumTime + float_time
                 else:
                     sum.workSumTime = float_time
+
                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                # ！ work = Works.query.filter(staff_information.staffId == Works.staffId).first()
+                work = Works.query.filter(set.staffId == Works.staffId).first()
+                if work.workTime is None:
+                    work.workTime = float_time
+                else:
+                    work.workTime = work.workTime + float_time
 
                 # 给年度出差总时长添加出差时长
                 out = Outs.query.filter(Outs.staffId == set.staffId).first()
@@ -106,6 +118,7 @@ def execute_task():
                 attendance.workTime = time(hour=0, minute=0, second=0)
                 db.session.add(attendance)
                 # 工作时长置零  等待签到
+
                 # 设置签到/签退的函数， 在应签到时间后一个小时和应签退时间后一个小时 设置两个函数
                 # 在这两个函数里，检测执行此函数时，此条考勤记录中的签到/退状态 如果仍为默认的0
                 # 则，A函数中A迟到， B函数中检测如果没有签到也没有签退，则A缺勤即可
@@ -117,7 +130,7 @@ def execute_task():
                 dt_plus_one_hour_attend = dt_attend + timedelta(hours=1)
                 result_attend_time = dt_plus_one_hour_attend.time()
                 result_attend_datetime = datetime.combine(current_date, result_attend_time)
-                # A 函数执行时间
+                # A 函数执行时间  设置为签到时间之后的一个小时的时间点
 
                 @scheduler.task(trigger='date', run_date=result_attend_datetime, args=[attendance.attendanceId], id=attendance.attendanceId+'attend')
                 def execute_attend(attendanceId):
@@ -145,7 +158,7 @@ def execute_task():
                 dt_plus_one_hour_end = dt_end + timedelta(hours=1)
                 result_end_time = dt_plus_one_hour_end.time()
                 result_end_datetime = datetime.combine(current_date, result_end_time)
-                # B函数执行时间
+                # B函数执行时间 设置为签退时间之后的一个小时的时间点
 
                 @scheduler.task(trigger='date', run_date=result_end_datetime, args=[attendance.attendanceId], id=attendance.attendanceId + "end")
                 def execute_end(attendanceId):
@@ -208,7 +221,11 @@ def execute_task():
                                     sum.workSumTime = float_time
 
                                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                                # work = Works.query.filter(staff_information.staffId == Works.staffId).first()
+                                work = Works.query.filter(set.staffId == Works.staffId).first()
+                                if work.workTime is None:
+                                    work.workTime = float_time
+                                else:
+                                    work.workTime = work.workTime + float_time
 
                         # 保存数据库
                         db.session.commit()

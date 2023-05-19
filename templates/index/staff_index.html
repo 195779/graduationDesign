@@ -213,12 +213,38 @@
                     <ul class="nav nav-second-level">
                         <li><a href="#" style="color: #fdffff">人脸信息</a>
                         </li>
-                        <li><a href="{{ url_for('staff_all.staff_get_faces', staff_username=staff.staffId) }}" style="color: #fdffff">人脸录入</a>
+                        <li><a href="#" onclick="myFunction()" style="color: #fdffff">人脸录入</a>
                         </li>
                         <li><a href="{{ url_for('test_all.index', staff_username=staff.staffId) }}" style="color: #fdffff">测试异步加载界面</a>
                         </li>
                     </ul>
                 </li>
+                <script>
+                    function myFunction() {
+                        fetch('{{ url_for('staff_all.staff_get_authority', staff_username=staff.staffId) }}')
+                            .then(function (response) {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('请求出错');
+                                }
+                            })
+                            .then(function (data) {
+                                // 在这里对返回的数据进行判断
+                                if (data === 'opened') {
+                                    // 如果满足条件，则执行跳转操作
+                                    window.location.href = " {{ url_for('staff_all.staff_get_faces', staff_username=staff.staffId) }} ";
+                                } else {
+                                    // 如果不满足条件，可以执行其他操作
+                                    console.log('条件不满足');
+                                    alert('人脸录入权限未开，请向系统管理员或所隶属部门的管理员申请开启人脸录入权限')
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log('发生错误:', error);
+                            });
+                    }
+                </script>
             </ul>
 
         </div>

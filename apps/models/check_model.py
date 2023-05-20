@@ -140,10 +140,10 @@ class staffInformation(db.Model):
     informationState = db.Column(db.Boolean,  server_default='0', comment='职工信息完善状态')
     faceValueState = db.Column(db.Boolean, server_default='0', comment='职工人脸信息完善状态')
     staffAddress = db.Column(db.Text, comment='家庭住址')
-    staffCheckState = db.Column(db.Integer, server_default=text('0'), nullable=True, comment='今日尚未出勤：0  出勤：{今日出勤（工作中）：10 , 今日出差：11 ,  今日休假： 12  ,'
+    staffCheckState = db.Column(db.Integer, server_default=text('0'), nullable=True, comment='今日尚未出勤：0  出勤：{今日出勤（工作中）：10  今日出勤（临时外出）16 , 今日出差：11 ,  今日休假： 12  ,'
                                                                                             ' 加班出勤（工作中）： 13 ,  今日出勤（已完成工作） 14  加班出勤（已完成工作）15 } ; '
-                                                    '  缺勤：{今日缺勤：20 , 今日迟到（工作中）：21 ;  今日早退：22; 今日迟到（未出勤）27  今日迟到|早退 28   今日迟到（已完成工作）29  ' 
-                                                    ' 今日加班缺勤：23  ;  今日加班迟到（工作中）： 24 ; 今日加班迟到（未出勤）30 ;  }')
+                                                    '  缺勤：{今日缺勤：20 , 今日迟到（工作中）：21 ;  今日出勤|早退：22; 今日迟到（未出勤）23  今日迟到|早退 24  今日迟到（临时外出）25  今日迟到（已完成工作）26  ' 
+                                                    ' 今日加班缺勤：30  ;  今日加班迟到（工作中）：31  ; 今日加班迟到（未出勤）32 ;  }')
     staff_Remark = db.Column(db.Text, comment="备注/Text任意长度字符类型")
 
     def __str__(self):

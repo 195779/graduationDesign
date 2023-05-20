@@ -489,6 +489,7 @@ def now_attend(gateAdmin_username):
                     if attendance.attendState == 0 and begin_time_sub <= current_datetime < begin_time_plus :
                         attendance.attendState = 1
                         attendance.attendTime = current_datetime.time()
+                        # 记录正常出勤的签到时间
                         staff_information.staffCheckState = 10
                         # 今日出勤（工作中）
 
@@ -496,11 +497,16 @@ def now_attend(gateAdmin_username):
                     elif attendance.attendState == 2 and current_datetime > begin_time_plus and attendance.attendTime is None:
                         attendance.attendState = 2
                         attendance.attendTime = current_datetime.time()
+                        # 记录迟到的签到时间
                         staff_information.staffCheckState = 21
                         # 今日迟到（工作中）
 
                     # 今日正常出勤 + 临时出门 ： 状态改为 正常出勤|临时出门 4 记录离开时间
-                    elif attendance.attendState == 1 and
+                    elif attendance.attendState == 1 and current_datetime < end_time_sub:
+                        attendance.leaveTime = current_datetime.time()
+                        # 记录临时出门的离开时间
+                        attendance.attendState = 4
+                        staff_information.staffCheckState = 16
 
 
         if len(attend_records) >= 50:

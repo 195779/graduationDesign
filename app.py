@@ -62,6 +62,9 @@ def execute_task():
                 else:
                     sum.workSumTime = float_time
 
+                # 休假次数 + 1
+                sum.holidayFrequency = sum.holidayFreqency + 1
+
                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                 work = Works.query.filter(set.staffId == Works.staffId).first()
                 if work.workTime is None:
@@ -96,6 +99,9 @@ def execute_task():
                     sum.workSumTime = sum.workSumTime + float_time
                 else:
                     sum.workSumTime = float_time
+
+                # 出差次数 + 1
+                sum.outFrequency = sum.outFrequency + 1
 
                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                 work = Works.query.filter(set.staffId == Works.staffId).first()
@@ -140,13 +146,15 @@ def execute_task():
                             # 记录为迟到
                             staff_information = staffInformation.query.filter(
                                 staffInformation.staffId == attendance.staffId).first()
-                            staff_information.staffCheckState = 21
+                            staff_information.staffCheckState = 23
+                            # 今日迟到（未出勤）
 
                             # 给本月的统计记录添加一次迟到
                             current_date_year = datetime.now().date().strftime("%Y")
                             current_date_month = datetime.now().date().strftime("%m")
                             sum_Id = current_date_year + '-' + current_date_month + '-' + staff.staffId
                             sum = Sum.query.filter(sum_Id == Sum.sumId).first()
+                            # 迟到次数 + 1
                             sum.lateFrequency = sum.lateFrequency + 1
 
                             db.session.commit()
@@ -204,6 +212,8 @@ def execute_task():
                                 sum.workSumTime = sum.workSumTime + float_time
                             else:
                                 sum.workSumTime = float_time
+
+                            # 正常出勤次数 + 1
                             sum.attendFrequency  = sum.attendFrequency + 1
 
                             # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
@@ -220,7 +230,9 @@ def execute_task():
                                 attendance.workTime = time(0, 0, 0)
                                 attendance.attendState = 8
                                 staff_information.staffCheckState = 20
+                                # 缺勤次数 + 1
                                 sum.absenceFrequency = sum.absenceFrequency + 1
+                                # 迟到次数 - 1
                                 sum.lateFrequency = sum.lateFrequency - 1
                             # 迟到 但是 有签到时间 做正常签退处理
                             else:
@@ -238,7 +250,7 @@ def execute_task():
                                 attendance.workTime = time(hours, minutes, seconds)
 
                                 # 向staff_information中记录 考勤状态：
-                                staff_information.staffCheckState = 29
+                                staff_information.staffCheckState = 26
                                 attendance.attendState = 2
                                 # 迟到的次数已经在前一个定时函数中完成对sum中的迟到次数加一操作了
 
@@ -252,7 +264,6 @@ def execute_task():
                                     sum.workSumTime = sum.workSumTime + float_time
                                 else:
                                     sum.workSumTime = float_time
-                                sum.attendFrequency = sum.attendFrequency + 1
 
                                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                                 work = Works.query.filter(set.staffId == Works.staffId).first()
@@ -293,7 +304,6 @@ def execute_task():
                                 sum.workSumTime = sum.workSumTime + float_time
                             else:
                                 sum.workSumTime = float_time
-                            sum.attendFrequency = sum.attendFrequency + 1
 
                             # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                             work = Works.query.filter(set.staffId == Works.staffId).first()
@@ -307,7 +317,7 @@ def execute_task():
                             sum.earlyFreqency = sum.earlyFrequency + 1
                             # 统计早退次数 + 1
                             attendance.attendState = 7
-                            staff_information.staffCheckState = 28
+                            staff_information.staffCheckState = 24
                             # 状态为正常签到早退
                             leave_end_time = attendance.leaveTime
                             # 取出临时离开的时间作为结束时间
@@ -333,7 +343,6 @@ def execute_task():
                                 sum.workSumTime = sum.workSumTime + float_time
                             else:
                                 sum.workSumTime = float_time
-                            sum.attendFrequency = sum.attendFrequency + 1
 
                             # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                             work = Works.query.filter(set.staffId == Works.staffId).first()

@@ -88,7 +88,6 @@ def setAttendance(admin_username):
         if len(attendance) != 2:
             result = {'status': 'error', 'message': '发送数据长度不等于2：有误'}
         else:
-            message = ''
 
             staffId = attendance[1]
             attendance_state = attendance[0]

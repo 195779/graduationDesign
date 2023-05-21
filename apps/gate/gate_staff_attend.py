@@ -379,8 +379,11 @@ def video_feed(gateAdmin_username):
         all_Id = []
 
         for one_face in all_faces:
-            all_Id.append(one_face.staffId)
-            all_features.append(one_face.staffFaceValue)
+            if one_face.staffFaceValue is not None:
+                # 将已经录入人脸并生成特征值，则特征值不为空的记录 加入该列表list
+                # 防止出现因新添加的职工未录入人脸特征值而导致的无法正确打开人脸签到识别界面的情况
+                all_Id.append(one_face.staffId)
+                all_features.append(one_face.staffFaceValue)
 
         return Response(gen(VideoCamera(), '001', all_features, all_Id),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -491,6 +494,9 @@ def now_attend(gateAdmin_username):
 
                     # 0 begin-1<time<begin+1 今日未出勤 + 现在来签到 + 时间满足签到区间 :  状态改为正常出勤 1  记录签到时间
                     if attendance.attendState == 0 and begin_time_sub <= current_datetime < begin_time_plus :
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.attendState = 1
                         attendance.attendTime = current_datetime.time()
                         # 记录正常出勤的签到时间
@@ -502,6 +508,9 @@ def now_attend(gateAdmin_username):
 
                     # 2 time > begin + 1 今日已迟到 + 还未签到 + 现在来签到 ： 状态改为保持为迟到 2 记录签到时间
                     elif attendance.attendState == 2 and current_datetime > begin_time_plus and attendance.attendTime is None:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.attendState = 2
                         attendance.attendTime = current_datetime.time()
                         # 记录迟到的签到时间
@@ -513,6 +522,9 @@ def now_attend(gateAdmin_username):
 
                     # 1 time<end-1 今日正常出勤 + 临时出门 ： 状态改为 正常出勤|临时出门 4 记录离开时间
                     elif attendance.attendState == 1 and current_datetime < end_time_sub:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.leaveTime = current_datetime.time()
                         # 记录临时出门的离开时间
                         attendance.attendState = 4
@@ -523,6 +535,9 @@ def now_attend(gateAdmin_username):
 
                     # 1 今日正常出勤 + end-1<time<end+1 : 状态改为6 正常签退下班
                     elif attendance.attendState == 1 and end_time_sub < current_datetime < end_time_plus:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.endTime = current_datetime.time()
                         # 记录签退时间
                         attendance.attendState = 6
@@ -574,6 +589,9 @@ def now_attend(gateAdmin_username):
 
                     # 4 time<end+1 在临时出门的条件下，他又回来了
                     elif attendance.attendState == 4 and current_datetime < end_time_plus:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.attendState = 1
                         staff_information.staffCheckState = 10
                         string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！临时外出返回 ！！'
@@ -588,6 +606,9 @@ def now_attend(gateAdmin_username):
 
                     # 2 time<end-1 今日迟到 + 已经签到 + 去刷脸识别 === 迟到条件下的临时出门
                     elif attendance.attendState == 2 and attendance.attendTime is not None and current_datetime < end_time_sub:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.attendState = 5
                         attendance.leaveTime = current_datetime.time()
                         # 记录临时出门的离开时间
@@ -599,6 +620,11 @@ def now_attend(gateAdmin_username):
 
                     # 2  end-1<time<end+1 今日已经签到 + 今日迟到 + 时间满足下班区间 === 迟到+下班
                     elif attendance.attendState == 2 and attendance.attendTime is not None and end_time_sub < current_datetime < end_time_plus:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
+                        attendance.endTime = current_datetime.time()
+                        # 记录今天下班时间
                         attendance.attendState = 2
                         attendance.endTime = current_datetime.time()
                         staff_information.staffCheckState = 26
@@ -651,6 +677,9 @@ def now_attend(gateAdmin_username):
 
                     # 5 time<end+1
                     elif attendance.attendState == 5 and current_datetime < end_time_plus:
+                        # 记录考勤记录更新的时间
+                        attendance.editTime = current_datetime
+
                         attendance.attendState = 2
                         staff_information.staffCheckState = 21
 
@@ -666,6 +695,8 @@ def now_attend(gateAdmin_username):
                         string_return = 'ERROR！ 此时新来到的签到人员为：' + str(staffName_first) + '！！未知的状态 ！！'
                         print(string_return)
                         attend_records.append(string_return)
+
+        # 保存数据库
         db.session.commit()
 
         if len(attend_records) >= 50:
@@ -678,7 +709,7 @@ def now_attend(gateAdmin_username):
 
 
 # 开启签到
-@login_required('gateAdmin_username'                                    )
+@login_required('gateAdmin_username')
 @gate_bp.route('<gateAdmin_username>/staff_attend', methods=["POST", 'GET'], endpoint='staff_attend')
 def staff_attend(gateAdmin_username):
     if session.get(gateAdmin_username + 'gateAdmin_username') is not None:

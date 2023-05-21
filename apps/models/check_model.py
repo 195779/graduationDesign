@@ -190,22 +190,24 @@ class Set(db.Model):
 class Attendance(db.Model):
     __table_name__ = 'attendance'
     attendanceId = db.Column(db.String(50), primary_key=True, unique=True, nullable=False,
-                             comment='出勤记录ID/主键/不重复/不为空/！！以当天Date日期+职工ID合成String作为出勤记录ID存入！！')
+                            comment='出勤记录ID/主键/不重复/不为空/！！以当天Date日期+职工ID合成String作为出勤记录ID存入！！')
     staffId = db.Column(db.String(20), db.ForeignKey('staff.staffId', onupdate='CASCADE'), unique=False, nullable=False,
                         comment='职工ID/外键/允许重复（1对多）/不为空')
     attendTime = db.Column(db.Time(), comment='签到打卡时间')
     endTime = db.Column(db.Time(), comment='签退打卡时间')
     leaveTime = db.Column(db.Time(), comment='临时离开的时间')
     workTime = db.Column(db.Time(), comment='工作时间')
+    editId = db.Column(db.String(20), comment='上次修改者ID/在生成考勤记录的定时函数中将此ID赋予一个默认值')
+    editTime = db.Column(db.DateTime(), comment='上次保存数据库的时间')
     attendDate = db.Column(db.DateTime(), server_default=text('CURRENT_TIMESTAMP'), comment='记录日期')
     attendImage = db.Column(db.LargeBinary(65536), nullable=True, comment='签到拍照打卡截图')
     endImage = db.Column(db.LargeBinary(65536), nullable=True, comment='签退拍照打卡截图')
     attendState = db.Column(db.Integer, server_default=text('0'), comment='签到状态/默认为0未打卡/不为空/出勤1/迟到2/缺勤3')
     endState = db.Column(db.Integer, server_default=text('0'), comment='签退状态/默认为0未打卡/不为空/早退2/晚签退3')
     outState = db.Column(db.Boolean, server_default='0',
-                         comment='出差状态/不设置为外键/每次生成每天的出勤记录之前检查set表的个人状态,如果出差，在此记录状态，工作时间设置八小时，其余空白/出差总时长相应增加/出差次数+1')
+                        comment='出差状态/不设置为外键/每次生成每天的出勤记录之前检查set表的个人状态,如果出差，在此记录状态，工作时间设置八小时，其余空白/出差总时长相应增加/出差次数+1')
     holidayState = db.Column(db.Boolean, server_default='0',
-                             comment='请假状态/不设置为外键/每次生成每天的出勤记录之前检查set表的个人状态 如果请假，在此记录状态，工作时间设置0，其余空白，请假次数+1/假期剩余总时长对应相减/')
+                            comment='请假状态/不设置为外键/每次生成每天的出勤记录之前检查set表的个人状态 如果请假，在此记录状态，工作时间设置0，其余空白，请假次数+1/假期剩余总时长对应相减/')
 
     def __str__(self):
         return self.attendanceId + ' is  the ' + self.staffId + "in the attendance's date which is " + str(self.attendDate)

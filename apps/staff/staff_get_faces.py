@@ -145,6 +145,52 @@ def delete_face(staff_username):
 
 
 @login_required('<staff_username>')
+@staff_bp.route('/<staff_username>/post_again', methods=['POST', "GET"], endpoint='post_again')
+def post_again(staff_username):
+    if session.get(staff_username + 'staff_username') is not None:
+        staffIds = request.json
+        username = ''
+        for staffId in staffIds:
+            username = username + staffId
+        if staff_username == username:
+            try:
+                path_images_from_camera = "static/data/data_faces_from_camera/"
+                path = path_images_from_camera + staff_username
+                print(path)
+                features_mean_personX = features_extraction.return_features_mean_personX(path)
+                features = str(features_mean_personX[0])
+                for i in range(1, 128):
+                    # range(1,128) 遍历 1-127的全部数字 i  加上前面已经加入的 0 ，
+                    # 将128维的特征向量（128个浮点数）全部从float类型转换为字符串类型，并用逗号隔开
+                    features = features + ',' + str(features_mean_personX[i])
+                face = faceValue.query.filter(faceValue.staffId == staff_username).first()
+                if face:
+                    face.staffFaceValue = features
+                    # 如果存在则更新
+                else:
+                    # 不存在则添加
+                    face = faceValue(staffId=staff_username, staffFaceValue=features)
+                    db.session.add(face)
+                db.session.commit()
+                # print(" >> 特征均值 / The mean of features:", list(features_mean_personX), '\n')
+                staff_information = staffInformation.query.filter(staffInformation.staffId == staff_username).first()
+                staff_information.faceValueState = True
+                # 更改人脸信息录入的状态
+                db.session.commit()
+                status = 'success'
+                message = '人脸图片重新提交成功'
+            except Exception as e:
+                print('Error:', e)
+                status = 'error'
+                message = '人脸图片重新提交失败'
+
+        result = {'status': status, 'message': message}
+        return jsonify(result)
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('<staff_username>')
 @staff_bp.route('/<staff_username>/staff_get_authority', methods=['POST', 'GET'], endpoint='staff_get_authority')
 def staff_get_authority(staff_username):
     if session.get(staff_username + 'staff_username') is not None:

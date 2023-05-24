@@ -8,38 +8,168 @@
 
 </head>
 <body>
+<script src="../../static/js/jquery-2.1.1.min.js"></script>
+ <form id="attend_add_staff_all_form">
+                    <div class="modal-body col-sm-12">
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <link rel="stylesheet"
+                                      href="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+                                <!-- 导入 Bootstrap 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                                <!-- 导入 Bootstrap-datepicker 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+                                <label for="start-date-all">设置考勤起始日期</label>
+                                <div class="input-group date" id="start-date-all-picker">
+                                    <input type="text" placeholder="选择考勤起始日期  年-月-日" class="form-control"
+                                           id="start-date-all" name="start-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start = document.getElementById("start-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_start).datepicker({
+                                            format: "yyyy-mm-dd",
+                                            // 设置日期格式
+                                            todayHighlight: true,
+                                            // 设置当天日期高亮显示
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-date-all">设置考勤结束日期</label>
+                                <div class="input-group date" id="end-date-all-picker">
+                                    <input type="text" placeholder="选择考勤结束日期  年-月-日" class="form-control"
+                                           id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="end-date-all" autocomplete="off" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end = document.getElementById("end-date-all");
+                                    // 创建日期选择器
+                                    $(datepicker_end).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 引入 datetimepicker 插件 -->
+                                <link rel="stylesheet"
+                                      href="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css">
+                                <script src="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
+                                <label for="start-datetime-all">设置考勤应签到时刻</label>
+                                <div class="input-group date" id="start-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签到时刻 时:分:秒" class="form-control"
+                                           id="start-datetime-all" name="start-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#start-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="end-datetime-all">设置考勤应签退时刻</label>
+                                <div class="input-group date" id="end-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="end-datetime-all" name="end-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#end-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <div class="form-group col-sm-6">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <label for="add-date-all">设置加班日期</label>
+                                <div class="input-group date" id="add-date-all-picker">
+                                    <input type="text" placeholder="选择加班日期  年-月-日" class="form-control"
+                                           id="add-date-all" name="add-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_add = document.getElementById("add-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_add).datepicker({
+                                            format: "yyyy-mm-dd",  // 设置日期格式
+                                            todayHighlight: true,  // 设置当天日期高亮显示
 
-<!-- 引入 Bootstrap 和 jQuery -->
-<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-<!-- 引入 datetimepicker 插件 -->
-<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css">
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
-
-<!-- 设置时间选择器的输入框 -->
-<div class="form-group">
-    <label for="timepicker">选择时间</label>
-    <input type="text" class="form-control" id="timepicker" name="timepicker" required>
-</div>
-
-<!-- 使用 datetimepicker 插件设置时间选择器 -->
-<script>
-    $('#timepicker').datetimepicker({
-        datepicker: false, // 不显示日期选择器
-        format: 'H:i:s', // 时间格式为 时:分:秒
-        step: 5, // 时间间隔为 5 分钟
-        icons: {
-            up: "glyphicon glyphicon-chevron-up",
-            down: "glyphicon glyphicon-chevron-down",
-            previous: 'glyphicon glyphicon-chevron-left',
-            next: 'glyphicon glyphicon-chevron-right'
-        } // 使用 Bootstrap 图标
-    });
-</script>
-
-
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="add-datetime-all">设置加班应签到时刻</label>
+                                <div class="input-group date" id="add-datetime-all-picker">
+                                    <input type="text" placeholder="考勤应签退时刻 时:分:秒" class="form-control"
+                                           id="add-datetime-all" name="add-datetime-all" data-provide="timepicker"
+                                           data-show-meridian="false" data-minute-step="1" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    $('#add-datetime-all').datetimepicker({
+                                        datepicker: false, // 不显示日期选择器
+                                        format: 'H:i:s', // 时间格式为 时:分:秒
+                                        step: 5, // 时间间隔为 5 分钟
+                                        icons: {
+                                            up: "glyphicon glyphicon-chevron-up",
+                                            down: "glyphicon glyphicon-chevron-down",
+                                            previous: 'glyphicon glyphicon-chevron-left',
+                                            next: 'glyphicon glyphicon-chevron-right'
+                                        } // 使用 Bootstrap 图标
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="modal-footer">
+                        <button id="cancel_attend_add" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary" >确认修改</button>
+                    </div>
+                </form>
 
 </body>
 </html>

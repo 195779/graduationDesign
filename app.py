@@ -20,7 +20,7 @@ migrate = Migrate(app=app, db=db)
 manager.add_command('db', MigrateCommand)
 
 
-@scheduler.task('cron', id='attendance', hour=15, minute=47, second=25)
+@scheduler.task('cron', id='attendance', hour=23, minute=25, second=3)
 def execute_task():
     # 定时函数在每天的固定时间为每个职工用户生成一条等待填写数据的考勤记录
     print("这是执行了几次？？？")
@@ -49,7 +49,7 @@ def execute_task():
             # 在对休假日期与出差日期的设置中已经保证了其不会出现日期重叠
             # 如果休假/出差日期 与 正常出勤日期重叠， 则只执行休假/出差的情况即可
             # 休假/出差
-            if set.endHolidayDate >= current_date >= set.beginHolidayDate:
+            if set.endHolidayDate and set.beginHolidayDate and set.endHolidayDate >= current_date >= set.beginHolidayDate:
                 attendance.holidayState = True
                 staff_information.staffCheckState = 12
                 # 设置休假状态
@@ -86,7 +86,7 @@ def execute_task():
                 db.session.add(attendance)
 
 
-            elif set.endOutDate >= current_date >= set.beginOutDate:
+            elif set.endOutDate and set.beginOutDate and set.endOutDate >= current_date >= set.beginOutDate:
                 # 出差
                 attendance.outState = True
                 staff_information.staffCheckState = 11
@@ -124,7 +124,7 @@ def execute_task():
 
 
             # 正常出勤
-            elif set.endAttendDate >= current_date >= set.beginAttendDate:
+            elif set.endAttendDate and set.beginAttendDate and set.endAttendDate >= current_date >= set.beginAttendDate:
                 attendance.workTime = time(hour=0, minute=0, second=0)
                 # 工作时长置零  等待签到
 
@@ -145,7 +145,7 @@ def execute_task():
                     with scheduler.app.app_context():
                         attendance = Attendance.query.filter(attendanceId == Attendance.attendanceId).first()
                         staff = Staff.query.filter(attendance.staffId == Staff.staffId).first()
-                        if attendance.attendState == 0:
+                        if attendance and attendance.attendState == 0:
                             attendance.attendState = 2
                             # 记录为迟到
                             staff_information = staffInformation.query.filter(
@@ -190,60 +190,9 @@ def execute_task():
                         # 对6（1完成考勤）的职工不做处理
                         # 7和3\8 就是自己这个定时函数生成的自然不需要判断
 
-                        # 出勤 有签到（或者临时出门但是回来了）  没有签退， 做正常签退的工时计算
-                        if attendance.attendState == 1:
-                            set_end_time = set.endTime.time()
-                            attendance.endTime = set_end_time
-                            current_date = datetime.now().date()
-                            dt1 = datetime.combine(current_date, attendance.endTime)
-                            dt2 = datetime.combine(current_date, attendance.attendTime)
-                            time_diff = dt1 - dt2
-                            # 获取总秒数
-                            total_seconds = time_diff.total_seconds()
-                            # 计算时、分、秒的差异
-                            hours = int(total_seconds // 3600)
-                            minutes = int((total_seconds % 3600) // 60)
-                            seconds = int(total_seconds % 60)
-                            attendance.workTime = time(hours, minutes, seconds)
-
-                            # 向staff_information中记录 考勤状态：
-                            staff_information.staffCheckState = 14
-                            attendance.attendState = 6
-
-                            # 将今天的工作时间存入本月工作时间记录
-                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
-                            # 转换为以小时为整数的浮点数
-                            float_time = round(float_time, 3)
-                            # 保留3位小数
-
-                            if sum.workSumTime is not None:
-                                sum.workSumTime = sum.workSumTime + float_time
-                            else:
-                                sum.workSumTime = float_time
-
-                            # 正常出勤次数 + 1
-                            sum.attendFrequency = sum.attendFrequency + 1
-
-                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                            work = Works.query.filter(set.staffId == Works.staffId).first()
-                            if work.workTime is None:
-                                work.workTime = float_time
-                            else:
-                                work.workTime = work.workTime + float_time
-
-                        # 2 迟到    已经签到的做正常签退处理，未签到的做缺勤处理
-                        elif attendance.attendState == 2:
-                            # 没有签到的迟到===缺勤处理
-                            if attendance.attendTime is None:
-                                attendance.workTime = time(0, 0, 0)
-                                attendance.attendState = 8
-                                staff_information.staffCheckState = 20
-                                # 缺勤次数 + 1
-                                sum.absenceFrequency = sum.absenceFrequency + 1
-                                # 迟到次数 - 1
-                                sum.lateFrequency = sum.lateFrequency - 1
-                            # 迟到 但是 有签到时间 做正常签退处理
-                            else:
+                        if attendance:
+                            # 出勤 有签到（或者临时出门但是回来了）  没有签退， 做正常签退的工时计算
+                            if attendance.attendState == 1:
                                 set_end_time = set.endTime.time()
                                 attendance.endTime = set_end_time
                                 current_date = datetime.now().date()
@@ -259,9 +208,102 @@ def execute_task():
                                 attendance.workTime = time(hours, minutes, seconds)
 
                                 # 向staff_information中记录 考勤状态：
-                                staff_information.staffCheckState = 26
-                                attendance.attendState = 9
-                                # 迟到的次数已经在前一个定时函数中完成对sum中的迟到次数加一操作了
+                                staff_information.staffCheckState = 14
+                                attendance.attendState = 6
+
+                                # 将今天的工作时间存入本月工作时间记录
+                                float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                                # 转换为以小时为整数的浮点数
+                                float_time = round(float_time, 3)
+                                # 保留3位小数
+
+                                if sum.workSumTime is not None:
+                                    sum.workSumTime = sum.workSumTime + float_time
+                                else:
+                                    sum.workSumTime = float_time
+
+                                # 正常出勤次数 + 1
+                                sum.attendFrequency = sum.attendFrequency + 1
+
+                                # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                                work = Works.query.filter(set.staffId == Works.staffId).first()
+                                if work.workTime is None:
+                                    work.workTime = float_time
+                                else:
+                                    work.workTime = work.workTime + float_time
+
+                            # 2 迟到    已经签到的做正常签退处理，未签到的做缺勤处理
+                            elif attendance.attendState == 2:
+                                # 没有签到的迟到===缺勤处理
+                                if attendance.attendTime is None:
+                                    attendance.workTime = time(0, 0, 0)
+                                    attendance.attendState = 8
+                                    staff_information.staffCheckState = 20
+                                    # 缺勤次数 + 1
+                                    sum.absenceFrequency = sum.absenceFrequency + 1
+                                    # 迟到次数 - 1
+                                    sum.lateFrequency = sum.lateFrequency - 1
+                                # 迟到 但是 有签到时间 做正常签退处理
+                                else:
+                                    set_end_time = set.endTime.time()
+                                    attendance.endTime = set_end_time
+                                    current_date = datetime.now().date()
+                                    dt1 = datetime.combine(current_date, attendance.endTime)
+                                    dt2 = datetime.combine(current_date, attendance.attendTime)
+                                    time_diff = dt1 - dt2
+                                    # 获取总秒数
+                                    total_seconds = time_diff.total_seconds()
+                                    # 计算时、分、秒的差异
+                                    hours = int(total_seconds // 3600)
+                                    minutes = int((total_seconds % 3600) // 60)
+                                    seconds = int(total_seconds % 60)
+                                    attendance.workTime = time(hours, minutes, seconds)
+
+                                    # 向staff_information中记录 考勤状态：
+                                    staff_information.staffCheckState = 26
+                                    attendance.attendState = 9
+                                    # 迟到的次数已经在前一个定时函数中完成对sum中的迟到次数加一操作了
+
+                                    # 将今天的工作时间存入本月工作时间记录
+                                    float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                                    # 转换为以小时为整数的浮点数
+                                    float_time = round(float_time, 3)
+                                    # 保留3位小数
+
+                                    if sum.workSumTime is not None:
+                                        sum.workSumTime = sum.workSumTime + float_time
+                                    else:
+                                        sum.workSumTime = float_time
+
+                                    # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                                    work = Works.query.filter(set.staffId == Works.staffId).first()
+                                    if work.workTime is None:
+                                        work.workTime = float_time
+                                    else:
+                                        work.workTime = work.workTime + float_time
+
+                            # 正常签到之后，他又临时出门了 然后一直没回公司 按早退处理
+                            elif attendance.attendState == 4:
+                                sum.earlyFrequency = sum.earlyFrequency + 1
+                                # 统计早退次数 + 1
+                                attendance.attendState = 3
+                                # 考勤记录状态设置为 正常签到的早退
+                                staff_information.staffCheckState = 22
+                                # 职工信息中的考勤状态为 正常签到早退
+                                leave_end_time = attendance.leaveTime
+                                # 取出临时离开的时间作为结束时间
+                                attendance.endTime = leave_end_time
+                                current_date = datetime.now().date()
+                                dt1 = datetime.combine(current_date, attendance.endTime)
+                                dt2 = datetime.combine(current_date, attendance.attendTime)
+                                time_diff = dt1 - dt2
+                                # 获取总秒数
+                                total_seconds = time_diff.total_seconds()
+                                # 计算时、分、秒的差异
+                                hours = int(total_seconds // 3600)
+                                minutes = int((total_seconds % 3600) // 60)
+                                seconds = int(total_seconds % 60)
+                                attendance.workTime = time(hours, minutes, seconds)
 
                                 # 将今天的工作时间存入本月工作时间记录
                                 float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
@@ -281,91 +323,53 @@ def execute_task():
                                 else:
                                     work.workTime = work.workTime + float_time
 
-                        # 正常签到之后，他又临时出门了 然后一直没回公司 按早退处理
-                        elif attendance.attendState == 4:
-                            sum.earlyFrequency = sum.earlyFrequency + 1
-                            # 统计早退次数 + 1
-                            attendance.attendState = 3
-                            # 考勤记录状态设置为 正常签到的早退
-                            staff_information.staffCheckState = 22
-                            # 职工信息中的考勤状态为 正常签到早退
-                            leave_end_time = attendance.leaveTime
-                            # 取出临时离开的时间作为结束时间
-                            attendance.endTime = leave_end_time
-                            current_date = datetime.now().date()
-                            dt1 = datetime.combine(current_date, attendance.endTime)
-                            dt2 = datetime.combine(current_date, attendance.attendTime)
-                            time_diff = dt1 - dt2
-                            # 获取总秒数
-                            total_seconds = time_diff.total_seconds()
-                            # 计算时、分、秒的差异
-                            hours = int(total_seconds // 3600)
-                            minutes = int((total_seconds % 3600) // 60)
-                            seconds = int(total_seconds % 60)
-                            attendance.workTime = time(hours, minutes, seconds)
+                            # 迟到签到之后，他又临时出门了，然后一直没回公司，按迟到|早退处理
+                            elif attendance.attendState == 5:
+                                sum.earlyFreqency = sum.earlyFrequency + 1
+                                # 统计早退次数 + 1
+                                attendance.attendState = 7
+                                staff_information.staffCheckState = 24
+                                # 状态为正常签到早退
+                                leave_end_time = attendance.leaveTime
+                                # 取出临时离开的时间作为结束时间
+                                attendance.endTime = leave_end_time
+                                current_date = datetime.now().date()
+                                dt1 = datetime.combine(current_date, attendance.endTime)
+                                dt2 = datetime.combine(current_date, attendance.attendTime)
+                                time_diff = dt1 - dt2
+                                # 获取总秒数
+                                total_seconds = time_diff.total_seconds()
+                                # 计算时、分、秒的差异
+                                hours = int(total_seconds // 3600)
+                                minutes = int((total_seconds % 3600) // 60)
+                                seconds = int(total_seconds % 60)
+                                attendance.workTime = time(hours, minutes, seconds)
 
-                            # 将今天的工作时间存入本月工作时间记录
-                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
-                            # 转换为以小时为整数的浮点数
-                            float_time = round(float_time, 3)
-                            # 保留3位小数
+                                # 将今天的工作时间存入本月工作时间记录
+                                float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                                # 转换为以小时为整数的浮点数
+                                float_time = round(float_time, 3)
+                                # 保留3位小数
 
-                            if sum.workSumTime is not None:
-                                sum.workSumTime = sum.workSumTime + float_time
-                            else:
-                                sum.workSumTime = float_time
+                                if sum.workSumTime is not None:
+                                    sum.workSumTime = sum.workSumTime + float_time
+                                else:
+                                    sum.workSumTime = float_time
 
-                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                            work = Works.query.filter(set.staffId == Works.staffId).first()
-                            if work.workTime is None:
-                                work.workTime = float_time
-                            else:
-                                work.workTime = work.workTime + float_time
+                                # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                                work = Works.query.filter(set.staffId == Works.staffId).first()
+                                if work.workTime is None:
+                                    work.workTime = float_time
+                                else:
+                                    work.workTime = work.workTime + float_time
 
-                        # 迟到签到之后，他又临时出门了，然后一直没回公司，按迟到|早退处理
-                        elif attendance.attendState == 5:
-                            sum.earlyFreqency = sum.earlyFrequency + 1
-                            # 统计早退次数 + 1
-                            attendance.attendState = 7
-                            staff_information.staffCheckState = 24
-                            # 状态为正常签到早退
-                            leave_end_time = attendance.leaveTime
-                            # 取出临时离开的时间作为结束时间
-                            attendance.endTime = leave_end_time
-                            current_date = datetime.now().date()
-                            dt1 = datetime.combine(current_date, attendance.endTime)
-                            dt2 = datetime.combine(current_date, attendance.attendTime)
-                            time_diff = dt1 - dt2
-                            # 获取总秒数
-                            total_seconds = time_diff.total_seconds()
-                            # 计算时、分、秒的差异
-                            hours = int(total_seconds // 3600)
-                            minutes = int((total_seconds % 3600) // 60)
-                            seconds = int(total_seconds % 60)
-                            attendance.workTime = time(hours, minutes, seconds)
+                            # 记录考勤记录的数据更新时间
+                            attendance.editTime = datetime.now()
 
-                            # 将今天的工作时间存入本月工作时间记录
-                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
-                            # 转换为以小时为整数的浮点数
-                            float_time = round(float_time, 3)
-                            # 保留3位小数
-
-                            if sum.workSumTime is not None:
-                                sum.workSumTime = sum.workSumTime + float_time
-                            else:
-                                sum.workSumTime = float_time
-
-                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                            work = Works.query.filter(set.staffId == Works.staffId).first()
-                            if work.workTime is None:
-                                work.workTime = float_time
-                            else:
-                                work.workTime = work.workTime + float_time
-
-                        # 记录考勤记录的数据更新时间
-                        attendance.editTime = datetime.now()
                         # 保存数据库
                         db.session.commit()
+
+                db.session.add(attendance)
 
         # 执行过exectue_task这个给每个用户每天添加考勤记录的定时函数后
         # 把执行时间存入数据库
@@ -388,8 +392,6 @@ def execute_task():
 
         # 记录考勤记录的更新时间
         attendance.editTime = datetime.now()
-        # 数据库保存attendance、aps
-        db.session.add(attendance)
         db.session.commit()
 
 
@@ -411,7 +413,7 @@ def has_executed_today(attendanceApsId):
 @manager.app.before_first_request
 def check_and_execute_task():
     current_time = datetime.now().time()
-    target_time = time(hour=15, minute=46)  # 固定时间为每天的 9:20 AM
+    target_time = time(hour=23, minute=6)  # 固定时间为每天的 9:20 AM
 
     if current_time > target_time:
         # 检查当天是否已经执行过定时函数
@@ -426,7 +428,7 @@ def check_and_execute_task():
         pass
 
 
-@scheduler.task('cron', id='sum', hour=15, minute=46)
+@scheduler.task('cron', id='sum', hour=23, minute=5)
 def check_and_sum_task():
     # 检测所有职工的本月的sum记录是否已经生成，如果没有则添加生成
     current_time = datetime.now()

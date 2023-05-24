@@ -78,6 +78,9 @@
          aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div id="loadingPopup" style="display: none; margin-top: 15px"><span class="custom-badge status-orange" style="font-size: 10px" ><i
+                                                class="glyphicon glyphicon-time"></i> 已经提交图片进行计算，正在加载中，请稍后...............</span></div>
+                <div id="resultPopup" style="display: none; margin-top: 15px;"></div>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         &times;
@@ -88,8 +91,8 @@
                 </div>
                 <form action="{{ url_for('staff_all.delete_faces', staff_username=staff.staffId) }}" method="post">
                     <div class="modal-body">
-                        职工&nbsp&nbspID:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="text" class="table-input"
-                                                                            name="staffId"
+                        职工&nbsp&nbsp编号:&nbsp&nbsp<input type="text" class="table-input"
+                                                                            name="staffId" id="staffId_modal"
                                                                             value="{{ staff.staffId }}" readonly>
                         <br>
                         职工&nbsp&nbsp姓名:&nbsp&nbsp<input type="text" class="table-input" name="staffName"
@@ -114,8 +117,9 @@
                              style="width:150px;height: 150px">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="submit" class="btn btn-primary">驳回重录</button>
+                        <button type="button" class="col-sm-2 btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="col-sm-2 btn btn-primary" onclick="post_again()" >重新提交</button>
+                        <button type="submit" class="col-sm-2 btn btn-primary">驳回重录</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
@@ -125,7 +129,48 @@
 
 
     <script>
-        $("#canvas").width($("#video").width())
+        function post_again()
+        {
+            var staffId = document.getElementById('staffId_modal').value;
+            // 获取弹窗元素
+            const loadingPopup = document.getElementById("loadingPopup");
+            const resultPopup = document.getElementById("resultPopup");
+            // 显示正在加载弹窗
+            loadingPopup.style.display = "block";
+
+                // 发送POST请求到后端接口
+                fetch('{{ url_for('staff_all.post_again', staff_username=staff.staffId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(staffId)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            // 关闭正在加载弹窗
+                            loadingPopup.style.display = "none";
+                            resultPopup.innerHTML = "<span class='custom-badge status-green' style='font-size: 10px' ><i class='glyphicon glyphicon-time'></i> 数据已经加载完成</span>"
+                            resultPopup.style.display = "block";
+                            // 两秒后隐藏结果弹窗
+                            setTimeout(() => {
+                                resultPopup.style.display = "none";
+                                location.reload();
+                            }, 3000);
+
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能重新提交计算人脸信息！！！' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+        }
+
+    $("#canvas").width($("#video").width())
         $("#canvas").height($("#video").height())
 
         function openvideo() {

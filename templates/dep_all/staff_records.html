@@ -1,0 +1,818 @@
+{% extends 'index/departmentAdmin_index.html' %}
+{% block styles %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="renderer" content="webkit">
+        <meta name="keywords" content="后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+        <meta name="description" content="基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+        <link href="../../../../static/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+        <link href="../../../../static/font-awesome/css/font-awesome.css?v=4.3.0" rel="stylesheet">
+
+        <!-- Morris -->
+        <link href="../../../../static/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+        <!-- Gritter -->
+        <link href="../../../../static/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+
+        <link href="../../../../static/css/animate.css" rel="stylesheet">
+        <link href="../../../../static/css/style.css?v=2.2.0" rel="stylesheet">
+
+    {% endblock %}
+
+{% block top %}
+     <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="index_1.html#"><i
+                                class="fa fa-bars"></i> </a>
+                        <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
+                            <div class="form-group">
+                                <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
+                                       id="top-search">
+                            </div>
+                        </form>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li id="datetime">
+                            <script>
+                                    setInterval("document.getElementById('datetime').innerHTML=new Date().toLocaleString();", 1000);
+                                </script>
+                        </li>
+                        <li>
+                        <span class="m-r-sm text-muted welcome-message"><a href="{{ url_for('index.department_admin_index', depAdmin_username=departmentAdmin.departmentAdminId) }}" title="返回首页"><i
+                                class="fa fa-home"></i></a>欢迎使用企业考勤管理系统</span>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                                <i class="fa fa-envelope"></i> <span class="label label-warning">16</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-messages">
+                                <li>
+                                    <div class="dropdown-messages-box">
+                                        <a href="profile.html" class="pull-left">
+                                            <img alt="image" class="img-circle" src="../../../../static/img/a7.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <small class="pull-right">46小时前</small>
+                                            <strong>小四</strong> 项目已处理完结
+                                            <br>
+                                            <small class="text-muted">3天前 2014.11.8</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="dropdown-messages-box">
+                                        <a href="profile.html" class="pull-left">
+                                            <img alt="image" class="img-circle" src="../../../../static/img/a4.jpg">
+                                        </a>
+                                        <div class="media-body ">
+                                            <small class="pull-right text-navy">25小时前</small>
+                                            <strong>国民岳父</strong> 这是一条测试信息
+                                            <br>
+                                            <small class="text-muted">昨天</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="mailbox.html">
+                                            <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="index.html#">
+                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts">
+                                <li>
+                                    <a href="mailbox.html">
+                                        <div>
+                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
+                                            <span class="pull-right text-muted small">4分钟前</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="profile.html">
+                                        <div>
+                                            <i class="fa fa-qq fa-fw"></i> 3条新回复
+                                            <span class="pull-right text-muted small">12分钟钱</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="notifications.html">
+                                            <strong>查看所有 </strong>
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+
+
+                        <li>
+                            <a href="{{ url_for('login.login') }}">
+                                <i class="fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+ {% endblock %}
+
+{% block left_content %}
+    <link rel="stylesheet" type="text/css" href="../../../../static/css2/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../../static/css2/style.css">
+<link rel="stylesheet" type="text/css" href="../../../../static/css/plugins/datapicker/datepicker3.css">
+    <script src="../../../../static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                            <img alt="image" class="img-circle" src="../../../../static/img/profile_small.png"/>
+                            </span>
+                            <a data-toggle="dropdown"  class="dropdown-toggle dropdown-btn" href="admin_index.html#">
+                                <span class="clear" style="margin-top: 5px; margin-left: 8px">
+                                    <span class="block m-t-xs">
+                                        <strong class="font-bold" style="color: #fdffff">
+                                            {{ departmentAdmin.departmentAdminId}}
+                                        </strong>
+                                    </span>
+                                    <span class="text-muted text-xs block" style="margin-top: 3px">
+                                        <strong class="font-bold" style="color: #fdffff">{{ dep.departmentName }} | 部门管理员</strong>
+                                        <b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu animated fadeInRight m-t-xs">
+                                <li class="dropdown-item"><a href="#">修改头像</a>
+                                </li>
+                                <li class="dropdown-item"><a href="#">个人资料</a>
+                                </li>
+                                <li class="dropdown-item"><a href="#">信箱</a>
+                                </li>
+                                <li class="divider dropdown-item"></li>
+                                <li><a href="{{ url_for('login.login') }}">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            A+
+                        </div>
+
+                    </li>
+                    <li class="active">
+                        <a href="#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门职工管理</span> <span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="{{ url_for('depAdmin_all.dep_staff_manage', depAdmin_username=departmentAdmin.departmentAdminId, departmentId=dep.departmentId) }}">本部门职工个人信息</a>
+                            </li>
+                            <li><a href="#">本部门职工人脸信息</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门考勤统计</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="toastr_notifications.html">总况</a>
+                            </li>
+                            <li><a href="nestable_list.html">出勤/工时统计</a>
+                            </li>
+                            <li><a href="timeline_v2.html">迟到统计</a>
+                            </li>
+                            <li><a href="forum_main.html">早退统计</a>
+                            </li>
+                            <li><a href="code_editor.html">休假统计</a>
+                            </li>
+                            <li><a href="modal_window.html">出差统计</a>
+                            </li>
+                            <li><a href="validation.html">加班统计</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">本部门职工考勤设置</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="graph_echarts.html">出勤设置</a>
+                            </li>
+                            <li><a href="graph_flot.html">休假设置</a>
+                            </li>
+                            <li><a href="graph_morris.html">出差设置</a>
+                            </li>
+                            <li><a href="graph_rickshaw.html">加班设置</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
+                                class="label label-warning pull-right">16</span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="mailbox.html">收件箱</a>
+                            </li>
+                            <li><a href="mail_compose.html">发布公告</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="admin_index.html#"><i class="fa fa-edit"></i> <span class="nav-label">人脸信息管理</span><span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="form_basic.html">人脸信息</a>
+                            </li>
+                            <li><a href="form_validate.html">？人脸签到？</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+{% endblock %}
+
+{% block content %}
+        <div class="content">
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-4 col-3">
+                    <h4>
+                        <span class="page-title" style="color: #048ef1;">{{ dep.departmentName }}</span>
+                        <span class="page-sub-title" style="color:grey;">职工 {{ staff_information.staffId }}|{{ staff_information.staffName }} 考勤记录</span>
+                    </h4>
+                </div>
+            </div>
+        <script src="../../../../static/js/jquery-2.1.1.min.js"></script>
+                <div class="modal-row" style="margin-top: 8px">
+                    <div class="form-group col-sm-3" style="margin-right: 0px">
+                        <select class="form-control" id="attendance_state"  name="attendance_state" required>
+                                <!-- JS 从后端获取考勤状态，动态生成选项 -->
+                                <option value="*">未选择要查询的考勤状态</option>
+                                <option value="0">当日尚未出勤|(休假/出差)</option>
+                                <option value="1">当日正常出勤|工作中</option>
+                                <option value="2">当日迟到</option>
+                                <option value="3">当日正常出勤|早退</option>
+                                <option value="4">当日正常出勤|临时出门</option>
+                                <option value="5">当日迟到|临时出门</option>
+                                <option value="6">当日正常出勤|完成工作</option>
+                                <option value="7">当日迟到|早退</option>
+                                <option value="8">当日缺勤</option>
+                                <option value="9">当日迟到|完成工作</option>
+                        </select>
+                    </div>
+                            <div class="form-group col-sm-3" style="margin-right: 0px">
+                                <!-- 导入 Bootstrap-datepicker 的 CSS 文件 -->
+                                <link rel="stylesheet"
+                                      href="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+                                <!-- 导入 Bootstrap 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                                <!-- 导入 Bootstrap-datepicker 的 JavaScript 文件 -->
+                                <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+                                <div class="input-group date" id="start-date-all-picker">
+                                    <input type="text" placeholder="选择查询起始日期  年-月-日" class="form-control"
+                                           id="start-date-all" name="start-date-all" data-provide="datepicker"
+                                           data-date-format="yyyy-mm-dd" >
+                                    <script>
+                                        const datepicker_start = document.getElementById("start-date-all");
+                                        // 创建日期选择器
+                                        $(datepicker_start).datepicker({
+                                            format: "yyyy-mm-dd",
+                                            // 设置日期格式
+                                            todayHighlight: true,
+                                            // 设置当天日期高亮显示
+                                            autoclose: true       // 设置选择日期后自动关闭
+                                        });
+                                    </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3" style="margin-right: 0px">
+                                <div class="input-group date" id="end-date-all-picker">
+                                    <input type="text" placeholder="选择查询结束日期  年-月-日" class="form-control"
+                                           id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
+                                           name="end-date-all" autocomplete="off" >
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <script>
+                                    const datepicker_end = document.getElementById("end-date-all");
+                                    // 创建日期选择器
+                                    $(datepicker_end).datepicker({
+                                        format: "yyyy-mm-dd",  // 设置日期格式
+                                        todayHighlight: true,  // 设置当天日期高亮显示
+                                        autoclose: true       // 设置选择日期后自动关闭
+                                    });
+                                </script>
+                            </div>
+
+                    <a   class="btn btn-primary float-right btn-rounded" style="margin-top: 5px; margin-right: 15px" onclick="search_attendance({{ staff_information.staffId }})" ><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;查询考勤记录</a>
+                    <a   class="btn btn-primary float-right btn-rounded" style="margin-top: 5px" id = 'export_excel' ><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;导出当前界面考勤记录</a>
+
+                </div>
+
+        <script>
+
+        </script>
+
+        {% if attendances %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <style>
+                            ::-webkit-scrollbar {
+                                display: none;
+                            }
+                        </style>
+                        <table class="table table-striped custom-table"  id="attendance_table"  style="::webkit-scrollbar">
+                            <thead>
+                            <tr>
+                                <th >职工姓名</th>
+                                <th >职工ID</th>
+                                <th >&nbsp;职工所隶属部门</th>
+                                <th >&nbsp;职工所担任职务</th>
+                                <th >职工签到|考勤状态</th>
+                                <th >职工休假|出差状态</th>
+                                <th >考勤记录日期</th>
+                                <th >上次被更新时间</th>
+                                <th >更新执行人员</th>
+                            </tr>
+                            </thead>
+                            <tbody id="attendance_tbody">
+                            {% for attendance in attendances %}
+                                <tr id="{{ attendance.attendanceId }}tr">
+                                    <td data-toggle="modal" data-target="#scan_message"  id="{{ attendance.staffId }}" name="{{ attendance.staffId }}ID" onclick=" openModal_scan_staff(this.id,this.name,'{{ attendance.departmentName }}') ">
+                                        <img width="28" height="28" style="border-radius: 50%"
+                                             src="../../../../static/data/data_headimage_staff/{{ attendance.staffId }}/head.jpg"
+                                             class="rounded-circle" alt="">
+                                        <h2><a style="color: blue">{{ attendance.staffName }}</a></h2>
+                                    </td>
+                                    <td>{{ attendance.staffId }}</td>
+                                    <td>
+
+                                        <span class="custom-badge status-green" id="{{attendance.staffId }}department">{{ attendance.departmentName }}</span>
+                                    </td>
+                                    <td>
+
+                                        <span class="custom-badge status-orange" id="{{ attendance.staffId }}position">{{ attendance.positionName }}</span>
+                                    </td>
+                                    <td>
+                                        {% if attendance.attendance_state == 0 %}
+                                            <span class="custom-badge status-grey" >当日尚未出勤|(出差|休假)</span>
+                                        {% elif attendance.attend_state == 1  %}
+                                            <span class="custom-badge status-green" >当日正常出勤|工作中</span>
+                                        {% elif attendance.attend_state == 2  %}
+                                            <span class="custom-badge status-red" >当日迟到</span>
+                                        {% elif attendance.attend_state == 3  %}
+                                            <span class="custom-badge status-red" >当日正常出勤|早退</span>
+                                        {% elif attendance.attend_state == 4  %}
+                                            <span class="custom-badge status-orange" >当日正常出勤|临时出门</span>
+                                        {% elif attendance.attend_state == 5  %}
+                                            <span class="custom-badge status-orange" >当日迟到|临时出门</span>
+                                        {% elif attendance.attend_state == 6  %}
+                                            <span class="custom-badge status-green" >当日正常出勤|完成工作</span>
+                                        {% elif attendance.attend_state == 7  %}
+                                            <span class="custom-badge status-red" >当日迟到|早退</span>
+                                        {% elif attendance.attend_state == 8  %}
+                                            <span class="custom-badge status-red" >当日缺勤</span>
+                                        {% elif attendance.attend_state == 9  %}
+                                            <span class="custom-badge status-red" >当日迟到|完成工作</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if attendance.attendance_outState %}
+                                            <span class="custom-badge status-blue" >当日出差</span>
+                                        {% endif %}
+                                        {% if attendance.attendance_holidayState %}
+                                            <span class="custom-badge status-blue" >当日休假</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ attendance.attendance_date }}
+                                    </td>
+                                    <td>
+                                        {{ attendance.attendance_editTime }}
+                                    </td>
+                                    <td>
+                                        {{ attendance.attendance_editId }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <h2>该用户 {{staffId}} 尚无考勤记录！</h2>
+        {%  endif %}
+
+        </div>
+
+
+
+        <script src="../../../../static/js/jquery-2.1.1.min.js"></script>
+        <!-- 模态框 -->
+        <div class="modal fade" id="scan_message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="width:70%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">职工信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工ID:</label></div>
+                            <div class="col-sm-8"><span id="staff_id"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工姓名:</label></div>
+                            <div class="col-sm-8"><span id="staff_name"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工性别:</label></div>
+                            <div class="col-sm-8"><span id="staff_gender"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工隶属部门:</label></div>
+                            <div class="col-sm-8"><span id="staff_department"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工职务:</label></div>
+                            <div class="col-sm-8"><span id="staff_position"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工人脸录入权限:</label></div>
+                            <div class="col-sm-8"><span id="staff_face_authority"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电子邮箱:</label></div>
+                            <div class="col-sm-8"><span id="staff_email"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工电话号码:</label></div>
+                            <div class="col-sm-8"><span id="staff_phone"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工考勤状态:</label></div>
+                            <div class="col-sm-8"><span id="staff_attendance_status"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工生日日期:</label></div>
+                            <div class="col-sm-8"><span id="staff_birthday"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工国籍:</label></div>
+                            <div class="col-sm-8"><span id="staff_country"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工民族:</label></div>
+                            <div class="col-sm-8"><span id="staff_nation"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工籍贯:</label></div>
+                            <div class="col-sm-8"><span id="staff_hometown"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工现住址:</label></div>
+                            <div class="col-sm-8"><span id="staff_address"></span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><label>职工备注信息:</label></div>
+                            <div class="col-sm-8"><span id="staff_remark"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 引入 SheetJS 库 -->
+        <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+       <script src="https://unpkg.com/file-saver/dist/FileSaver.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                    $('#export_excel').click(function () {
+                        // 获取表格数据
+                        var table = document.getElementById('attendance_table');
+                        var rows = table.rows;
+
+                        // 创建一个 Workbook 对象
+                        var workbook = XLSX.utils.book_new();
+                        var sheet = XLSX.utils.table_to_sheet(table);
+
+                        // 移除单元格的样式
+                        Object.keys(sheet).forEach(function (cell) {
+                            sheet[cell].s = undefined;
+                        });
+
+                        // 将数据添加到 Workbook 中
+                        XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
+
+
+                        // 将 Workbook 转换为二进制数据
+                        var wbout = XLSX.write(workbook, {bookType: 'xlsx', type: 'binary'});
+
+                        // 将二进制数据转换为 Blob 对象
+                        var blob = new Blob([s2ab(wbout)], {type: 'application/octet-stream'});
+
+                        // 创建临时下载链接
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        // 创建一个隐藏的 <a> 元素并设置下载链接
+                        var a = document.createElement('a');
+                        a.href = downloadUrl;
+                        a.download = 'attendance_table_' +  + '.xlsx';
+
+                        // 添加到文档中并触发点击事件
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // 清理临时下载链接和 <a> 元素
+                        URL.revokeObjectURL(downloadUrl);
+                        document.body.removeChild(a);
+                    });
+                });
+            // 字符串转换为 ArrayBuffer
+            function s2ab(s) {
+                var buf = new ArrayBuffer(s.length);
+                var view = new Uint8Array(buf);
+                for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+                return buf;
+            }
+
+
+
+
+            function search_attendance(staffId){
+                var attendance_state = document.getElementById('attendance_state');
+                var state = attendance_state.options[attendance_state.selectedIndex].value;
+
+                var start_date_all = document.getElementById('start-date-all');
+                var end_date_all = document.getElementById('end-date-all');
+                var beginDate = start_date_all.value;
+                var endDate = end_date_all.value
+
+                console.log(staffId + " " + state + " " + beginDate + " " + endDate)
+
+                fetch('{{ url_for('depAdmin_all.search_attendance', depAdmin_username=departmentAdmin.departmentAdminId) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'staffId' : staffId,
+                        'state' : state,
+                        'beginDate': beginDate,
+                        'endDate' : endDate
+                    })
+                }).then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        alert(data.status+" "+data.message)
+                        if (data.status == 'success'){
+                            const attendanceData = data.data;
+
+                            // 清空tbody子元素
+                            var tbody = document.getElementById('attendance_tbody');
+                            while(tbody.firstChild){
+                                tbody.removeChild(tbody.firstChild);
+                            }
+
+                            var html_child = ''
+
+
+                            attendanceData.forEach(attendance =>{
+                            var out_holiday_state;
+
+                            if (attendance.attendance_outState){
+                                out_holiday_state = "<span class='custom-badge status-blue'>当日出差</span>"
+                            }
+                            if (attendance.attendance_holidayState){
+                                out_holiday_state = '<span class="custom-badge status-blue" >当日休假</span>'
+                            }
+
+                            var attend_state;
+                            if (attendance.attendance_state === 0)
+                                attend_state = "<span class='custom-badge status-grey' >当日尚未出勤|(出差|休假)</span>";
+                            else if (attendance.attend_state === 1)
+                                    attend_state = "<span class='custom-badge status-green' >当日正常出勤|工作中</span>";
+                            else if (attendance.attend_state === 2)
+                                    attend_state = "<span class='custom-badge status-red' >当日迟到</span>"
+                            else if (attendance.attend_state === 3)
+                                    attend_state = "<span class='custom-badge status-red' >当日正常出勤|早退</span>"
+                            else if (attendance.attend_state === 4)
+                                    attend_state = "<span class='custom-badge status-orange' >当日正常出勤|临时出门</span>"
+                            else if (attendance.attend_state === 5)
+                                    attend_state = "<span class='custom-badge status-orange' >当日迟到|临时出门</span>"
+                            else if (attendance.attend_state === 6)
+                                    attend_state = "<span class='custom-badge status-green' >当日正常出勤|完成工作</span>"
+                            else if (attendance.attend_state === 7 )
+                                    attend_state="<span class='custom-badge status-red' >当日迟到|早退</span>"
+                            else if (attendance.attend_state === 8 )
+                                    attend_state="<span class='custom-badge status-red' >当日缺勤</span>"
+                            else if (attendance.attend_state === 9 )
+                                    attend_state="<span class='custom-badge status-red' >当日迟到|完成工作</span>"
+
+
+                            html_child = html_child +
+                                "<tr id = '" + attendance.attendanceId + "tr_new'>" +
+                                "<td data-toggle='modal' data-target='#scan_message'  id='" + attendance.staffId + "' name= '" + attendance.staffId + "ID" + "' onclick= 'openModal_scan_staff(this.id)'>"+
+                                    "<img width='28' height='28' style='border-radius: 50%'"+
+                                         "src='../../../../static/data/data_headimage_staff/"+ attendance.staffId + "/head.jpg'"+
+                                         "class='rounded-circle' >" +
+                                "<h2><a style='color: blue; margin-left: 4px;'> " + attendance.staffName +"</a></h2>"+
+                                "</td>"+
+                                "<td>" + attendance.staffId + "</td>" +
+                                "<td>" +
+                                    "<span class='custom-badge status-green' id='"+attendance.staffId+"department'>" + attendance.departmentName + "</span>" +
+                                "</td>" +
+                                "<td>"+
+                                    "<span class='custom-badge status-orange' id='" + attendance.staffId  + "position'>" + attendance.positionName + "</span>" +
+                                "</td>" +
+                                "<td>"+
+                                    attend_state +
+                                "</td>" +
+                                "<td>" +
+                                    out_holiday_state +
+                                "</td>" +
+                                "<td>"+
+                                    attendance.attendance_date +
+                                "</td>" +
+                                "<td>" +
+                                    attendance.attendance_editTime +
+                                "</td>" +
+                                "<td>" +
+                                    attendance.attendance_editId  +
+                                "</td>" +
+                                "</tr>"
+                                // 创建一个临时的 div 元素用于解析自定义的 tr 字符串
+                                //var tempDiv = document.createElement('div');
+                                //tempDiv.innerHTML = html_child;
+                                //var customTr = tempDiv.firstChild
+                        });
+
+                            tbody.innerHTML = html_child
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+
+
+
+            function staff_message_modal(options){
+                staff_id = document.getElementById('staff_id');
+                staff_id.textContent = options['staff_id'];
+
+                staff_name = document.getElementById('staff_name');
+                staff_name.textContent = options['staff_name'];
+
+                staff_gender = document.getElementById('staff_gender');
+                staff_gender.textContent = options['staff_gender'];
+
+                staff_department = document.getElementById('staff_department');
+                staff_department.textContent = options['staff_department'];
+
+                staff_position = document.getElementById('staff_position');
+                staff_position.textContent = options['staff_position'];
+
+                staff_face_status = document.getElementById('staff_face_status');
+                if (options['staff_face_status'] === true){
+                    staff_face_status.textContent = '已经录入';
+                }
+                else{
+                    staff_face_status.textContent = '尚未录入';
+                }
+
+                staff_face_authority = document.getElementById('staff_face_authority');
+                if (options['staff_face_authority'] === true){
+                    staff_face_authority.textContent = '允许录入';
+                }
+                else{
+                    staff_face_authority.textContent = '禁止录入';
+                }
+
+                staff_email = document.getElementById('staff_email');
+                staff_email.textContent = options['staff_email'];
+
+                staff_phone = document.getElementById('staff_phone');
+                staff_phone.textContent = options['staff_phone'];
+
+                staff_attendance_status = document.getElementById('staff_attendance_status');
+
+                attendnce_status = options['staff_attendance_status']
+                if (attendnce_status === 0)
+                    attendnce_status = '今日尚未出勤';
+                else if(attendnce_status === 10){
+                    attendnce_status = '今日出勤|工作中';
+                }
+                else if(attendnce_status === 11){
+                     attendnce_status = '今日出差';
+                }
+                else if(attendnce_status === 12){
+                     attendnce_status = '今日休假';
+                }
+                else if(attendnce_status === 13){
+                     attendnce_status = '加班出勤|工作中';
+                }
+                else if(attendnce_status === 14){
+                     attendnce_status = '今日出勤|完成工作';
+                }
+                else if(attendnce_status === 15){
+                     attendnce_status = '加班出勤|已完成工作';
+                }
+                else if(attendnce_status === 16){
+                     attendnce_status = '今日出勤|临时外出';
+                }
+                else if(attendnce_status === 20){
+                     attendnce_status = '今日缺勤';
+                }
+                else if(attendnce_status === 21){
+                     attendnce_status = '今日迟到|工作中';
+                }
+                else if(attendnce_status === 22){
+                     attendnce_status = '今日出勤|早退';
+                }
+                else if(attendnce_status === 23){
+                     attendnce_status = '今日迟到|未出勤';
+                }
+                else if(attendnce_status === 24){
+                     attendnce_status = '今日迟到|早退';
+                }
+                else if(attendnce_status === 25){
+                     attendnce_status = '今日迟到|临时外出';
+                }
+                else if(attendnce_status === 26){
+                     attendnce_status = '今日迟到|已完成工作';
+                }
+                else if(attendnce_status === 30){
+                     attendnce_status = '今日加班缺勤';
+                }
+                else if(attendnce_status === 31){
+                     attendnce_status = '今日加班迟到|工作中';
+                }
+                else if(attendnce_status === 32){
+                     attendnce_status = '今日加班迟到|未出勤';
+                }
+                staff_attendance_status.textContent = attendnce_status;
+
+
+                staff_birthday = document.getElementById('staff_birthday');
+                staff_birthday.textContent = options['staff_birthday'];
+
+                staff_country = document.getElementById('staff_country');
+                staff_country.textContent = options['staff_country'];
+
+                staff_nation = document.getElementById('staff_nation');
+                staff_nation.textContent = options['staff_nation'];
+
+                staff_hometown = document.getElementById('staff_hometown');
+                staff_hometown.textContent = options['staff_hometown'];
+
+                staff_address = document.getElementById('staff_address');
+                staff_address.textContent = options['staff_address'];
+
+                staff_remark = document.getElementById('staff_remark');
+                staff_remark.textContent = options['staff_remark'];
+            }
+            function openModal_scan_staff(staffId, staffName, departmentName){
+               // console.log('openModal_scan_staff')
+
+                fetch('{{ url_for('depAdmin_all.get_message', depAdmin_username=departmentAdmin.departmentAdminId) }}',{
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify({
+                        staff_Id : staffId
+                    })
+                }).then(response => response.json())
+                    .then(options => {
+                        //console.log(options);
+                        staff_message_modal(options);
+                    })
+                    .catch(error => console.error(error));
+            }
+        </script>
+{% endblock %}

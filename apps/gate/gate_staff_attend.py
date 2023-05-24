@@ -267,7 +267,7 @@ class VideoCamera(object):
                                         mm = self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n'
                                         print('人脸从1 到 1： ', mm)
                                         file.write(self.name_known_list[similar_person_num] + '  ' + now + '     已签到\n')
-                                        attend_records.append(mm)
+                                        # attend_records.append(mm)
                                         staffName = self.name_known_list[similar_person_num]
                                         global staffName_first
                                         # 将函数外部定义的staffName_first 设置为全局变量
@@ -335,7 +335,7 @@ class VideoCamera(object):
                                     print('人脸从0到1： ', mm)
                                     file.write(self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n')
                                     staffName = self.name_known_list[similar_person_num]
-                                    attend_records.append(mm)
+                                    # attend_records.append(mm)
                                     staffName_first = staffName
                                 else:
                                     pass

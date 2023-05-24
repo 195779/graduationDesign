@@ -1,5 +1,7 @@
 {% extends 'index/departmentAdmin_index.html' %}
 
+
+
 {% block left_content %}
     <nav class="navbar-default navbar-static-side" role="navigation">
             <div class="sidebar-collapse">
@@ -192,11 +194,11 @@
                                     <td>
                                             {% if staff_information_list[i].staffCheckState == 0 %}
                                                 <span class="custom-badge status-grey" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-headphones" ></i> 非工作时间</span>
+                                                class="glyphicon glyphicon-headphones" ></i> 今日尚未出勤</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 10 %}
                                                 <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-ok-sign"></i> 今日出勤</span>
+                                                class="glyphicon glyphicon-ok-sign"></i> 今日出勤（工作中）</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 11 %}
                                                 <span class="custom-badge status-orange" id="{{ staff_information_list[i].staffId }}State"><i
@@ -206,9 +208,21 @@
                                                 <span class="custom-badge status-blue" id="{{ staff_information_list[i].staffId }}State"><i
                                                 class="glyphicon glyphicon-shopping-cart"></i> 今日休假</span>
                                             {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 16 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日出勤（临时外出）</span>
+                                            {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 13 %}
                                                 <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-leaf"></i> 加班出勤</span>
+                                                class="glyphicon glyphicon-leaf"></i> 加班出勤（工作中）</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 14 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日出勤（已完成工作）</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 15 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 加班出勤（已完成工作）</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 20 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}"><i
@@ -216,23 +230,39 @@
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 21 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-hourglass"></i> 今日迟到</span>
+                                                class="glyphicon glyphicon-hourglass"></i> 今日迟到（工作中）</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 22 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-glass"></i> 今日早退</span>
+                                                class="glyphicon glyphicon-glass"></i> 今日出勤|早退</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 23 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-warning-sign"></i> 加班缺勤</span>
+                                                class="glyphicon glyphicon-warning-sign"></i> 今日迟到(尚未出勤)</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 24 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-bell"></i> 加班迟到</span>
+                                                class="glyphicon glyphicon-bell"></i> 今日迟到|早退</span>
                                             {% endif %}
                                             {% if staff_information_list[i].staffCheckState == 25 %}
                                                 <span class="custom-badge status-red" id="{{ staff_information_list[i].staffId }}State"><i
-                                                class="glyphicon glyphicon-cutlery"></i> 加班早退</span>
+                                                class="glyphicon glyphicon-cutlery"></i> 今日迟到（临时外出）</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 26 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日迟到（已完成工作）</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 30 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日加班缺勤</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 31 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日加班迟到（工作中）</span>
+                                            {% endif %}
+                                            {% if staff_information_list[i].staffCheckState == 32 %}
+                                                <span class="custom-badge status-green" id="{{ staff_information_list[i].staffId }}State"><i
+                                                class="glyphicon glyphicon-leaf"></i> 今日加班迟到（未出勤）</span>
                                             {% endif %}
                                     </td>
                                     <style>
@@ -279,20 +309,11 @@
                                         <!-- 下拉框 -->
                                         <div class="dropdown-content dropdown-menu dropdown-menu" style="min-width: 130px; max-width: 130px; margin-top: 5px">
 
-                                            <div class="dropdown-item" id="state_break" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-grey"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-headphones"></i> 非工作时间
-                                                </span>
-                                            </div>
-
-
                                             <div class="dropdown-item" id="today_work" name="{{ staff_information_list[i].staffId }}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
                                                 <span
                                                     class="custom-badge status-green"
                                                     style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-ok-sign"></i> 今日出勤
+                                                    class="glyphicon glyphicon-ok-sign"></i> 设为 今日出勤
                                                 </span>
                                             </div>
 
@@ -300,7 +321,7 @@
                                                 <span
                                                     class="custom-badge status-orange"
                                                     style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-globe"></i> 今日出差
+                                                    class="glyphicon glyphicon-globe"></i> 设为 今日出差
                                                 </span>
                                             </div>
 
@@ -308,68 +329,13 @@
                                                 <span
                                                     class="custom-badge status-blue"
                                                     style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-shopping-cart"></i> 今日休假
+                                                    class="glyphicon glyphicon-shopping-cart"></i> 设为 今日休假
                                                 </span>
                                             </div>
 
-                                            <div class="dropdown-item" id="add_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-green"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-leaf"></i> 加班出勤
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="today_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-remove-circle"></i> 今日缺勤
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="today_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-hourglass"></i> 今日迟到
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="today_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-glass"></i> 今日早退
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="add_not_work" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-warning-sign"></i> 加班缺勤
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="add_late" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-bell"></i> 加班迟到
-                                                </span>
-                                            </div>
-
-                                            <div class="dropdown-item" id="add_early" name="{{staff_information_list[i].staffId}}" style="margin-top: 5px; " onclick="setAttendance(this.id, event)">
-                                                <span
-                                                    class="custom-badge status-red"
-                                                    style="min-width: 110px; max-width: 110px;"><i
-                                                    class="glyphicon glyphicon-cutlery"></i> 加班早退
-                                                </span>
-                                            </div>
                                         </div>
                                     </td>
-                                    <td><a href="{{ url_for('depAdmin_all.staff_records',  depAdmin_username=departmentAdmin.departmentAdminId, staff_username=staff_information_list[i].staffId) }}" class="btn btn-primary float-right btn-rounded"   id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
+                                    <td><a href="{{ url_for('depAdmin_all.staff_records',  depAdmin_username=departmentAdmin.departmentAdminId, departmentId=dep.departmentId ,staff_username=staff_information_list[i].staffId) }}" class="btn btn-primary float-right btn-rounded"   id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
                                             class="glyphicon glyphicon-list"></i> <p>查看考勤记录</p></a></td>
                                     <td>
                                         <a id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_attend_add_single(this.id,this.name,'{{ dep.departmentName }}') " class="btn btn-primary float-right btn-rounded"  data-toggle="modal" data-target="#attend_add_staff_all_single"   style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
@@ -443,8 +409,10 @@
                                         const datepicker_start = document.getElementById("start-date-all");
                                         // 创建日期选择器
                                         $(datepicker_start).datepicker({
-                                            format: "yyyy-mm-dd",  // 设置日期格式
-                                            todayHighlight: true,  // 设置当天日期高亮显示
+                                            format: "yyyy-mm-dd",
+                                            // 设置日期格式
+                                            todayHighlight: true,
+                                            // 设置当天日期高亮显示
                                             autoclose: true       // 设置选择日期后自动关闭
                                         });
                                     </script>
@@ -458,7 +426,7 @@
                                 <div class="input-group date" id="end-date-all-picker">
                                     <input type="text" placeholder="选择考勤结束日期  年-月-日" class="form-control"
                                            id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
-                                           name="end-date-all" >
+                                           name="end-date-all" autocomplete="off" >
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -1276,10 +1244,10 @@
                         if (data.status === 'success') {
                             var selectPersonSpan = document.getElementById(staffId+"State");
                             var newSpan = document.createElement('span');
-                            newSpan.innerHTML = "<span " + data.message + "</span>";
-                            // console.log("<span " + data.message + "</span>")
+                            newSpan.innerHTML = "<span " + data.message_html + "</span>";
+                            console.log( data.message)
                             selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
-                            alert('考勤状态修改成功');
+                            alert(data.message);
                         } else {
                             alert('Error: ' + '未能修改考勤状态！！！' + staffId + " " +state + " " + data.message);
                         }

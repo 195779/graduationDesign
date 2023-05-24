@@ -88,11 +88,13 @@ def setAttendance(admin_username):
     if session.get(admin_username + 'admin_username') is not None:
         global  status
         global  message
+        global  message_html
         status = 'error'
         message = '！！! 不可修改 ！！！'
+        message_html = ''
         attendance_receive = request.json
         if len(attendance_receive) != 2:
-            result = {'status': 'error', 'message': '发送数据长度不等于2：有误'}
+            result = {'status': 'error', 'message': '发送数据长度不等于2：有误', 'message_html': message_html}
         else:
 
             staffId = attendance_receive[1]
@@ -112,7 +114,6 @@ def setAttendance(admin_username):
             work = Works.query.filter(staffId == Works.staffId).first()
             out = Outs.query.filter(Outs.staffId == staffId).first()
 
-
             # 先检测今日是否存在考勤记录： 检测attendance的记录是否存在
             if attendance is not None:
 
@@ -121,6 +122,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为：今日缺勤 | 要求修改为 今日出勤
                     if attendance.attendState == 8 and staff_information.staffCheckState == 20:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（已经完成工作）"
+                        message = '已经从 今日缺勤 修改为 今日出勤（已经完成工作）'
+                        status = 'success'
                         # 设置应签到/签退时间为今日考勤记录的起始/结束时间
                         attendance.attendTime = set.attendTime.time()
                         attendance.endTime = set.endTime.time()
@@ -168,6 +172,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为 今日迟到（工作中） | 要求修改为  今日出勤(工作中）
                     if attendance.attendState == 2 and staff_information.staffCheckState == 21:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（工作中）"
+                        message = '已经从 今日迟到（工作中） 修改为 今日出勤（工作中）'
+                        status = 'success'
                         # 修改考勤记录的状态为 1 正常出勤
                         attendance.attendState = 1
                         # 修改职工综合信息中的考勤状态为 正常出勤(工作中)
@@ -182,6 +189,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为 今日出勤|早退     |  要求修改为  今日出勤(已经完成工作)
                     if attendance.attendState == 3 and staff_information.staffCheckState == 22:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（已经完成工作）"
+                        message = '已经从 今日缺勤（早退） 修改为 今日出勤（已经完成工作）'
+                        status = 'success'
                         # 记录旧的早退的时间
                         old_endTime = attendance.endTime
                         # 设置应签退时间为今日考勤记录的结束时间
@@ -244,6 +254,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为 今日迟到|未出勤   |  要求修改为  今日出勤(工作中）
                     if attendance.attendState == 2 and staff_information.staffCheckState == 23:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（工作中）"
+                        message = '已经从 今日迟到（未出勤） 修改为 今日出勤（工作中）'
+                        status = 'success'
                         # 修改考勤记录的状态为 1 正常出勤
                         attendance.attendState = 1
                         # 修改职工综合信息中的考勤状态为 正常出勤(工作中)
@@ -258,6 +271,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为 今日迟到|临时外出 |  要求修改为   今日出勤(临时外出)
                     if attendance.attendState == 5 and staff_information.staffCheckState == 25:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（临时外出）"
+                        message = '已经从 今日迟到（临时外出） 修改为 今日出勤（临时外出）'
+                        status = 'success'
                         # 考勤记录的考勤状态改为 4 正常出勤|临时外出
                         attendance.attendState = 4
                         # 职工综合信息的考勤状态改为 16 今日出勤（临时外出）
@@ -271,7 +287,10 @@ def setAttendance(admin_username):
                         sum.lateFrequency = sum.lateFrequency - 1
 
                     # 今日迟到（已经完成工作）     |  要求修改为   今日出勤（已经完成工作）
-                    if attendance.attendState == 2 and staff_information.staffCheckState == 26:
+                    if attendance.attendState == 9 and staff_information.staffCheckState == 26:
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤（已经完成工作）"
+                        message = '已经从 今日迟到（已经完成工作） 修改为 今日出勤（已经完成工作）'
+                        status = 'success'
                         # 记录旧的迟到的签到时间
                         old_attendTime = attendance.attendTime
                         # 设置应签到时间为今日考勤记录的签到时间
@@ -334,6 +353,9 @@ def setAttendance(admin_username):
 
                     # 原本状态为 今日迟到|早退     |  要求修改为   今日出勤（已经完成工作）
                     if attendance.attendState == 7 and staff_information.staffCheckState == 24:
+                        message = '已经从 今日迟到（早退） 修改为 今日出勤（已经完成工作）'
+                        status = 'success'
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤(已经完成工作)"
                         # 记录旧的早退的时间
                         old_endTime = attendance.endTime
                         # 记录旧的迟到签到时间
@@ -402,42 +424,201 @@ def setAttendance(admin_username):
 
                     # 如果正确完成更新
                     db.session.commit()
-                    message = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出勤"
 
                 elif attendance_state == 'today_out':
                     # 如果工作时间不为空，则不足八小时的补足八小时，足够8小时的不处理
                     # 考勤记录的考勤记录状态归 0
                     # 对于 已经记录的 正常出勤/迟到/早退/缺勤 的记录 要消去
+                    if attendance.outState:
+                        message = '原本考勤状态即为出差状态 | 未做变动'
+                        status = 'error'
+                    elif attendance.holidayState:
+                        message = '原本考勤状态为休假状态 | 现修改为出差状态'
+                        status = 'success'
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出差"
+                        attendance.outState = False
+                        attendance.holidayState = True
+                        staff_information.staffCheckState = 11
+                        # 设置出差状态
+                        # 更新 考勤记录的修改时间/考勤记录的修改者ID
+                        attendance.editTime = current_datetime
+                        attendance.editId = admin_username
+                        # 休假次数 - 1
+                        sum.holidayFrequency = sum.holidayFrequency - 1
+                        # 出差次数 + 1
+                        sum.outFrequency = sum.outFrequency + 1
+                        # 将今天的工作时间存入本月工作时间记录
+                        float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                        # 转换为以小时为整数的浮点数
+                        float_time = round(float_time, 3)
+                        # 保留3位小数
+                        # 从年度总剩余休假时长中加上休假时长
+                        if holiday.holidayTime is None:
+                            holiday.holidayTime = 0 + float_time
+                        else:
+                            holiday.holidayTime = holiday.holidayTime + float_time
+                        # 给年度出差总时长加上出差时长
+                        if out.outTime is None:
+                            out.outTime = 0 + float_time
+                        else:
+                            out.outTime = out.outTime + float_time
 
+                    else:
+                        if attendance.attendState == 0 or attendance.attendState == 1 or attendance.attendState == 2 or  attendance.attendState == 4 or attendance.attendState == 5 or attendance.attendState == 8:
+                            attendance.holidayState = True
+                            attendance.attendState = 0
+                            staff_information.staffCheckState = 11
+                            # 更新 考勤记录的修改时间/考勤记录的修改者ID
+                            attendance.editTime = current_datetime
+                            attendance.editId = admin_username
+                            message = '现改为 出差状态'
+                            status = 'success'
+                            message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日出差"
+                            # 设置休假状态
+                            attendance.workTime = time(hour=8, minute=0, second=0)
+                            # 工作时长直接拉满
 
-                    staff_information.staffCheckState = 11
-                    # 其他表的更新操作
+                            # 将今天的工作时间存入本月工作时间记录
+                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                            # 转换为以小时为整数的浮点数
+                            float_time = round(float_time, 3)
+                            # 保留3位小数
+                            if sum.workSumTime is not None:
+                                sum.workSumTime = sum.workSumTime + float_time
+                            else:
+                                sum.workSumTime = float_time
+
+                            # 出差次数 + 1
+                            sum.outFrequency = sum.outFrequency + 1
+
+                            if attendance.attendState == 2 or attendance.attendState == 5:
+                                sum.lateFrequency = sum.lateFrequency - 1
+
+                            if attendance.attendState == 8:
+                                sum.absenceFrequency = sum.absenceFrequency - 1
+
+                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                            work = Works.query.filter(set.staffId == Works.staffId).first()
+                            if work.workTime is None:
+                                work.workTime = float_time
+                            else:
+                                work.workTime = work.workTime + float_time
+
+                            # 从年度总剩余休假时长中减去休假时长
+                            holiday = Holidays.query.filter(set.staffId == Holidays.staffId).first()
+                            if holiday.holidayTime is None:
+                                holiday.holidayTime = 0 - float_time
+                            else:
+                                holiday.holidayTime = holiday.holidayTime - float_time
+                            # 要注意系统管理员要加一条： 给每个新添加的用户设置本年度休假总时长
+                        else:
+                            message = '原本考勤状态已经完成签到/签退 | 不可再改为出差状态'
+                            status = 'error'
 
                     # 如果正确完成更新
                     db.session.commit()
-                    message = "class='custom-badge status-orange' id='" + staffId + "State'><i class='glyphicon glyphicon-globe' ></i> 今日出差"
 
                 elif attendance_state == 'today_holiday':
                     # 如果工作时间不为空，则不足八小时的补足八小时，足够8小时的不处理
                     # 考勤记录的考勤记录状态归 0
                     # 对于 已经记录的 正常出勤/迟到/早退/缺勤 的记录 要消去
 
-                    staff_information.staffCheckState = 12
-                    # 其他表的更新操作
+                    if attendance.holidayState:
+                        message = '原本考勤状态即为休假状态 | 未做变动'
+                        status = 'error'
+                    elif attendance.outState:
+                        message = '原本考勤状态为出差状态 | 现修改为休假状态'
+                        status = 'success'
+                        message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日休假"
+                        attendance.outState = False
+                        attendance.holidayState = True
+                        staff_information.staffCheckState = 12
+                        # 设置休假状态
+                        # 更新 考勤记录的修改时间/考勤记录的修改者ID
+                        attendance.editTime = current_datetime
+                        attendance.editId = admin_username
+                        # 休假次数 + 1
+                        sum.holidayFrequency = sum.holidayFrequency + 1
+                        # 出差次数 - 1
+                        sum.outFrequency = sum.outFrequency - 1
+                        # 将今天的工作时间存入本月工作时间记录
+                        float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                        # 转换为以小时为整数的浮点数
+                        float_time = round(float_time, 3)
+                        # 保留3位小数
+                        # 从年度总剩余休假时长中减去休假时长
+                        if holiday.holidayTime is None:
+                            holiday.holidayTime = 0 - float_time
+                        else:
+                            holiday.holidayTime = holiday.holidayTime - float_time
+                        # 给年度出差总时长减去出差时长
+                        if out.outTime is None:
+                            out.outTime = 0 - float_time
+                        else:
+                            out.outTime = out.outTime - float_time
+                    else:
+                        if attendance.attendState == 0 or attendance.attendState == 1 or attendance.attendState == 2 or attendance.attendState == 4 or attendance.attendState == 5 or attendance.attendState == 8:
+                            attendance.holidayState = True
+                            attendance.attendState = 0
+                            staff_information.staffCheckState = 12
+                            # 更新 考勤记录的修改时间/考勤记录的修改者ID
+                            attendance.editTime = current_datetime
+                            attendance.editId = admin_username
+                            message = '现改为 休假状态'
+                            status = 'success'
+                            message_html = "class='custom-badge status-green' id='" + staffId + "State'><i class='glyphicon glyphicon-ok-sign' ></i> 今日休假"
+                            # 设置休假状态
+                            attendance.workTime = time(hour=8, minute=0, second=0)
+                            # 工作时长直接拉满
+
+                            # 将今天的工作时间存入本月工作时间记录
+                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                            # 转换为以小时为整数的浮点数
+                            float_time = round(float_time, 3)
+                            # 保留3位小数
+                            if sum.workSumTime is not None:
+                                sum.workSumTime = sum.workSumTime + float_time
+                            else:
+                                sum.workSumTime = float_time
+
+                            # 休假次数 + 1
+                            sum.holidayFrequency = sum.holidayFrequency + 1
+
+                            if attendance.attendState == 2 or attendance.attendState == 5:
+                                sum.lateFrequency = sum.lateFrequency - 1
+
+                            if attendance.attendState == 8:
+                                sum.absenceFrequency = sum.absenceFrequency - 1
+
+                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                            work = Works.query.filter(set.staffId == Works.staffId).first()
+                            if work.workTime is None:
+                                work.workTime = float_time
+                            else:
+                                work.workTime = work.workTime + float_time
+
+                            # 从年度总剩余休假时长中减去休假时长
+                            holiday = Holidays.query.filter(set.staffId == Holidays.staffId).first()
+                            if holiday.holidayTime is None:
+                                holiday.holidayTime = 0 - float_time
+                            else:
+                                holiday.holidayTime = holiday.holidayTime - float_time
+                            # 要注意系统管理员要加一条： 给每个新添加的用户设置本年度休假总时长
+                        else:
+                            message = '原本考勤状态已经完成签到/签退 | 不可再改为休假状态'
+                            status = 'error'
 
                     # 如果正确完成更新
                     db.session.commit()
-                    message = "class='custom-badge status-blue' id='" + staffId + "State'><i class='glyphicon glyphicon-shopping-cart' ></i> 今日休假"
-
 
                 else:
                     status = 'error'
-                    message = '！！！不存在正确的attendance_state ！！！'
+                    message = '！！无法对当前的考勤状态进行修改！！'
             else:
                 status = 'error'
                 message = '不存在今日考勤记录：！今日非工作日！'
 
-            result = {'status': status , 'message': message}
+            result = {'status': status, 'message': message, 'message_html': message_html}
         return jsonify(result), 200
     else:
         return redirect(url_for('login.login'))
@@ -533,61 +714,65 @@ def add_staff(admin_username):
         employee_password = request.form['add_employee-password']
 
         # 职工ID、密码
-        staff = Staff()
-        staff_information = staffInformation()
-        staff.staffId = employee_id
-        staff.staffPassWord = employee_password
-        staff_information.staffId = employee_id
-
-        # 职工姓名
-        staff_information.staffName = employee_name
-
-        # 职工性别
-        if employee_gender == '0':
-            employee_gender = '男'
+        staff = Staff.query.filter(Staff.staffId == employee_id).first()
+        if staff is not None:
+            return jsonify({'status': 'error', 'message': '输入的职工ID已经存在，请重新输入'})
         else:
-            employee_gender = '女'
+            staff = Staff()
+            staff_information = staffInformation()
+            staff.staffId = employee_id
+            staff.staffPassWord = employee_password
+            staff_information.staffId = employee_id
 
-        staff_information.staffGender = employee_gender
+            # 职工姓名
+            staff_information.staffName = employee_name
 
-        # 职工职务
-        position = Position.query.filter(position_name == Position.positionName).first()
-        staff_information.staffPositionId = position.positionId
+            # 职工性别
+            if employee_gender == '0':
+                employee_gender = '男'
+            else:
+                employee_gender = '女'
 
-        # 隶属部门
-        department = Departments.query.filter(department_name == Departments.departmentName).first()
-        staff_information.staffDepartmentId = department.departmentId
+            staff_information.staffGender = employee_gender
 
-        # 初始化人脸字段为空
-        staff_face = faceValue()
-        staff_face.staffId = employee_id
+            # 职工职务
+            position = Position.query.filter(position_name == Position.positionName).first()
+            staff_information.staffPositionId = position.positionId
 
-        # 初始化考勤设置
-        staff_set = Set()
-        staff_set.staffId = employee_id
+            # 隶属部门
+            department = Departments.query.filter(department_name == Departments.departmentName).first()
+            staff_information.staffDepartmentId = department.departmentId
 
-        # 初始化工作状态
-        staff_works = Works()
-        staff_works.staffId = employee_id
+            # 初始化人脸字段为空
+            staff_face = faceValue()
+            staff_face.staffId = employee_id
 
-        # 初始化假期状态
-        staff_holidays = Holidays()
-        staff_holidays.staffId = employee_id
+            # 初始化考勤设置
+            staff_set = Set()
+            staff_set.staffId = employee_id
 
-        # 初始化加班状态
-        staff_adds = Adds()
-        staff_adds.staffId = employee_id
+            # 初始化工作状态
+            staff_works = Works()
+            staff_works.staffId = employee_id
 
-        # 初始化出差状态
-        staff_outs = Outs()
-        staff_outs.staffId = employee_id
+            # 初始化假期状态
+            staff_holidays = Holidays()
+            staff_holidays.staffId = employee_id
 
-        # 提交保存
-        db.session.add_all([staff, staff_information, staff_face, staff_set, staff_works,
-                            staff_holidays, staff_adds, staff_outs])
-        db.session.commit()
+            # 初始化加班状态
+            staff_adds = Adds()
+            staff_adds.staffId = employee_id
 
-        return jsonify({'message': '职工职务信息已保存'}), 200
+            # 初始化出差状态
+            staff_outs = Outs()
+            staff_outs.staffId = employee_id
+
+            # 提交保存
+            db.session.add_all([staff, staff_information, staff_face, staff_set, staff_works,
+                                staff_holidays, staff_adds, staff_outs])
+            db.session.commit()
+
+            return jsonify({'status': 'success', 'message': '职工职务信息已保存'}), 200
     else:
         return redirect(url_for('login.login'))
 

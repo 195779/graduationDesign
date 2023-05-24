@@ -464,7 +464,7 @@ def now_attend(gateAdmin_username):
                     # 在 4      time < end+1 则在应签退后一小时内回来了                / 签到状态改为 1   正常出勤      不做时长处理
                     # 在 4      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数里改为3   算作早退 这里给用户显示一下  定时函数已经以临时出门的离开时间为结束时间计算工时
                     # 在 2      time < end - 1  且已经签到                            / 签到状态改为 5   临时出门|迟到  记录离开时间
-                    # 在 2      end-1 < time < end+1   且已经签到                     / 签到状态保持 2   迟到           记录工作时长
+                    # 在 2      end-1 < time < end+1   且已经签到                     / 签到状态改为 9   迟到|完成工作           记录工作时长
                     # 在 2      time > end+1     且已签到                             / 签到状态在定时函数中保持2       迟到|未签退   定时函数按应签退时间计算工作时长
                     # 在 2      time > end+1     且未签到                             / 签到状态在定时函数中更改为8      按缺勤处理
                     # 在 5      time < end+1 在应签退后一小时内回来了                  / 签到状态改为 2   迟到            不做时长处理
@@ -625,7 +625,7 @@ def now_attend(gateAdmin_username):
 
                         attendance.endTime = current_datetime.time()
                         # 记录今天下班时间
-                        attendance.attendState = 2
+                        attendance.attendState = 9
                         attendance.endTime = current_datetime.time()
                         staff_information.staffCheckState = 26
 

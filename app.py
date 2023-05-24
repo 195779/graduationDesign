@@ -20,9 +20,10 @@ migrate = Migrate(app=app, db=db)
 manager.add_command('db', MigrateCommand)
 
 
-@scheduler.task('cron', id='attendance', hour=16, minute=17, second=25)
+@scheduler.task('cron', id='attendance', hour=15, minute=47, second=25)
 def execute_task():
     # 定时函数在每天的固定时间为每个职工用户生成一条等待填写数据的考勤记录
+    print("这是执行了几次？？？")
     with scheduler.app.app_context():
         set_all = Set.query.all()
         for set in set_all:
@@ -66,7 +67,7 @@ def execute_task():
                     sum.workSumTime = float_time
 
                 # 休假次数 + 1
-                sum.holidayFrequency = sum.holidayFreqency + 1
+                sum.holidayFrequency = sum.holidayFrequency + 1
 
                 # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
                 work = Works.query.filter(set.staffId == Works.staffId).first()
@@ -125,13 +126,11 @@ def execute_task():
             # 正常出勤
             elif set.endAttendDate >= current_date >= set.beginAttendDate:
                 attendance.workTime = time(hour=0, minute=0, second=0)
-                db.session.add(attendance)
                 # 工作时长置零  等待签到
 
                 # 设置签到/签退的函数， 在应签到时间后一个小时和应签退时间后一个小时 设置两个函数
                 attendTime = set.attendTime.time()
                 endTime = set.endTime.time()
-
                 dt_attend = datetime.combine(datetime.min, attendTime)
                 dt_plus_one_hour_attend = dt_attend + timedelta(hours=1)
                 result_attend_time = dt_plus_one_hour_attend.time()
@@ -161,8 +160,8 @@ def execute_task():
                             sum = Sum.query.filter(sum_Id == Sum.sumId).first()
                             # 迟到次数 + 1
                             sum.lateFrequency = sum.lateFrequency + 1
-
                             attendance.editTime = datetime.now()
+
                             db.session.commit()
 
                 dt_end = datetime.combine(datetime.min, endTime)
@@ -261,7 +260,7 @@ def execute_task():
 
                                 # 向staff_information中记录 考勤状态：
                                 staff_information.staffCheckState = 26
-                                attendance.attendState = 2
+                                attendance.attendState = 9
                                 # 迟到的次数已经在前一个定时函数中完成对sum中的迟到次数加一操作了
 
                                 # 将今天的工作时间存入本月工作时间记录
@@ -284,7 +283,7 @@ def execute_task():
 
                         # 正常签到之后，他又临时出门了 然后一直没回公司 按早退处理
                         elif attendance.attendState == 4:
-                            sum.earlyFreqency = sum.earlyFrequency + 1
+                            sum.earlyFrequency = sum.earlyFrequency + 1
                             # 统计早退次数 + 1
                             attendance.attendState = 3
                             # 考勤记录状态设置为 正常签到的早退
@@ -390,6 +389,7 @@ def execute_task():
         # 记录考勤记录的更新时间
         attendance.editTime = datetime.now()
         # 数据库保存attendance、aps
+        db.session.add(attendance)
         db.session.commit()
 
 
@@ -411,7 +411,7 @@ def has_executed_today(attendanceApsId):
 @manager.app.before_first_request
 def check_and_execute_task():
     current_time = datetime.now().time()
-    target_time = time(hour=13, minute=44)  # 固定时间为每天的 9:20 AM
+    target_time = time(hour=15, minute=46)  # 固定时间为每天的 9:20 AM
 
     if current_time > target_time:
         # 检查当天是否已经执行过定时函数
@@ -426,7 +426,7 @@ def check_and_execute_task():
         pass
 
 
-@scheduler.task('cron', id='sum', hour=14, minute=19)
+@scheduler.task('cron', id='sum', hour=15, minute=46)
 def check_and_sum_task():
     # 检测所有职工的本月的sum记录是否已经生成，如果没有则添加生成
     current_time = datetime.now()
@@ -450,6 +450,8 @@ def check_and_sum_task():
 
                 db.session.add(sum)
                 db.session.commit()
+            else:
+                print('本月的sum记录已经生成过了，无需再度生成')
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    DEBUG = True
+    DEBUG = False
     ENV = 'development'
     SECRET_KEY = os.urandom(32)
     SQLALCHEMY_DATABASE_URI = DB_URI

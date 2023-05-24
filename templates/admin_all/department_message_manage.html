@@ -633,10 +633,10 @@
                         if (data.status === 'success') {
                             var selectPersonSpan = document.getElementById(staffId+"State");
                             var newSpan = document.createElement('span');
-                            newSpan.innerHTML = "<span " + data.message + "</span>";
-                            // console.log("<span " + data.message + "</span>")
+                            newSpan.innerHTML = "<span " + data.message_html + "</span>";
+                            console.log( data.message)
                             selectPersonSpan.parentNode.replaceChild(newSpan, selectPersonSpan);
-                            alert('考勤状态修改成功');
+                            alert(data.message);
                         } else {
                             alert('Error: ' + '未能修改考勤状态！！！' + staffId + " " +state + " " + data.message);
                         }
@@ -937,8 +937,13 @@
                     body: add_formData_submit
                 }).then(response => response.json())
                     .then(data => {
-                        alert(data.message);
-                        location.reload();
+                        if (data.status === 'success'){
+                            alert(data.message);
+                            location.reload();
+                        }
+                        else{
+                            alert(data.message);
+                        }
                     })
                     .catch(error => console.error(error));
             }

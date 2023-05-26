@@ -3,6 +3,7 @@ from datetime import datetime, time
 
 from flask import render_template, request, session, redirect, url_for, abort, jsonify
 from flask import Blueprint
+from sqlalchemy import func, extract, Float, Integer
 
 from apps.Index.index_admin import login_required
 from apps.admin.__init__ import admin_bp
@@ -959,5 +960,77 @@ def get_message(admin_username):
         options = dict(zip(result_id,result_message))
 
         return jsonify(options)
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_month_data_a', methods=['POST','GET'], endpoint='get_month_data_a')
+def get_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+
+        attend_data = [0] * 12
+        absence_data = [0] * 12
+        holiday_data = [0] * 12
+        out_data = [0] * 12
+
+        attend = db.session.query(
+            func.substring(Sum.sumId, 6, 2).label('month'),
+            func.cast(func.sum(Sum.attendFrequency), Integer).label('total_frequency')
+        ).group_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).order_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).all()
+        absence = db.session.query(
+            func.substring(Sum.sumId, 6, 2).label('month'),
+            func.cast(func.sum(Sum.absenceFrequency), Integer).label('total_frequency')
+        ).group_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).order_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).all()
+        holiday = db.session.query(
+            func.substring(Sum.sumId, 6, 2).label('month'),
+            func.cast(func.sum(Sum.holidayFrequency), Integer).label('total_frequency')
+        ).group_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).order_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).all()
+        out = db.session.query(
+            func.substring(Sum.sumId, 6, 2).label('month'),
+            func.cast(func.sum(Sum.outFrequency), Integer).label('total_frequency')
+        ).group_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).order_by(
+            func.substring(Sum.sumId, 6, 2)
+        ).all()
+
+
+
+
+        for row in attend:
+            month = int(row.month)
+            total_frequency = int(row.total_frequency)
+            attend_data[month - 1] = total_frequency  # 由于索引从 0 开始，所以需要将月份减 1
+
+        for row in absence:
+            month = int(row.month)
+            total_frequency = int(row.total_frequency)
+            absence_data[month - 1] = total_frequency  # 由于索引从 0 开始，所以需要将月份减 1
+
+        for row in out:
+            month = int(row.month)
+            total_frequency = int(row.total_frequency)
+            out_data[month - 1] = total_frequency  # 由于索引从 0 开始，所以需要将月份减 1
+
+        for row in holiday:
+            month = int(row.month)
+            total_frequency = int(row.total_frequency)
+            holiday_data[month - 1] = total_frequency  # 由于索引从 0 开始，所以需要将月份减 1
+
+        status = 'success'
+        return jsonify({'status': status, 'attend_data':attend_data, 'absence_data':absence_data, 'out_data':out_data, 'holiday_data':holiday_data})
     else:
         return redirect(url_for('login.login'))

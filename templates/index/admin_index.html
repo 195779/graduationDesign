@@ -22,6 +22,8 @@
 
     <link href="../../static/css/animate.css" rel="stylesheet">
     <link href="../../static/css/style.css?v=2.2.0" rel="stylesheet">
+    <!-- ECharts -->
+    <script src="../../static/js/plugins/echarts/echarts-all.js"></script>
 </head>
 
 
@@ -275,7 +277,6 @@
                         </div>
                     </div>
                 </div>
-
     <div class="highlight">
         <div class="col-lg-6">
                         <div class="ibox float-e-margins">
@@ -302,6 +303,143 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-line-chart" ></div>
                             </div>
+                            <script>
+                                let attendance_month_data = []
+                                let absence_month_data = []
+                                let holiday_month_data = [];
+                                let out_month_data = [];
+                                let status = ['出勤', '缺勤', '请假', '出差']
+
+                                fetch('{{ url_for('admin_all.get_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data);
+                                        if (data.status == 'success'){
+                                            attendance_month_data = data.attend_data
+                                            absence_month_data = data.absence_data
+                                            out_month_data = data.out_data
+                                            holiday_month_data = data.holiday_data
+
+                                            var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+                                            var lineoption = {
+                                    title: {
+                                        text: '月度考勤人数(次)统计',
+                                        textStyle: {
+                                            fontSize: 16,
+                                            color: '#05b6fc'
+                                        }
+                                    },
+                                    toolbox: {
+                                        show: true,
+                                        orient: 'vertical',
+                                        x: 'right',
+                                        y: 'center',
+                                        feature: {
+                                            dataView: {show: true, readOnly: false},
+                                            restore: {show: true},
+                                            saveAsImage: {show: true}
+                                        }
+                                    },
+                                    tooltip: {
+                                        trigger: 'axis'
+                                    },
+                                    legend: {
+                                        data: status
+                                    },
+                                    calculable: true,
+                                    xAxis: [
+                                        {
+                                            type: 'category',
+                                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                                        }
+                                    ],
+                                    yAxis: [
+                                        {
+                                            type: 'value'
+                                        }
+                                    ],
+                                    series: [
+                                        {
+                                            name: '出勤',
+                                            type: 'line',
+                                            data: attendance_month_data,
+                                            markPoint: {
+                                                data: [
+                                                    {type: 'max', name: '最大值'},
+                                                    {type: 'min', name: '最小值'}
+                                                ]
+                                            },
+                                            markLine: {
+                                                data: [
+                                                    {type: 'average', name: '平均值'}
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            name: '缺勤',
+                                            type: 'line',
+                                            data: absence_month_data,
+                                            markPoint: {
+                                                data: [
+                                                    {type: 'max', name: '最大值'},
+                                                    {type: 'min', name: '最小值'}
+                                                ]
+                                            },
+                                            markLine: {
+                                                data: [
+                                                    {type: 'average', name: '平均值'}
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            name: '请假',
+                                            type: 'line',
+                                            data: holiday_month_data,
+                                            markPoint: {
+                                                data: [
+                                                    {type: 'max', name: '最大值'},
+                                                    {type: 'min', name: '最小值'}
+                                                ]
+                                            },
+                                            markLine: {
+                                                data: [
+                                                    {type: 'average', name: '平均值'}
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            name: '出差',
+                                            type: 'line',
+                                            data: out_month_data,
+                                            markPoint: {
+                                                data: [
+                                                    {type: 'max', name: '最大值'},
+                                                    {type: 'min', name: '最小值'}
+                                                ]
+                                            },
+                                            markLine: {
+                                                data: [
+                                                    {type: 'average', name: '平均值'}
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                };
+
+                                            lineChart.setOption(lineoption);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
                         </div>
                     </div>
         <div class="col-lg-6">
@@ -511,7 +649,6 @@
     <script src="../../static/js/plugins/pace/pace.min.js"></script>
 
     <!-- ECharts demo data -->
-    <script src="../../static/js/demo/echarts-demo.js"></script>
 <!--！！！-->
 
 

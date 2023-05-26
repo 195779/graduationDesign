@@ -79,39 +79,11 @@
                     <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span
                             class="nav-label">考勤记录统计</span><span
                             class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="toastr_notifications.html">总况</a>
-                        </li>
-                        <li><a href="nestable_list.html">出勤/工时统计</a>
-                        </li>
-                        <li><a href="timeline_v2.html">迟到统计</a>
-                        </li>
-                        <li><a href="forum_main.html">早退统计</a>
-                        </li>
-                        <li><a href="code_editor.html">休假统计</a>
-                        </li>
-                        <li><a href="modal_window.html">出差统计</a>
-                        </li>
-                        <li><a href="validation.html">加班统计</a>
-                        </li>
+                    <ul class="nav nav-second-level" id='department-list3'>
+
                     </ul>
                 </li>
 
-                <li>
-                    <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span
-                            class="nav-label">职工考勤设置</span><span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="graph_echarts.html">出勤设置</a>
-                        </li>
-                        <li><a href="graph_flot.html">休假设置</a>
-                        </li>
-                        <li><a href="graph_morris.html">出差设置</a>
-                        </li>
-                        <li><a href="graph_rickshaw.html">加班设置</a>
-                        </li>
-                    </ul>
-                </li>
                 <li>
                     <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
                             class="label label-warning pull-right">16</span></a>
@@ -119,17 +91,6 @@
                         <li><a href="mailbox.html">收件箱</a>
                         </li>
                         <li><a href="mail_compose.html">发布公告</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="admin_index.html#"><i class="fa fa-edit"></i> <span
-                            class="nav-label">人脸信息管理</span><span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="form_basic.html">人脸信息</a>
-                        </li>
-                        <li><a href="form_validate.html">？人脸签到？</a>
                         </li>
                     </ul>
                 </li>
@@ -288,7 +249,7 @@
                                 <th style="text-align: -webkit-center;">考勤状态</th>
                                 <th style="text-align: -webkit-center;">编辑考勤状态</th>
                                 <th style="text-align: -webkit-center;">编辑职务信息</th>
-                                <th style="text-align: -webkit-center">查看完整信息</th>
+                                <th style="text-align: -webkit-center">查看人脸信息</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -296,11 +257,11 @@
                                 <tr id="{{ staff_information_list[i].staffId }}">
                                     <td><input type="checkbox" name="person"
                                                value="{{ staff_information_list[i].staffId }}"></td>
-                                    <td>
+                                    <td data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ Dep.departmentName }}') ">
                                         <img width="28" height="28" style="border-radius: 50%"
                                              src="../../static/data/data_headimage_staff/{{ staff_information_list[i].staffId }}/head.jpg"
                                              class="rounded-circle" alt="">
-                                        <h2>{{ staff_information_list[i].staffName }}</h2>
+                                        <h2 style="color: blue">{{ staff_information_list[i].staffName }}</h2>
                                     </td>
                                     <td>{{ staff_information_list[i].staffId }}</td>
                                     <td>
@@ -467,8 +428,8 @@
                                     <td><a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#edit_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal(this.id,this.name,'{{ Dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
                                             class="glyphicon glyphicon-pencil"></i> <p>编辑职务信息</p></a></td>
                                     <td>
-                                        <a class="btn btn-primary float-right btn-rounded" data-toggle="modal" data-target="#scan_message"  id="{{ staff_information_list[i].staffId }}" name="{{ staff_information_list[i].staffName }}" onclick=" openModal_scan_staff(this.id,this.name,'{{ Dep.departmentName }}') " style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"><i
-                                            class="glyphicon glyphicon-zoom-in"></i> <p>查看完整信息</p></a></td>
+                                        <a class="btn btn-primary float-right btn-rounded"  onclick=" face_OpenModal( '{{ staff_information_list[i].staffId }}', '{{ staff_information_list[i].staffName }}')"   style="max-width: 130px; min-width: 130px; max-height: 40px; min-height: 40px"  data-toggle="modal" data-target="#face_modal"><i
+                                            class="glyphicon glyphicon-zoom-in"></i> <p>已录入的人脸图片</p></a></td>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -478,6 +439,118 @@
                 </div>
             </div>
         </div>
+
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="face_modal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="face-modal-content" id="face_modal_content">
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+
+    <script>
+        function face_OpenModal(staffId, staffName) {
+            var modal = document.getElementById("face_modal");
+
+            // 替换模态弹窗中的内容
+            var modalContent = document.getElementById("face_modal_content");
+            modalContent.innerHTML = "" +
+                "<div id='loadingPopup' style='display: none; margin-top: 15px'><span class='custom-badge status-orange' style='font-size: 10px' >" +
+                "<i class='glyphicon glyphicon-time'></i> 已经提交图片进行计算，正在加载中，请稍后...............</span></div>" +
+                "<div id='resultPopup' style='display: none; margin-top: 15px;'></div>" +
+                "<div class='modal-header'>" +
+                "    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>" +
+                "       &times;" +
+                "    </button>" +
+                "   <h4 class='modal-title' id='myModalLabel'>" +
+                "      职工照片录入详情" +
+                "   </h4>" +
+                "</div>" +
+                "<form  action='/staff/" + staffId + "/delete_faces'  " + "  method='post'>" +
+                " <div class='modal-body'>" +
+                "    职工&nbsp&nbsp编号:&nbsp&nbsp<input type='text' class='table-input'" +
+                "                                       name='staffId' id='staffId_modal'" +
+                "                                      value=" + staffId + " readonly>" +
+                " <br>" +
+                "  职工&nbsp&nbsp姓名:&nbsp&nbsp<input type='text' class='table-input' name='staffName'" +
+                "                                 value=" + staffName + " readonly>" +
+                " <br>" +
+                " 照&nbsp&nbsp片:" +
+                " <br>" +
+                "<br>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/1.jpg'" +
+                "style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/2.jpg'" +
+                "style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/3.jpg'" +
+                "    style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/4.jpg'" +
+                "    style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/5.jpg'" +
+                "    style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/6.jpg'" +
+                "    style='width:150px;height: 150px'>" +
+                "<img src='../../static/data/data_faces_from_camera/" + staffId +"/7.jpg'" +
+                "    style='width:150px;height: 150px'>" +
+                "</div>" +
+                " <div class='modal-footer'>" +
+                "    <button type='button' class='col-sm-2 btn btn-default' data-dismiss='modal'>关闭</button>" +
+                "    <button type='button' class='col-sm-2 btn btn-primary' onclick='post_again()'>重新提交</button>" +
+                "    <button type='submit' class='col-sm-2 btn btn-primary'>驳回重录</button>" +
+                " </div>" +
+                "</form>"
+
+
+        }
+        function post_again()
+        {
+            var staffId = document.getElementById('staffId_modal').value;
+            console.log(staffId + "dddd")
+            // 获取弹窗元素
+            const loadingPopup = document.getElementById("loadingPopup");
+            const resultPopup = document.getElementById("resultPopup");
+            // 显示正在加载弹窗
+            loadingPopup.style.display = "block";
+
+                // 发送POST请求到后端接口
+                fetch('/staff/'+ staffId +'/post_again', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(staffId)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理后端返回的JSON数据
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            // 关闭正在加载弹窗
+                            loadingPopup.style.display = "none";
+                            resultPopup.innerHTML = "<span class='custom-badge status-green' style='font-size: 10px' ><i class='glyphicon glyphicon-time'></i> 数据已经加载完成</span>"
+                            resultPopup.style.display = "block";
+                            // 两秒后隐藏结果弹窗
+                            setTimeout(() => {
+                                resultPopup.style.display = "none";
+                                location.reload();
+                            }, 3000);
+                        } else {
+                            alert('Error: ' + ' 返回数据错误/未能重新提交计算人脸信息！！！' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+        }
+    </script>
+
+
         <script>
             // 获取按钮和下拉框
             var dropdownBtns = document.querySelectorAll('.dropdown-btn');
@@ -512,6 +585,7 @@
                     success: function (data) {
                         $.each(data, function (key, value) {
                             $('#department-list2').append("<li><a href='/admin/"+ '{{ admin.adminId }}/' + key + "'>" + value + '</a></li>');
+                            $("#department-list3").append("<li><a href='/admin/" + '{{ admin.adminId }}/' + key + "/attendance_records'>" + value + '</a></li>');
                         });
                     }
                 });

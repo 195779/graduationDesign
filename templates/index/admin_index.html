@@ -79,21 +79,8 @@
                     <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span
                             class="nav-label">考勤记录统计</span><span
                             class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="toastr_notifications.html">总况</a>
-                        </li>
-                        <li><a href="nestable_list.html">出勤/工时统计</a>
-                        </li>
-                        <li><a href="timeline_v2.html">迟到统计</a>
-                        </li>
-                        <li><a href="forum_main.html">早退统计</a>
-                        </li>
-                        <li><a href="code_editor.html">休假统计</a>
-                        </li>
-                        <li><a href="modal_window.html">出差统计</a>
-                        </li>
-                        <li><a href="validation.html">加班统计</a>
-                        </li>
+                    <ul class="nav nav-second-level" id='department-list2'>
+
                     </ul>
                 </li>
 
@@ -493,6 +480,7 @@
             success: function(data) {
                 $.each(data, function(key, value) {
                     $('#department-list').append("<li><a href='/admin/" + '{{ admin.adminId }}/' + key +"'>"+value+'</a></li>');
+                    $("#department-list2").append("<li><a href='/admin/" + '{{ admin.adminId }}/' + key + "/attendance_records'>" + value + '</a></li>');
         });
     }
 });

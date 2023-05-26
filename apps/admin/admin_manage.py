@@ -12,7 +12,7 @@ from exts import db
 
 
 @login_required('<admin_username>')
-@admin_bp.route("/<admin_username>/<departmentId>", methods=['POST', "GET"])
+@admin_bp.route("/<admin_username>/<departmentId>", methods=['POST', "GET"], endpoint='staff_manage')
 def staff_manage(admin_username, departmentId):
     if session.get(admin_username+'admin_username') is not None:
             if len(departmentId) == 3:
@@ -39,6 +39,152 @@ def staff_manage(admin_username, departmentId):
                                        staff_position_list=staff_position_list)
             else:
                 return ''
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('<admin_username>')
+@admin_bp.route("/<admin_username>/<departmentId>/attendance_records", methods=['POST', "GET"], endpoint='admin_dep_attendance_records')
+def admin_dep_attendance_records(admin_username, departmentId):
+    if session.get(admin_username + 'admin_username') is not None:
+        if len(departmentId) == 3:
+            attendances = []
+            admin = Admin.query.filter(admin_username == Admin.adminId).first()
+            staff_informations = staffInformation.query.filter(staffInformation.staffDepartmentId == departmentId).all()
+            department = Departments.query.filter(Departments.departmentId == departmentId).first()
+            for staff_information in staff_informations:
+                attendances_staff = Attendance.query.filter(Attendance.staffId == staff_information.staffId).all()
+                for attendance_staff in attendances_staff:
+                    attendances.append(attendance_staff)
+
+            attendance_data = []
+            for attendance in attendances:
+                staffId = attendance.staffId
+                staff_information = staffInformation.query.filter(staffInformation.staffId == staffId).first()
+                position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
+
+                staffName = staff_information.staffName
+                attendanceId = attendance.attendanceId
+                departmentName = department.departmentName
+                positionName = position.positionName
+                attendance_state = attendance.attendState
+                attendance_date = attendance.attendDate
+                attendance_editId = attendance.editId
+                attendance_editTime = attendance.editTime
+                attendance_outState = attendance.outState
+                attendance_holidayState = attendance.holidayState
+                attendance_data.append({'staffId': staffId, 'staffName': staffName, 'departmentName': departmentName,
+                                        'attendanceId': attendanceId,
+                                        'positionName': positionName, 'attendance_state': attendance_state,
+                                        'attendance_date': attendance_date,
+                                        'attendance_editId': attendance_editId,
+                                        'attendance_editTime': attendance_editTime,
+                                        'attendance_outState': attendance_outState,
+                                        'attendance_holidayState': attendance_holidayState})
+
+            return render_template('admin_all/admin_dep_records.html',
+                                attendances=attendance_data, dep=department, admin=admin)
+        else:
+            return ''
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+
+@login_required('<admin_username>')
+@admin_bp.route('/<admin_username>/search_attendance', methods=['POST', 'GET'], endpoint='search_attendance')
+def search_attendance(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        message = request.json
+        departmentId = str(message.get('departmentId'))
+        departmentId = '00' + departmentId
+        state = message.get('state')
+        start_date = message.get('beginDate')
+        end_date = message.get('endDate')
+
+        admin = Admin.query.filter(admin_username == Admin.adminId).first()
+        staff_informations = staffInformation.query.filter(staffInformation.staffDepartmentId == departmentId).all()
+        department = Departments.query.filter(Departments.departmentId == departmentId).first()
+
+        attendance_data = []
+        attendances = []
+        message_return = ''
+
+        if start_date == '' or end_date == '':
+            message_return = message_return + '存在至少一个时间为空，当前查询结果未按时间检索'
+
+            if state == '*':
+                message_return = message_return + ' | 未选择检索类型，当前查询结果包含全部考勤状态'
+                for staff_information in staff_informations:
+                    attendances_staff = Attendance.query.filter(Attendance.staffId == staff_information.staffId).all()
+                    for attendance_staff in attendances_staff:
+                        attendances.append(attendance_staff)
+            else:
+
+                for staff_information in staff_informations:
+                    attendances_staff = Attendance.query.filter(Attendance.attendState==int(state),
+                                                                Attendance.staffId == staff_information.staffId).all()
+                    for attendance_staff in attendances_staff:
+                        attendances.append(attendance_staff)
+
+        else:
+            beginDate =datetime.strptime(start_date, '%Y-%m-%d')
+            endDate = datetime.strptime(end_date, '%Y-%m-%d')
+            if beginDate > endDate:
+                status = 'error'
+                message_return = message_return + '查询的起始日期大于结束时间： 错误！'
+                return jsonify({'status': status, 'message': message_return, 'data': attendance_data})
+            elif state == '*':
+
+                message_return = message_return + ' | 未选择检索类型，当前查询结果包含全部考勤状态'
+                for staff_information in staff_informations:
+                    attendances_staff = Attendance.query.filter(Attendance.attendDate.between(beginDate, endDate),
+                                                                Attendance.staffId == staff_information.staffId).all()
+                    for attendance_staff in attendances_staff:
+                        attendances.append(attendance_staff)
+
+            else:
+
+                for staff_information in staff_informations:
+                    attendances_staff = Attendance.query.filter(Attendance.attendDate.between(beginDate, endDate),
+                                                                Attendance.attendState==int(state),
+                                                                Attendance.staffId == staff_information.staffId).all()
+                    for attendance_staff in attendances_staff:
+                        attendances.append(attendance_staff)
+
+        if attendances:
+            status = 'success'
+            message_return = message_return +  '已经获取到指定条件下的考勤记录'
+            for attendance in attendances:
+                staffId = attendance.staffId
+                staff_information = staffInformation.query.filter(staffInformation.staffId == staffId).first()
+                position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
+
+
+                staffName = staff_information.staffName
+                attendanceId = attendance.attendanceId
+                departmentName = department.departmentName
+                positionName = position.positionName
+                attendance_state = attendance.attendState
+                attendance_date = attendance.attendDate
+                attendance_editId = attendance.editId
+                attendance_editTime = attendance.editTime
+                attendance_outState = attendance.outState
+                attendance_holidayState = attendance.holidayState
+                attendance_data.append({'staffId': staffId, 'staffName': staffName, 'departmentName': departmentName,
+                                        'attendanceId': attendanceId,
+                                        'positionName': positionName, 'attendance_state': attendance_state,
+                                        'attendance_date': attendance_date.strftime("%Y-%m-%d %H:%M:%S"),
+                                        'attendance_editId': attendance_editId,
+                                        'attendance_editTime': attendance_editTime.strftime("%Y-%m-%d %H:%M:%S"),
+                                        'attendance_outState': attendance_outState,
+                                        'attendance_holidayState': attendance_holidayState})
+        else:
+            status = 'nothing'
+            message_return = '按照当前条件查询下无考勤记录！'
+
+        return jsonify({'status': status, 'message': message_return, 'data': attendance_data})
     else:
         return redirect(url_for('login.login'))
 

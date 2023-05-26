@@ -720,17 +720,27 @@ def search_attendance(depAdmin_username):
             staff_information.staffDepartmentId == Departments.departmentId).first()
 
         attendance_data = []
+        message_return = ''
+        status = 'nothing'
 
         if start_date == '' or end_date == '':
-            attendances = Attendance.query.filter(Attendance.staffId == staffId).all()
+            message_return = message_return +  '存在至少一个时间为空，当前查询结果未按时间检索'
+
+            if state == '*':
+                message_return = message_return + ' | 未选择检索类型，当前查询结果包含全部考勤状态'
+                attendances = Attendance.query.filter(Attendance.staffId == staffId).all()
+            else:
+                attendances = Attendance.query.filter(Attendance.staffId == staffId,
+                                                  Attendance.attendState == int(state)).all()
         else:
             beginDate =datetime.strptime(start_date, '%Y-%m-%d')
             endDate = datetime.strptime(end_date, '%Y-%m-%d')
             if beginDate > endDate:
                 status = 'error'
-                message = '查询的起始日期大于结束时间： 错误！'
-                return jsonify({'status': status, 'message': message, 'data': attendance_data})
+                message_return = message_return + '查询的起始日期大于结束时间： 错误！'
+                return jsonify({'status': status, 'message': message_return, 'data': attendance_data})
             elif state == '*':
+                message_return = message_return + ' | 未选择检索类型，当前查询结果包含全部考勤状态'
                 attendances = Attendance.query.filter(Attendance.attendDate.between(beginDate, endDate),  Attendance.staffId == staffId).all()
             else:
                 attendances = Attendance.query.filter(Attendance.attendDate.between(beginDate, endDate),
@@ -738,7 +748,7 @@ def search_attendance(depAdmin_username):
 
         if attendances:
             status = 'success'
-            message = '已经获取到指定条件下的考勤记录'
+            message_return = message_return + ' | 已经获取到指定条件下的考勤记录'
             for attendance in attendances:
                 staffName = staff_information.staffName
                 attendanceId = attendance.attendanceId
@@ -760,9 +770,9 @@ def search_attendance(depAdmin_username):
                                         'attendance_holidayState': attendance_holidayState})
         else:
             status = 'nothing'
-            message = '按照当前条件查询下无考勤记录！'
+            message_return = '按照当前条件查询下无考勤记录！'
 
-        return jsonify({'status': status, 'message': message, 'data': attendance_data})
+        return jsonify({'status': status, 'message': message_return, 'data': attendance_data})
     else:
         return redirect(url_for('login.login'))
 

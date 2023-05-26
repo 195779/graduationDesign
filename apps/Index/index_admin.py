@@ -51,6 +51,8 @@ def get_departments(admin_username):
         return redirect(url_for('login.login'))
 
 
+
+
 @login_required('<admin_username>')
 @index_bp.route('/<admin_username>/departments2', endpoint='departments2')
 def get_departments2(admin_username):

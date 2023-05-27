@@ -304,6 +304,8 @@
                                 <div class="echarts" id="echarts-line-chart" ></div>
                             </div>
                             <script>
+
+                                // 全年各月的人数统计
                                 let attendance_month_data = []
                                 let absence_month_data = []
                                 let holiday_month_data = [];
@@ -467,6 +469,154 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-bar-chart" ></div>
                             </div>
+                            <script>
+                                // 本周各天的人数统计
+                                let attendance_week_data = []
+                                let absence_week_data = []
+                                let holiday_week_data = [];
+                                let out_week_data = [];
+
+                                fetch('{{ url_for('admin_all.get_week_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data);
+                                        if (data.status == 'success'){
+                                            attendance_week_data = data.attend_data
+                                            absence_week_data = data.absence_data
+                                            out_week_data = data.out_data
+                                            holiday_week_data = data.holiday_data
+                                            date_week_data = data.date_data
+
+                                            var barChart = echarts.init(document.getElementById("echarts-bar-chart"));
+                                            var baroption = {
+                                                title: {
+                                                    text: '本周考勤人数(次)统计',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'axis'
+                                                },
+                                                legend: {
+                                                    data: ['出勤', '缺勤', '请假', '出差']
+                                                },
+                                                calculable: true,
+                                                xAxis: [
+                                                    {
+                                                        type: 'category',
+                                                        boundaryGap: true,
+                                                        data: date_week_data
+                                                    }
+                                                ],
+                                                yAxis: [
+                                                    {
+                                                        type: 'value',
+                                                        axisLabel: {
+                                                            formatter: '{value} 人'
+                                                        }
+                                                    }
+                                                ],
+                                                series: [
+                                                    {
+                                                        name: '出勤',
+                                                        type: 'bar',
+                                                        barWidth: 10,//柱图宽度
+                                                        data: attendance_week_data,
+                                                        markPoint: {
+                                                            data: [
+                                                                {type: 'max', name: '最大值'},
+                                                                {type: 'min', name: '最小值'}
+                                                            ]
+                                                        },
+                                                        markLine: {
+                                                            data: [
+                                                                {type: 'average', name: '平均值'}
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        name: '缺勤',
+                                                        type: 'bar',
+                                                        barWidth: 10,//柱图宽度
+                                                        barGap: '0%',//柱图间距
+                                                        data: absence_week_data,
+                                                        markPoint: {
+                                                            data: [
+                                                                {type: 'max', name: '最大值'},
+                                                                {type: 'min', name: '最小值'}
+                                                            ]
+                                                        },
+                                                        markLine: {
+                                                            data: [
+                                                                {type: 'average', name: '平均值'}
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        name: '请假',
+                                                        type: 'bar',
+                                                        barWidth: 10,//柱图宽度
+                                                        barGap: '0%',//柱图间距
+                                                        data: holiday_week_data,
+                                                        markPoint: {
+                                                            data: [
+                                                                {type: 'max', name: '最大值'},
+                                                                {type: 'min', name: '最小值'}
+                                                            ]
+                                                        },
+                                                        markLine: {
+                                                            data: [
+                                                                {type: 'average', name: '平均值'}
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        name: '出差',
+                                                        type: 'bar',
+                                                        barWidth: 10,//柱图宽度
+                                                        barGap: '0%',//柱图间距
+                                                        data: out_week_data,
+                                                        markPoint: {
+                                                            data: [
+                                                                {type: 'max', name: '最大值'},
+                                                                {type: 'min', name: '最小值'}
+                                                            ]
+                                                        },
+                                                        markLine: {
+                                                            data: [
+                                                                {type: 'average', name: '平均值'}
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            };
+                                            barChart.setOption(baroption);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
                         </div>
                     </div>
     </div>
@@ -496,6 +646,83 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-pie-chart"></div>
                             </div>
+                            <script>
+                                // 本周各天的人数统计
+                                let department_data = []
+                                let absence_department_data = []
+
+
+                                fetch('{{ url_for('admin_all.get_absence_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data);
+                                        var item;
+                                        if (data.status == 'success') {
+                                            department_data = data.department_data
+                                            absence_department_data = data.absence_data
+
+
+                                            var pieChart = echarts.init(document.getElementById("echarts-pie-chart"));
+                                            var pieoption = {
+                                                title: {
+                                                    text: '各部门缺勤人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: absence_department_data[i], name: department_data[i]}
+                                                pieoption.series[0].data.push(item)
+                                            }
+                                            pieChart.setOption(pieoption);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+
+                            </script>
                         </div>
                     </div>
         <div class="col-lg-6">

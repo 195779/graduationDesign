@@ -1,9 +1,9 @@
 import os
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 from flask import render_template, request, session, redirect, url_for, abort, jsonify
 from flask import Blueprint
-from sqlalchemy import func, extract, Float, Integer
+from sqlalchemy import func, extract, Float, Integer, case
 
 from apps.Index.index_admin import login_required
 from apps.admin.__init__ import admin_bp
@@ -15,37 +15,38 @@ from exts import db
 @login_required('<admin_username>')
 @admin_bp.route("/<admin_username>/<departmentId>", methods=['POST', "GET"], endpoint='staff_manage')
 def staff_manage(admin_username, departmentId):
-    if session.get(admin_username+'admin_username') is not None:
-            if len(departmentId) == 3:
-                adminId = admin_username
-                admin = Admin.query.filter(adminId == Admin.adminId).first()
-                department = Departments.query.filter(departmentId == Departments.departmentId).first()
+    if session.get(admin_username + 'admin_username') is not None:
+        if len(departmentId) == 3:
+            adminId = admin_username
+            admin = Admin.query.filter(adminId == Admin.adminId).first()
+            department = Departments.query.filter(departmentId == Departments.departmentId).first()
 
-                staffId_list = []
-                staff_list = []
-                staff_position_list = []
-                staff_information_list = staffInformation.query.filter(
-                    staffInformation.staffDepartmentId == departmentId).all()
-                for staff_information in staff_information_list:
-                    staffId_list.append(staff_information.staffId)
+            staffId_list = []
+            staff_list = []
+            staff_position_list = []
+            staff_information_list = staffInformation.query.filter(
+                staffInformation.staffDepartmentId == departmentId).all()
+            for staff_information in staff_information_list:
+                staffId_list.append(staff_information.staffId)
 
-                    staff = Staff.query.filter(Staff.staffId == staff_information.staffId)
-                    staff_list.append(staff)
+                staff = Staff.query.filter(Staff.staffId == staff_information.staffId)
+                staff_list.append(staff)
 
-                    staff_position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
-                    staff_position_list.append(staff_position)
+                staff_position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
+                staff_position_list.append(staff_position)
 
-                return render_template('admin_all/department_message_manage.html', Dep=department, admin=admin,
-                                       staff_list=staff_list, staff_information_list=staff_information_list,
-                                       staff_position_list=staff_position_list)
-            else:
-                return ''
+            return render_template('admin_all/department_message_manage.html', Dep=department, admin=admin,
+                                   staff_list=staff_list, staff_information_list=staff_information_list,
+                                   staff_position_list=staff_position_list)
+        else:
+            return ''
     else:
         return redirect(url_for('login.login'))
 
 
 @login_required('<admin_username>')
-@admin_bp.route("/<admin_username>/<departmentId>/attendance_records", methods=['POST', "GET"], endpoint='admin_dep_attendance_records')
+@admin_bp.route("/<admin_username>/<departmentId>/attendance_records", methods=['POST', "GET"],
+                endpoint='admin_dep_attendance_records')
 def admin_dep_attendance_records(admin_username, departmentId):
     if session.get(admin_username + 'admin_username') is not None:
         if len(departmentId) == 3:
@@ -84,13 +85,11 @@ def admin_dep_attendance_records(admin_username, departmentId):
                                         'attendance_holidayState': attendance_holidayState})
 
             return render_template('admin_all/admin_dep_records.html',
-                                attendances=attendance_data, dep=department, admin=admin)
+                                   attendances=attendance_data, dep=department, admin=admin)
         else:
             return ''
     else:
         return redirect(url_for('login.login'))
-
-
 
 
 @login_required('<admin_username>')
@@ -124,13 +123,13 @@ def search_attendance(admin_username):
             else:
 
                 for staff_information in staff_informations:
-                    attendances_staff = Attendance.query.filter(Attendance.attendState==int(state),
+                    attendances_staff = Attendance.query.filter(Attendance.attendState == int(state),
                                                                 Attendance.staffId == staff_information.staffId).all()
                     for attendance_staff in attendances_staff:
                         attendances.append(attendance_staff)
 
         else:
-            beginDate =datetime.strptime(start_date, '%Y-%m-%d')
+            beginDate = datetime.strptime(start_date, '%Y-%m-%d')
             endDate = datetime.strptime(end_date, '%Y-%m-%d')
             if beginDate > endDate:
                 status = 'error'
@@ -149,19 +148,18 @@ def search_attendance(admin_username):
 
                 for staff_information in staff_informations:
                     attendances_staff = Attendance.query.filter(Attendance.attendDate.between(beginDate, endDate),
-                                                                Attendance.attendState==int(state),
+                                                                Attendance.attendState == int(state),
                                                                 Attendance.staffId == staff_information.staffId).all()
                     for attendance_staff in attendances_staff:
                         attendances.append(attendance_staff)
 
         if attendances:
             status = 'success'
-            message_return = message_return +  '已经获取到指定条件下的考勤记录'
+            message_return = message_return + '已经获取到指定条件下的考勤记录'
             for attendance in attendances:
                 staffId = attendance.staffId
                 staff_information = staffInformation.query.filter(staffInformation.staffId == staffId).first()
                 position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
-
 
                 staffName = staff_information.staffName
                 attendanceId = attendance.attendanceId
@@ -209,6 +207,7 @@ def openFaceState(admin_username):
     else:
         return redirect(url_for('login.login'))
 
+
 @login_required('<admin_username>')
 @admin_bp.route('/<admin_username>/closeFaceState', methods=['POST'], endpoint='closeFaceState')
 def closeFaceState(admin_username):
@@ -233,9 +232,9 @@ def closeFaceState(admin_username):
 @admin_bp.route('/<admin_username>/setAttendance', methods=['POST'], endpoint='setAttendance')
 def setAttendance(admin_username):
     if session.get(admin_username + 'admin_username') is not None:
-        global  status
-        global  message
-        global  message_html
+        global status
+        global message
+        global message_html
         status = 'error'
         message = '！！! 不可修改 ！！！'
         message_html = ''
@@ -506,7 +505,7 @@ def setAttendance(admin_username):
                         # 记录旧的早退的时间
                         old_endTime = attendance.endTime
                         # 记录旧的迟到签到时间
-                        old_attendTime  = attendance.attendTime
+                        old_attendTime = attendance.attendTime
                         # 设置应签退/签到时间为今日考勤记录的签到/签退时间
                         attendance.endTime = set.endTime.time()
                         attendance.attendTime = set.attendTime.time()
@@ -519,7 +518,7 @@ def setAttendance(admin_username):
                         dt2 = datetime.combine(current_date, old_endTime)
                         dt3 = datetime.combine(current_date, old_attendTime)
                         dt4 = datetime.combine(current_date, attendance.attendTime)
-                        new_part_time_diff = (dt3-dt4) + (dt1-dt2)
+                        new_part_time_diff = (dt3 - dt4) + (dt1 - dt2)
                         new_time_diff = dt1 - dt4
 
                         # 获取总秒数（新增部分）
@@ -611,7 +610,7 @@ def setAttendance(admin_username):
                             out.outTime = out.outTime + float_time
 
                     else:
-                        if attendance.attendState == 0 or attendance.attendState == 1 or attendance.attendState == 2 or  attendance.attendState == 4 or attendance.attendState == 5 or attendance.attendState == 8:
+                        if attendance.attendState == 0 or attendance.attendState == 1 or attendance.attendState == 2 or attendance.attendState == 4 or attendance.attendState == 5 or attendance.attendState == 8:
                             attendance.holidayState = True
                             attendance.attendState = 0
                             staff_information.staffCheckState = 11
@@ -841,7 +840,8 @@ def getPositions(admin_username):
         positions = Position.query.all()
         position_results = []
         for position in positions:
-            position_results.append(position.positionName + "," + position.positionId + "," + str(position.positionLevel))
+            position_results.append(
+                position.positionName + "," + position.positionId + "," + str(position.positionLevel))
 
         options = position_results
         return jsonify(options)
@@ -930,9 +930,10 @@ def get_message(admin_username):
     if session.get(admin_username + 'admin_username') is not None:
         data = request.get_json()
         staffId = data.get('staff_Id')
-        result_id = ['staff_id', 'staff_name', 'staff_gender', 'staff_department', 'staff_position', 'staff_face_status',
-                    'staff_face_authority', 'staff_email', 'staff_phone', 'staff_attendance_status', 'staff_birthday',
-                    'staff_country', 'staff_nation', 'staff_hometown', 'staff_address', 'staff_remark']
+        result_id = ['staff_id', 'staff_name', 'staff_gender', 'staff_department', 'staff_position',
+                     'staff_face_status',
+                     'staff_face_authority', 'staff_email', 'staff_phone', 'staff_attendance_status', 'staff_birthday',
+                     'staff_country', 'staff_nation', 'staff_hometown', 'staff_address', 'staff_remark']
         staff_information = staffInformation.query.filter(staffId == staffInformation.staffId).first()
         position = Position.query.filter(staff_information.staffPositionId == Position.positionId).first()
         department = Departments.query.filter(staff_information.staffDepartmentId == Departments.departmentId).first()
@@ -954,10 +955,10 @@ def get_message(admin_username):
         staff_address = staff_information.staffAddress
         staff_remark = staff_information.staff_Remark
         result_message = [staff_id, staff_name, staff_gender, staff_department, staff_position, staff_face_status,
-                        staff_face_authority, staff_email, staff_phone, staff_attendance_status, staff_birthday,
-                        staff_country, staff_nation, staff_hometown, staff_address, staff_remark]
+                          staff_face_authority, staff_email, staff_phone, staff_attendance_status, staff_birthday,
+                          staff_country, staff_nation, staff_hometown, staff_address, staff_remark]
 
-        options = dict(zip(result_id,result_message))
+        options = dict(zip(result_id, result_message))
 
         return jsonify(options)
     else:
@@ -965,7 +966,7 @@ def get_message(admin_username):
 
 
 @login_required('admin_username')
-@admin_bp.route('<admin_username>/get_month_data_a', methods=['POST','GET'], endpoint='get_month_data_a')
+@admin_bp.route('<admin_username>/get_month_data_a', methods=['POST', 'GET'], endpoint='get_month_data_a')
 def get_month_data_a(admin_username):
     if session.get(admin_username + 'admin_username') is not None:
 
@@ -1007,9 +1008,6 @@ def get_month_data_a(admin_username):
             func.substring(Sum.sumId, 6, 2)
         ).all()
 
-
-
-
         for row in attend:
             month = int(row.month)
             total_frequency = int(row.total_frequency)
@@ -1031,6 +1029,112 @@ def get_month_data_a(admin_username):
             holiday_data[month - 1] = total_frequency  # 由于索引从 0 开始，所以需要将月份减 1
 
         status = 'success'
-        return jsonify({'status': status, 'attend_data':attend_data, 'absence_data':absence_data, 'out_data':out_data, 'holiday_data':holiday_data})
+        return jsonify(
+            {'status': status, 'attend_data': attend_data, 'absence_data': absence_data, 'out_data': out_data,
+             'holiday_data': holiday_data})
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_week_data_a', methods=['POST', 'GET'], endpoint='get_week_data_a')
+def get_week_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+
+        attend_data = [0] * 7
+        absence_data = [0] * 7
+        holiday_data = [0] * 7
+        out_data = [0] * 7
+
+        # 获取当前日期
+        today = datetime.now().date() + timedelta(days=1)
+        # 计算一周前的日期
+        week_ago = today - timedelta(days=7)
+        # 初始化日期数据列表
+        date_data = []
+        # 遍历日期范围
+        current_date = week_ago
+        while current_date < today:
+            # 提取月份和日期，并连接成字符串形式
+            formatted_date = current_date.strftime("%m-%d")
+            # 将字符串形式的日期添加到列表中
+            date_data.append(formatted_date)
+            # 增加一天，继续下一个日期
+            current_date += timedelta(days=1)
+
+        attend_absence_query = db.session.query(
+            func.date(Attendance.attendDate).label('date'),
+            func.sum(case([(Attendance.attendState == 6, Attendance.attendState)], else_=0)
+                     ).label('attend_sum'),
+            func.sum(case([(Attendance.attendState == 8, Attendance.attendState)], else_=0)
+                     ).label('absence_sum'),
+            func.sum(func.cast(Attendance.outState, Integer)).label('out_sum'),
+            func.sum(func.cast(Attendance.holidayState, Integer)).label('holiday_sum')
+        ).filter(
+            Attendance.attendDate >= week_ago,
+            Attendance.attendDate <= today
+        ).group_by(
+            func.date(Attendance.attendDate)
+        ).all()
+
+        for row in attend_absence_query:
+            date_index = (row.date - week_ago).days
+            attend_data[date_index] = int(row.attend_sum) // 6
+            absence_data[date_index] = int(row.absence_sum) // 8
+            out_data[date_index] = int(row.out_sum)
+            holiday_data[date_index] = int(row.holiday_sum)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'attend_data': attend_data, 'absence_data': absence_data, 'out_data': out_data,
+             'holiday_data': holiday_data, 'date_data': date_data})
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_absence_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_absence_month_data_a')
+def get_absence_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        absence_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.holidayFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in absence_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'absence_data': new_value_sorted})
     else:
         return redirect(url_for('login.login'))

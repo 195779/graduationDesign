@@ -87,38 +87,12 @@
                 </li>
 
                 <li>
-                    <a href="admin_index.html#"><i class="fa fa-bar-chart-o"></i> <span
-                            class="nav-label">职工考勤设置</span><span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="graph_echarts.html">出勤设置</a>
-                        </li>
-                        <li><a href="graph_flot.html">休假设置</a>
-                        </li>
-                        <li><a href="graph_morris.html">出差设置</a>
-                        </li>
-                        <li><a href="graph_rickshaw.html">加班设置</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
                     <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
                             class="label label-warning pull-right">16</span></a>
                     <ul class="nav nav-second-level">
                         <li><a href="mailbox.html">收件箱</a>
                         </li>
                         <li><a href="mail_compose.html">发布公告</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="admin_index.html#"><i class="fa fa-edit"></i> <span
-                            class="nav-label">人脸信息管理</span><span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="form_basic.html">人脸信息</a>
-                        </li>
-                        <li><a href="form_validate.html">？人脸签到？</a>
                         </li>
                     </ul>
                 </li>
@@ -244,7 +218,7 @@
                         <div class="dash-widget">
 							<span class="dash-widget-bg1"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
 							<div class="dash-widget-info text-right">
-								<h3>28</h3>
+								<h3 id="staff_number">28</h3>
 								<span class="widget-title1">职工总数 <i class="fa fa-check" aria-hidden="true"></i></span>
 							</div>
                         </div>
@@ -253,7 +227,7 @@
                         <div class="dash-widget">
                             <span class="dash-widget-bg2"><i class="glyphicon glyphicon-check"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>22</h3>
+                                <h3 id="staff_attend">22</h3>
                                 <span class="widget-title2">今天出勤人数<i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
@@ -262,8 +236,8 @@
                         <div class="dash-widget">
                             <span class="dash-widget-bg3"><i class="glyphicon glyphicon-ban-circle" aria-hidden="true"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>4</h3>
-                                <span class="widget-title3">今天缺勤人数<i class="fa fa-check" aria-hidden="true"></i></span>
+                                <h3 id="staff_absence">4</h3>
+                                <span class="widget-title3">今天缺勤/迟到/早退人数<i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
                     </div>
@@ -271,12 +245,40 @@
                         <div class="dash-widget">
                             <span class="dash-widget-bg4"><i class="glyphicon glyphicon-plane" aria-hidden="true"></i></span>
                             <div class="dash-widget-info text-right">
-                                <h3>2</h3>
+                                <h3 id="staff_out_holiday">2</h3>
                                 <span class="widget-title4">今天出差/请假人数<i class="fa fa-check" aria-hidden="true"></i></span>
                             </div>
                         </div>
                     </div>
                 </div>
+                <script>
+                    fetch('{{ url_for('admin_all.get_message_today_staff', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data);
+                                        if (data.status === 'success') {
+                                            var staff_number = document.getElementById('staff_number');
+                                            var staff_absence = document.getElementById('staff_absence');
+                                            var staff_attend = document.getElementById('staff_attend');
+                                            var staff_out_holiday = document.getElementById('staff_out_holiday');
+
+                                            staff_number.textContent = data.staff_number;
+                                            staff_absence.textContent = data.staff_absence;
+                                            staff_attend.textContent = data.staff_attend;
+                                            staff_out_holiday.textContent = data.staff_out_holiday;
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                </script>
     <div class="highlight">
         <div class="col-lg-6">
                         <div class="ibox float-e-margins">
@@ -322,7 +324,7 @@
                                     .then(data => {
                                         // 在这里处理返回的数据
                                         console.log(data);
-                                        if (data.status == 'success'){
+                                        if (data.status === 'success'){
                                             attendance_month_data = data.attend_data
                                             absence_month_data = data.absence_data
                                             out_month_data = data.out_data
@@ -486,7 +488,7 @@
                                     .then(data => {
                                         // 在这里处理返回的数据
                                         console.log(data);
-                                        if (data.status == 'success'){
+                                        if (data.status === 'success'){
                                             attendance_week_data = data.attend_data
                                             absence_week_data = data.absence_data
                                             out_week_data = data.out_data
@@ -496,7 +498,7 @@
                                             var barChart = echarts.init(document.getElementById("echarts-bar-chart"));
                                             var baroption = {
                                                 title: {
-                                                    text: '本周考勤人数(次)统计',
+                                                    text: '近七天考勤人数(次)统计',
                                                     textStyle: {
                                                         fontSize: 16,
                                                         color: '#05b6fc'
@@ -647,8 +649,7 @@
                                 <div class="echarts" id="echarts-pie-chart"></div>
                             </div>
                             <script>
-                                // 本周各天的人数统计
-                                let department_data = []
+                                var department_data = []
                                 let absence_department_data = []
 
 
@@ -663,7 +664,7 @@
                                         // 在这里处理返回的数据
                                         console.log(data);
                                         var item;
-                                        if (data.status == 'success') {
+                                        if (data.status === 'success') {
                                             department_data = data.department_data
                                             absence_department_data = data.absence_data
 
@@ -750,10 +751,84 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-pie2-chart"></div>
                             </div>
+                            <script>
+                                var department_data = []
+                                let holiday_department_data = []
+                                console.log("dddddddddddddddddd");
+                                fetch('{{ url_for('admin_all.get_holiday_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data + "tttttttttttt");
+                                        var item;
+                                        if (data.status === 'success') {
+                                            department_data = data.department_data
+                                            holiday_department_data = data.holiday_data
+
+                                            var pieChart2 = echarts.init(document.getElementById("echarts-pie2-chart"));
+                                            var pieoption2 = {
+                                                title: {
+                                                    text: '各部门请假人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: holiday_department_data[i], name: department_data[i]}
+                                                pieoption2.series[0].data.push(item)
+                                            }
+                                            pieChart2.setOption(pieoption2);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+
+                            </script>
                         </div>
                     </div>
         <div class="col-lg-6">
-                        <div class="ibox float-e-margins">
+            <div class="ibox float-e-margins">
                             <div class="ibox-title">
                                 <h5>企业考勤管理系统</h5>
                                 <div class="ibox-tools">
@@ -777,10 +852,84 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-pie3-chart"></div>
                             </div>
+                            <script>
+
+                                var department_data = []
+                                let out_department_data = []
+                                console.log("dddddddddddddddddd");
+                                fetch('{{ url_for('admin_all.get_out_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data + "tttttttttttt");
+                                        var item;
+                                        if (data.status === 'success') {
+                                            department_data = data.department_data
+                                            out_department_data = data.out_data
+
+                                            var pieChart3 = echarts.init(document.getElementById("echarts-pie3-chart"));
+                                            var pieoption3 = {
+                                                title: {
+                                                    text: '各部门出差人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: out_department_data[i], name: department_data[i]}
+                                                pieoption3.series[0].data.push(item)
+                                            }
+                                            pieChart3.setOption(pieoption3);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
                         </div>
-                    </div>
+        </div>
         <div class="col-lg-6">
-                        <div class="ibox float-e-margins">
+            <div class="ibox float-e-margins">
                             <div class="ibox-title">
                                 <h5>企业考勤管理系统</h5>
                                 <div class="ibox-tools">
@@ -804,10 +953,83 @@
                             <div class="ibox-content">
                                 <div class="echarts" id="echarts-pie4-chart"></div>
                             </div>
+                            <script>
+                                var department_data = []
+                                let attend_department_data = []
+                                console.log("dddddddddddddddddd");
+                                fetch('{{ url_for('admin_all.get_attend_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data + "tttttttttttt");
+                                        var item;
+                                        if (data.status === 'success') {
+                                            department_data = data.department_data
+                                            attend_department_data = data.attend_data
+                                            var pieChart4 = echarts.init(document.getElementById("echarts-pie4-chart"));
+                                            var pieoption4 = {
+                                                title: {
+                                                    text: '各部门出勤人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: attend_department_data[i], name: department_data[i]}
+                                                pieoption4.series[0].data.push(item)
+                                            }
+                                            pieChart4.setOption(pieoption4);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
                         </div>
-                    </div>
-        <div class="col-lg-12">
-                        <div class="ibox float-e-margins">
+        </div>
+
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
                             <div class="ibox-title">
                                 <h5>企业考勤管理系统</h5>
                                 <div class="ibox-tools">
@@ -829,10 +1051,183 @@
                                 </div>
                             </div>
                             <div class="ibox-content">
-                                <div class="echarts" id="echarts-scatter-chart"></div>
+                                <div class="echarts" id="echarts-pie5-chart"></div>
                             </div>
+                            <script>
+                                var department_data = []
+                                let late_department_data = []
+                                console.log("dddddddddddddddddd");
+                                fetch('{{ url_for('admin_all.get_late_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data + "tttttttttttt");
+                                        var item;
+                                        if (data.status === 'success') {
+                                            department_data = data.department_data
+                                            late_department_data = data.late_data
+                                            var pieChart5 = echarts.init(document.getElementById("echarts-pie5-chart"));
+                                            var pieoption5 = {
+                                                title: {
+                                                    text: '各部门迟到人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: late_department_data[i], name: department_data[i]}
+                                                pieoption5.series[0].data.push(item)
+                                            }
+                                            pieChart5.setOption(pieoption5);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
                         </div>
-                    </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>企业考勤管理系统</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="graph_flot.html#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="graph_flot.html#">选项1</a>
+                                        </li>
+                                        <li><a href="graph_flot.html#">选项2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="echarts" id="echarts-pie6-chart"></div>
+                            </div>
+                            <script>
+                                var department_data = []
+                                let early_department_data = []
+                                console.log("dddddddddddddddddd");
+                                fetch('{{ url_for('admin_all.get_early_month_data_a', admin_username=admin.adminId) }}', {
+                                    method: 'GET', // 根据您的需求选择请求方法，如 GET、POST 等
+                                    headers: {
+                                        'Content-Type': 'application/json', // 根据后端要求设置合适的 Content-Type
+                                    },
+                                })
+                                    .then(response => response.json()) // 将响应转换为 JSON 格式
+                                    .then(data => {
+                                        // 在这里处理返回的数据
+                                        console.log(data + "tttttttttttt");
+                                        var item;
+                                        if (data.status === 'success') {
+                                            department_data = data.department_data
+                                            early_department_data = data.early_data
+                                            var pieChart6 = echarts.init(document.getElementById("echarts-pie6-chart"));
+                                            var pieoption6 = {
+                                                title: {
+                                                    text: '各部门迟到人数(次)统计',
+                                                    subtext: '本月',
+                                                    x: 'center',
+                                                    textStyle: {
+                                                        fontSize: 16,
+                                                        color: '#05b6fc'
+                                                    }
+                                                },
+                                                toolbox: {
+                                                    show: true,
+                                                    orient: 'vertical',
+                                                    x: 'right',
+                                                    y: 'center',
+                                                    feature: {
+                                                        dataView: {show: true, readOnly: false},
+                                                        restore: {show: true},
+                                                        saveAsImage: {show: true}
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'item',
+                                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                                },
+                                                legend: {
+                                                    orient: 'vertical',
+                                                    x: 'left',
+                                                    data: department_data
+                                                },
+                                                calculable: true,
+                                                series: [
+                                                    {
+                                                        name: '访问来源',
+                                                        type: 'pie',
+                                                        radius: '55%',
+                                                        center: ['50%', '60%'],
+                                                        data: []
+                                                    }
+                                                ]
+                                            };
+                                            for (var i = 0; i < department_data.length; i++) {
+                                                item = {value: early_department_data[i], name: department_data[i]}
+                                                pieoption6.series[0].data.push(item)
+                                            }
+                                            pieChart6.setOption(pieoption6);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        // 在这里处理错误
+                                        console.error('Error:', error);
+                                    });
+                            </script>
+                        </div>
+        </div>
+
     </div>
 
      <!-- Mainly scripts -->

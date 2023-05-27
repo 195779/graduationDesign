@@ -372,32 +372,33 @@
                                     <td>
                                         {% if attendance.attendance_state == 0 %}
                                             <span class="custom-badge status-grey" >当日尚未出勤|(出差|休假)</span>
-                                        {% elif attendance.attend_state == 1  %}
+                                        {% elif attendance.attendance_state == 1  %}
                                             <span class="custom-badge status-green" >当日正常出勤|工作中</span>
-                                        {% elif attendance.attend_state == 2  %}
+                                        {% elif attendance.attendance_state == 2  %}
                                             <span class="custom-badge status-red" >当日迟到</span>
-                                        {% elif attendance.attend_state == 3  %}
+                                        {% elif attendance.attendance_state == 3  %}
                                             <span class="custom-badge status-red" >当日正常出勤|早退</span>
-                                        {% elif attendance.attend_state == 4  %}
+                                        {% elif attendance.attendance_state == 4  %}
                                             <span class="custom-badge status-orange" >当日正常出勤|临时出门</span>
-                                        {% elif attendance.attend_state == 5  %}
+                                        {% elif attendance.attendance_state == 5  %}
                                             <span class="custom-badge status-orange" >当日迟到|临时出门</span>
-                                        {% elif attendance.attend_state == 6  %}
+                                        {% elif attendance.attendance_state == 6  %}
                                             <span class="custom-badge status-green" >当日正常出勤|完成工作</span>
-                                        {% elif attendance.attend_state == 7  %}
+                                        {% elif attendance.attendance_state == 7  %}
                                             <span class="custom-badge status-red" >当日迟到|早退</span>
-                                        {% elif attendance.attend_state == 8  %}
+                                        {% elif attendance.attendance_state == 8  %}
                                             <span class="custom-badge status-red" >当日缺勤</span>
-                                        {% elif attendance.attend_state == 9  %}
+                                        {% elif attendance.attendance_state == 9  %}
                                             <span class="custom-badge status-red" >当日迟到|完成工作</span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if attendance.attendance_outState %}
                                             <span class="custom-badge status-blue" >当日出差</span>
-                                        {% endif %}
-                                        {% if attendance.attendance_holidayState %}
+                                        {% elif attendance.attendance_holidayState %}
                                             <span class="custom-badge status-blue" >当日休假</span>
+                                        {% else %}
+                                            <span class="custom-badge status-blue" >非休假|出差</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -621,30 +622,33 @@
                             if (attendance.attendance_outState){
                                 out_holiday_state = "<span class='custom-badge status-blue'>当日出差</span>"
                             }
-                            if (attendance.attendance_holidayState){
+                            else if (attendance.attendance_holidayState){
                                 out_holiday_state = '<span class="custom-badge status-blue" >当日休假</span>'
+                            }
+                            else{
+                                out_holiday_state = '<span class="custom-badge status-blue" >非休假|出差</span>'
                             }
 
                             var attend_state;
                             if (attendance.attendance_state === 0)
                                 attend_state = "<span class='custom-badge status-grey' >当日尚未出勤|(出差|休假)</span>";
-                            else if (attendance.attend_state === 1)
+                            else if (attendance.attendance_state === 1)
                                     attend_state = "<span class='custom-badge status-green' >当日正常出勤|工作中</span>";
-                            else if (attendance.attend_state === 2)
+                            else if (attendance.attendance_state === 2)
                                     attend_state = "<span class='custom-badge status-red' >当日迟到</span>"
-                            else if (attendance.attend_state === 3)
+                            else if (attendance.attendance_state === 3)
                                     attend_state = "<span class='custom-badge status-red' >当日正常出勤|早退</span>"
-                            else if (attendance.attend_state === 4)
+                            else if (attendance.attendance_state === 4)
                                     attend_state = "<span class='custom-badge status-orange' >当日正常出勤|临时出门</span>"
-                            else if (attendance.attend_state === 5)
+                            else if (attendance.attendance_state === 5)
                                     attend_state = "<span class='custom-badge status-orange' >当日迟到|临时出门</span>"
-                            else if (attendance.attend_state === 6)
+                            else if (attendance.attendance_state === 6)
                                     attend_state = "<span class='custom-badge status-green' >当日正常出勤|完成工作</span>"
-                            else if (attendance.attend_state === 7 )
+                            else if (attendance.attendance_state === 7 )
                                     attend_state="<span class='custom-badge status-red' >当日迟到|早退</span>"
-                            else if (attendance.attend_state === 8 )
+                            else if (attendance.attendance_state === 8 )
                                     attend_state="<span class='custom-badge status-red' >当日缺勤</span>"
-                            else if (attendance.attend_state === 9 )
+                            else if (attendance.attendance_state === 9 )
                                     attend_state="<span class='custom-badge status-red' >当日迟到|完成工作</span>"
 
 

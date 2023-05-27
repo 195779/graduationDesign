@@ -168,51 +168,18 @@
                 </li>
                 <li>
                     <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa fa-globe"></i> <span
-                            class="nav-label">个人考勤统计</span><span
-                            class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="toastr_notifications.html" style="color: #fdffff">总况</a>
-                        </li>
-                        <li><a href="nestable_list.html" style="color: #fdffff">出勤/工时统计</a>
-                        </li>
-                        <li><a href="timeline_v2.html" style="color: #fdffff">迟到统计</a>
-                        </li>
-                        <li><a href="forum_main.html" style="color: #fdffff">早退统计</a>
-                        </li>
-                        <li><a href="code_editor.html" style="color: #fdffff">休假统计</a>
-                        </li>
-                        <li><a href="modal_window.html" style="color: #fdffff">出差统计</a>
-                        </li>
-                        <li><a href="validation.html" style="color: #fdffff">加班统计</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-bar-chart-o"></i> <span
-                            class="nav-label">查看考勤设置</span><span
-                    ></span></a>
+                            class="nav-label">个人考勤统计</span></a>
                 </li>
                 <li>
-                    <a href="mailbox.html" style="color: #fdffff"><i class="fa fa-envelope"></i> <span
-                            class="nav-label">请假/留言/公告</span><span
-                            class="label label-warning pull-right">16</span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="mailbox.html" style="color:#fdffff;">收件箱</a>
-                        </li>
-                        <li><a href="mail_compose.html" style="color:#fdffff;">查看公告</a>
-                        </li>
-                        <li><a href="xxxxxxx.html" style="color: #fdffff">申请休假</a>
-                        </li>
-                    </ul>
+                    <a href="{{ url_for('index.open_box', staff_username=staff.staffId) }}" style="color: #fdffff"><i class="fa fa-envelope"></i> <span
+                            class="nav-label">请假/留言/公告</span>
+                    </a>
                 </li>
                 <li>
                     <a href="admin_index.html#" style="color: #fdffff"><i class="fa fa-edit"></i> <span
                             class="nav-label">人脸信息管理</span><span
                             class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li><a href="#" style="color: #fdffff">人脸信息</a>
-                        </li>
                         <li><a href="#" onclick="myFunction()" style="color: #fdffff">人脸录入</a>
                         </li>
                         <li><a href="{{ url_for('test_all.index', staff_username=staff.staffId) }}" style="color: #fdffff">测试异步加载界面</a>

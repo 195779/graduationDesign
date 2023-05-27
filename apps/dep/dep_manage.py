@@ -696,8 +696,7 @@ def staff_records(depAdmin_username, departmentId, staff_username):
                                         'attendance_outState': attendance_outState, 'attendance_holidayState': attendance_holidayState})
 
 
-            return render_template('dep_all/staff_records.html',
-            attendances=attendance_data, dep=department, departmentAdmin=depAdmin, staff_information=staff_information)
+            return render_template('dep_all/staff_records.html', attendances=attendance_data, dep=department, departmentAdmin=depAdmin, staff_information=staff_information)
         else:
             return ''
     else:

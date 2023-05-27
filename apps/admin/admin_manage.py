@@ -3,7 +3,7 @@ from datetime import datetime, time, timedelta
 
 from flask import render_template, request, session, redirect, url_for, abort, jsonify
 from flask import Blueprint
-from sqlalchemy import func, extract, Float, Integer, case
+from sqlalchemy import func, extract, Float, Integer, case, or_
 
 from apps.Index.index_admin import login_required
 from apps.admin.__init__ import admin_bp
@@ -1113,7 +1113,7 @@ def get_absence_month_data_a(admin_username):
 
         absence_query = db.session.query(
             staffInformation.staffDepartmentId,
-            func.cast(func.sum(Sum.holidayFrequency), Integer).label('totalAbsenceFrequency')
+            func.cast(func.sum(Sum.absenceFrequency), Integer).label('totalAbsenceFrequency')
         ).join(
             Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
         ).filter(
@@ -1136,5 +1136,286 @@ def get_absence_month_data_a(admin_username):
         status = 'success'
         return jsonify(
             {'status': status, 'department_data': department_data, 'absence_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_holiday_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_holiday_month_data_a')
+def get_holiday_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        holiday_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.holidayFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in holiday_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'holiday_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_out_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_out_month_data_a')
+def get_out_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        out_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.outFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in out_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'out_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_attend_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_attend_month_data_a')
+def get_attend_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        attend_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.attendFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in attend_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'attend_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_late_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_late_month_data_a')
+def get_late_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        late_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.lateFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in late_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'late_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_early_month_data_a', methods=['POST', 'GET'],
+                endpoint='get_early_month_data_a')
+def get_early_month_data_a(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+        department_data = []
+        department_id_data = []
+        departments = Departments.query.all()
+        for department in departments:
+            department_data.append(department.departmentName)
+            department_id_data.append(department.departmentId)
+
+        # 获取当前日期和时间
+        current_date = datetime.now()
+        # 提取当前月份
+        current_month = current_date.month
+        # 将月份转换为字符串形式，并补零（如果月份小于10）
+        current_month_str = str(current_month).zfill(2)
+
+        early_query = db.session.query(
+            staffInformation.staffDepartmentId,
+            func.cast(func.sum(Sum.earlyFrequency), Integer).label('totalAbsenceFrequency')
+        ).join(
+            Sum, staffInformation.staffId == func.substring_index(Sum.sumId, '-', -1)
+        ).filter(
+            func.substring(Sum.sumId, 6, 2) == current_month_str
+        ).group_by(
+            staffInformation.staffDepartmentId
+        ).all()
+
+        new = []
+
+        # 打印结果
+        for result in early_query:
+            department_id = result.staffDepartmentId
+            total_absence_frequency = result.totalAbsenceFrequency
+            new.append((department_id, total_absence_frequency))
+
+        new_value_sorted = [new_value for new_id, new_value in sorted(new, key=lambda x: department_id_data.index(x[0]))]
+        print(new_value_sorted)
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'department_data': department_data, 'early_data': new_value_sorted})
+    else:
+        return redirect(url_for('login.login'))
+
+
+@login_required('admin_username')
+@admin_bp.route('<admin_username>/get_message_today_staff', methods=['POST', 'GET'],
+                endpoint='get_message_today_staff')
+def get_message_today_staff(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+
+        # 统计创造日期为今天且attendState字段等于指定数值的记录数量
+        today = datetime.now().date()
+        attend_specified_state = [1, 4, 6]
+        attend_record_count = db.session.query(func.count(Attendance.attendanceId))\
+            .filter(func.DATE(Attendance.attendDate) == today, Attendance.attendState.in_(attend_specified_state)).scalar()
+
+        absence_specified_state = [2, 5, 7, 8, 9]
+        absence_record_count = db.session.query(func.count(Attendance.attendanceId)) \
+            .filter(func.DATE(Attendance.attendDate) == today,
+                    Attendance.attendState.in_(absence_specified_state)).scalar()
+
+        staffnumber = 0
+        staffs = Staff.query.all()
+        for staff in staffs:
+            if staff.staffState:
+                staffnumber = staffnumber + 1
+
+        out_holiday_record_count = db.session.query(func.count(Attendance.attendanceId)) \
+            .filter(func.DATE(Attendance.attendDate) == today,
+                    or_(Attendance.outState == True, Attendance.holidayState == True)).scalar()
+
+
+        status = 'success'
+        return jsonify(
+            {'status': status, 'staff_number': staffnumber, 'staff_absence': absence_record_count , 'staff_attend': attend_record_count, 'staff_out_holiday':out_holiday_record_count})
     else:
         return redirect(url_for('login.login'))

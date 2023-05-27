@@ -1,7 +1,7 @@
 import base64
 import os
 import time
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time as datetime_time
 
 import cv2
 import numpy as np
@@ -267,7 +267,7 @@ class VideoCamera(object):
                                         mm = self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n'
                                         print('人脸从1 到 1： ', mm)
                                         file.write(self.name_known_list[similar_person_num] + '  ' + now + '     已签到\n')
-                                        # attend_records.append(mm)
+                                        attend_records.append(mm)
                                         staffName = self.name_known_list[similar_person_num]
                                         global staffName_first
                                         # 将函数外部定义的staffName_first 设置为全局变量
@@ -335,7 +335,7 @@ class VideoCamera(object):
                                     print('人脸从0到1： ', mm)
                                     file.write(self.name_known_list[similar_person_num] + '  ' + now + '  已签到\n')
                                     staffName = self.name_known_list[similar_person_num]
-                                    # attend_records.append(mm)
+                                    attend_records.append(mm)
                                     staffName_first = staffName
                                 else:
                                     pass
@@ -404,297 +404,297 @@ def now_attend(gateAdmin_username):
 
             staffName_last = staffName_first
             print("此时新来的签到人员为：" + str(staffName_first))
+            if staffName_first:
+                # 在这里，可以对已经识别到的 Name(ID) 进行 处理
+                # 如果一个用户一直在摄像头前晃荡，只记录他签到时间（即每次从 0 - 1 的时候如果识别到的人名更新了则进行数据库处理）
+                staff_information = staffInformation.query.filter(staffName_first == staffInformation.staffId).first()
+                set = Set.query.filter(staffName_first == Set.staffId).first()
+                current_date = datetime.now().date()
+                current_datetime = datetime.now()
+                attendanceId = current_date.strftime('%Y-%m-%d') + set.staffId
+                attendance = Attendance.query.filter(attendanceId == Attendance.attendanceId).first()
+                current_date_year = datetime.now().date().strftime("%Y")
+                current_date_month = datetime.now().date().strftime("%m")
+                sum_Id = current_date_year + '-' + current_date_month + '-' + set.staffId
+                sum = Sum.query.filter(sum_Id == Sum.sumId).first()
+                # 当前时间要与 set 时间做比较
+                # 当前日期要与 set 日期做比较
+                # 要找到该职工 在当前日期的 考勤记录
+                # 向此考勤记录中更新/填写数据
+                # 要向Works工作表更新数据
+                # 要向information表更新出勤状态数据
+                # 如果是休假/出差状态（Holidays 和 Outs） ： 要提醒现在非正常出勤时间
 
-            # 在这里，可以对已经识别到的 Name(ID) 进行 处理
-            # 如果一个用户一直在摄像头前晃荡，只记录他签到时间（即每次从 0 - 1 的时候如果识别到的人名更新了则进行数据库处理）
-            staff_information = staffInformation.query.filter(staffName_first == staffInformation.staffId).first()
-            set = Set.query.filter(staffName_first == Set.staffId).first()
-            current_date = datetime.now().date()
-            current_datetime = datetime.now()
-            attendanceId = current_date.strftime('%Y-%m-%d') + set.staffId
-            attendance = Attendance.query.filter(attendanceId == Attendance.attendanceId).first()
-            current_date_year = datetime.now().date().strftime("%Y")
-            current_date_month = datetime.now().date().strftime("%m")
-            sum_Id = current_date_year + '-' + current_date_month + '-' + set.staffId
-            sum = Sum.query.filter(sum_Id == Sum.sumId).first()
-            # 当前时间要与 set 时间做比较
-            # 当前日期要与 set 日期做比较
-            # 要找到该职工 在当前日期的 考勤记录
-            # 向此考勤记录中更新/填写数据
-            # 要向Works工作表更新数据
-            # 要向information表更新出勤状态数据
-            # 如果是休假/出差状态（Holidays 和 Outs） ： 要提醒现在非正常出勤时间
-
-            # 如果是加班状态：
-            # 要找到当前日期的加班记录，要更新/填写数据
-            # 要向ADD表更新数据
-            # 要向information表更新数据
-            if attendance is None:
-                attend_records.append('ERROR！ 此时新来到的签到人员为：'+ str(staffName_first) + '！！没有今天的考勤记录！！')
-                print('ERROR！ 此时新来到的签到人员为：'+ str(staffName_first) + '！！没有今天的考勤记录！！')
-            else:
-                # 是否出差
-                if attendance.outState and staff_information.staffCheckState == 11:
-                    string_return = 'ERROR！ 此时 ' + time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) + ' 新来到的签到人员为：' + str(staffName_first) + '！！今天为出差状态！！'
-                    attend_records.append(string_return)
-                    print(string_return)
-                # 是否休假
-                elif attendance.holidayState and staff_information.staffCheckState == 12:
-                    string_return = 'ERROR！ 此时 ' + time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) + ' 新来到的签到人员为：' + str(staffName_first) + '！！今天为休假状态！！'
-                    attend_records.append(string_return)
-                    print(string_return)
-
-                # 非休假/出差状态的情况下 如果当天日期 介于正常考勤的日期之内
-                elif set.beginAttendDate <= current_date <= set.endAttendDate:
-
-                    # 定时函数的处理：
-                    # 在 begin + 1 处已经设置好定时函数检测 如有状态 0 的职工，则改为 状态2 迟到
-                    # 在 end + 1   处已经设置好定时函数检测 如有状态 1 的职工，则此职工正常出勤忘记了签退                 设置为6 完成出勤 按应签退时间计算工时
-                    #    end + 1                          如有状态 2 的职工，如果已经签到 则此职工迟到且忘记了签退       设置为2  迟到    按应签退时间计算工时
-                    #                                                       如果没有签到 则此职工今日缺勤              设置为8  今日缺勤 缺勤次数+1
-                    #    end + 1                          如有状态 4 的职工，则正常出勤+临时出门+在end+1之前一直没回来   设置为3  早退    按离开时间计算工时
-                    #    end + 1                          如有状态 5 的职工，则早上迟到+临时出门+在end+1之前一直没回来   设置为7  迟到    按离开时间计算工时
-
-                    # 状态流转：
-                    # 在 0      begin-1  < time < begin+1                            / 签到状态改为 1   正常出勤     记录签到时间
-                    # 在 2      time > begin+1  且签到时间为空                        / 签到状态已经在定时函数中改为2  已经迟到   在此要记录迟到的签到时间
-                    # 在 1      time < end-1                                         / 签到状态改为 4   临时出门      记录离开时间
-                    # 在 1      end-1 < time < end+1                                 / 签到状态改为 6   完成出勤      记录签退时间/记录工作时长
-                    # 在 1      time > end+1                                         / 签到状态已经在定时函数里改为6  给用户显示一下默认完成签退
-                    # 在 4      time < end+1 则在应签退后一小时内回来了                / 签到状态改为 1   正常出勤      不做时长处理
-                    # 在 4      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数里改为3   算作早退 这里给用户显示一下  定时函数已经以临时出门的离开时间为结束时间计算工时
-                    # 在 2      time < end - 1  且已经签到                            / 签到状态改为 5   临时出门|迟到  记录离开时间
-                    # 在 2      end-1 < time < end+1   且已经签到                     / 签到状态改为 9   迟到|完成工作           记录工作时长
-                    # 在 2      time > end+1     且已签到                             / 签到状态在定时函数中保持2       迟到|未签退   定时函数按应签退时间计算工作时长
-                    # 在 2      time > end+1     且未签到                             / 签到状态在定时函数中更改为8      按缺勤处理
-                    # 在 5      time < end+1 在应签退后一小时内回来了                  / 签到状态改为 2   迟到            不做时长处理
-                    # 在 5      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数中改为7    |早退 这里给用户显示一下 定时函数已经以临时出门的离开时间为结束时间计算工时
-
-                    # 综上：
-                    # 对临时出门并且在end+1之前回来的都正常按签到/签退计算工时（所以请理性摸鱼）；对临时出门以后到end+1一直没回来的都算作早退，当天工时会有减少
-
-                    # 生成begin-1 和 begin+1
-                    attendTime = set.attendTime.time()
-                    endTime = set.endTime.time()
-                    dt_attend = datetime.combine(datetime.min, attendTime)
-                    dt_plus_one_hour_attend = dt_attend + timedelta(hours=1)
-                    dt_sub_one_hour_attend = dt_attend - timedelta(hours=1)
-                    result_attend_time_plus = dt_plus_one_hour_attend.time()
-                    result_attend_time_sub = dt_sub_one_hour_attend.time()
-                    begin_time_plus = datetime.combine(current_date, result_attend_time_plus)
-                    begin_time_sub = datetime.combine(current_date, result_attend_time_sub)
-                    # 生成 end+1 和 end-1
-                    dt_end = datetime.combine(datetime.min, endTime)
-                    dt_plus_one_hour_end = dt_end + timedelta(hours=1)
-                    dt_sub_one_hour_end = dt_end - timedelta(hours=1)
-                    result_end_time_plus = dt_plus_one_hour_end.time()
-                    result_end_time_sub = dt_sub_one_hour_end.time()
-                    end_time_plus = datetime.combine(current_date, result_end_time_plus)
-                    end_time_sub = datetime.combine(current_date, result_end_time_sub)
-
-                    # 0 begin-1<time<begin+1 今日未出勤 + 现在来签到 + 时间满足签到区间 :  状态改为正常出勤 1  记录签到时间
-                    if attendance.attendState == 0 and begin_time_sub <= current_datetime < begin_time_plus :
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.attendState = 1
-                        attendance.attendTime = current_datetime.time()
-                        # 记录正常出勤的签到时间
-                        staff_information.staffCheckState = 10
-                        # 今日出勤（工作中）
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！完成出勤签到 ！！'
-                        print(string_return)
+                # 如果是加班状态：
+                # 要找到当前日期的加班记录，要更新/填写数据
+                # 要向ADD表更新数据
+                # 要向information表更新数据
+                if attendance is None:
+                    attend_records.append('ERROR！ 此时新来到的签到人员为：'+ str(staffName_first) + '！！没有今天的考勤记录！！')
+                    print('ERROR！ 此时新来到的签到人员为：'+ str(staffName_first) + '！！没有今天的考勤记录！！')
+                else:
+                    # 是否出差
+                    if attendance.outState and staff_information.staffCheckState == 11:
+                        string_return = 'ERROR！ 此时 ' + time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) + ' 新来到的签到人员为：' + str(staffName_first) + '！！今天为出差状态！！'
                         attend_records.append(string_return)
-
-                    # 2 time > begin + 1 今日已迟到 + 还未签到 + 现在来签到 ： 状态改为保持为迟到 2 记录签到时间
-                    elif attendance.attendState == 2 and current_datetime > begin_time_plus and attendance.attendTime is None:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.attendState = 2
-                        attendance.attendTime = current_datetime.time()
-                        # 记录迟到的签到时间
-                        staff_information.staffCheckState = 21
-                        # 今日迟到（工作中）
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今日迟到|完成签到 ！！'
                         print(string_return)
+                    # 是否休假
+                    elif attendance.holidayState and staff_information.staffCheckState == 12:
+                        string_return = 'ERROR！ 此时 ' + time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) + ' 新来到的签到人员为：' + str(staffName_first) + '！！今天为休假状态！！'
                         attend_records.append(string_return)
-
-                    # 1 time<end-1 今日正常出勤 + 临时出门 ： 状态改为 正常出勤|临时出门 4 记录离开时间
-                    elif attendance.attendState == 1 and current_datetime < end_time_sub:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.leaveTime = current_datetime.time()
-                        # 记录临时出门的离开时间
-                        attendance.attendState = 4
-                        staff_information.staffCheckState = 16
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的识别人员为：' + str(staffName_first) + '！！临时外出 ！！'
                         print(string_return)
-                        attend_records.append(string_return)
 
-                    # 1 今日正常出勤 + end-1<time<end+1 : 状态改为6 正常签退下班
-                    elif attendance.attendState == 1 and end_time_sub < current_datetime < end_time_plus:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
+                    # 非休假/出差状态的情况下 如果当天日期 介于正常考勤的日期之内
+                    elif set.beginAttendDate <= current_date <= set.endAttendDate:
 
-                        attendance.endTime = current_datetime.time()
-                        # 记录签退时间
-                        attendance.attendState = 6
-                        staff_information.staffCheckState = 14
-                        # 今日出勤|已完成工作
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签退人员为：' + str(staffName_first) + '！！今日工作已经完成|离开 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-                        # 记录今日工作时长
-                        dt1 = datetime.combine(current_date, attendance.endTime)
-                        dt2 = datetime.combine(current_date, attendance.attendTime)
-                        time_diff = dt1 - dt2
-                        # 获取总秒数
-                        total_seconds = time_diff.total_seconds()
-                        # 计算时、分、秒的差异
-                        hours = int(total_seconds // 3600)
-                        minutes = int((total_seconds % 3600) // 60)
-                        seconds = int(total_seconds % 60)
-                        attendance.workTime = time(hours, minutes, seconds)
+                        # 定时函数的处理：
+                        # 在 begin + 1 处已经设置好定时函数检测 如有状态 0 的职工，则改为 状态2 迟到
+                        # 在 end + 1   处已经设置好定时函数检测 如有状态 1 的职工，则此职工正常出勤忘记了签退                 设置为6 完成出勤 按应签退时间计算工时
+                        #    end + 1                          如有状态 2 的职工，如果已经签到 则此职工迟到且忘记了签退       设置为2  迟到    按应签退时间计算工时
+                        #                                                       如果没有签到 则此职工今日缺勤              设置为8  今日缺勤 缺勤次数+1
+                        #    end + 1                          如有状态 4 的职工，则正常出勤+临时出门+在end+1之前一直没回来   设置为3  早退    按离开时间计算工时
+                        #    end + 1                          如有状态 5 的职工，则早上迟到+临时出门+在end+1之前一直没回来   设置为7  迟到    按离开时间计算工时
 
-                        # 将今天的工作时间存入本月工作时间记录
-                        float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
-                        # 转换为以小时为整数的浮点数
-                        float_time = round(float_time, 3)
-                        # 保留3位小数
+                        # 状态流转：
+                        # 在 0      begin-1  < time < begin+1                            / 签到状态改为 1   正常出勤     记录签到时间
+                        # 在 2      time > begin+1  且签到时间为空                        / 签到状态已经在定时函数中改为2  已经迟到   在此要记录迟到的签到时间
+                        # 在 1      time < end-1                                         / 签到状态改为 4   临时出门      记录离开时间
+                        # 在 1      end-1 < time < end+1                                 / 签到状态改为 6   完成出勤      记录签退时间/记录工作时长
+                        # 在 1      time > end+1                                         / 签到状态已经在定时函数里改为6  给用户显示一下默认完成签退
+                        # 在 4      time < end+1 则在应签退后一小时内回来了                / 签到状态改为 1   正常出勤      不做时长处理
+                        # 在 4      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数里改为3   算作早退 这里给用户显示一下  定时函数已经以临时出门的离开时间为结束时间计算工时
+                        # 在 2      time < end - 1  且已经签到                            / 签到状态改为 5   临时出门|迟到  记录离开时间
+                        # 在 2      end-1 < time < end+1   且已经签到                     / 签到状态改为 9   迟到|完成工作           记录工作时长
+                        # 在 2      time > end+1     且已签到                             / 签到状态在定时函数中保持2       迟到|未签退   定时函数按应签退时间计算工作时长
+                        # 在 2      time > end+1     且未签到                             / 签到状态在定时函数中更改为8      按缺勤处理
+                        # 在 5      time < end+1 在应签退后一小时内回来了                  / 签到状态改为 2   迟到            不做时长处理
+                        # 在 5      time > end+1 在应签退后一小时之外回来了，晚了           / 签到状态已经在定时函数中改为7    |早退 这里给用户显示一下 定时函数已经以临时出门的离开时间为结束时间计算工时
+
+                        # 综上：
+                        # 对临时出门并且在end+1之前回来的都正常按签到/签退计算工时（所以请理性摸鱼）；对临时出门以后到end+1一直没回来的都算作早退，当天工时会有减少
+
+                        # 生成begin-1 和 begin+1
+                        attendTime = set.attendTime.time()
+                        endTime = set.endTime.time()
+                        dt_attend = datetime.combine(datetime.min, attendTime)
+                        dt_plus_one_hour_attend = dt_attend + timedelta(hours=1)
+                        dt_sub_one_hour_attend = dt_attend - timedelta(hours=1)
+                        result_attend_time_plus = dt_plus_one_hour_attend.time()
+                        result_attend_time_sub = dt_sub_one_hour_attend.time()
+                        begin_time_plus = datetime.combine(current_date, result_attend_time_plus)
+                        begin_time_sub = datetime.combine(current_date, result_attend_time_sub)
+                        # 生成 end+1 和 end-1
+                        dt_end = datetime.combine(datetime.min, endTime)
+                        dt_plus_one_hour_end = dt_end + timedelta(hours=1)
+                        dt_sub_one_hour_end = dt_end - timedelta(hours=1)
+                        result_end_time_plus = dt_plus_one_hour_end.time()
+                        result_end_time_sub = dt_sub_one_hour_end.time()
+                        end_time_plus = datetime.combine(current_date, result_end_time_plus)
+                        end_time_sub = datetime.combine(current_date, result_end_time_sub)
+
+                        # 0 begin-1<time<begin+1 今日未出勤 + 现在来签到 + 时间满足签到区间 :  状态改为正常出勤 1  记录签到时间
+                        if attendance.attendState == 0 and begin_time_sub <= current_datetime < begin_time_plus :
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.attendState = 1
+                            attendance.attendTime = current_datetime.time()
+                            # 记录正常出勤的签到时间
+                            staff_information.staffCheckState = 10
+                            # 今日出勤（工作中）
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！完成出勤签到 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 2 time > begin + 1 今日已迟到 + 还未签到 + 现在来签到 ： 状态改为保持为迟到 2 记录签到时间
+                        elif attendance.attendState == 2 and current_datetime > begin_time_plus and attendance.attendTime is None:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.attendState = 2
+                            attendance.attendTime = current_datetime.time()
+                            # 记录迟到的签到时间
+                            staff_information.staffCheckState = 21
+                            # 今日迟到（工作中）
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今日迟到|完成签到 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 1 time<end-1 今日正常出勤 + 临时出门 ： 状态改为 正常出勤|临时出门 4 记录离开时间
+                        elif attendance.attendState == 1 and current_datetime < end_time_sub:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.leaveTime = current_datetime.time()
+                            # 记录临时出门的离开时间
+                            attendance.attendState = 4
+                            staff_information.staffCheckState = 16
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的识别人员为：' + str(staffName_first) + '！！临时外出 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 1 今日正常出勤 + end-1<time<end+1 : 状态改为6 正常签退下班
+                        elif attendance.attendState == 1 and end_time_sub < current_datetime < end_time_plus:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.endTime = current_datetime.time()
+                            # 记录签退时间
+                            attendance.attendState = 6
+                            staff_information.staffCheckState = 14
+                            # 今日出勤|已完成工作
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签退人员为：' + str(staffName_first) + '！！今日工作已经完成|离开 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+                            # 记录今日工作时长
+                            dt1 = datetime.combine(current_date, attendance.endTime)
+                            dt2 = datetime.combine(current_date, attendance.attendTime)
+                            time_diff = dt1 - dt2
+                            # 获取总秒数
+                            total_seconds = time_diff.total_seconds()
+                            # 计算时、分、秒的差异
+                            hours = int(total_seconds // 3600)
+                            minutes = int((total_seconds % 3600) // 60)
+                            seconds = int(total_seconds % 60)
+                            attendance.workTime = time(hours, minutes, seconds)
+
+                            # 将今天的工作时间存入本月工作时间记录
+                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                            # 转换为以小时为整数的浮点数
+                            float_time = round(float_time, 3)
+                            # 保留3位小数
 
 
-                        if sum.workSumTime is not None:
-                            sum.workSumTime = sum.workSumTime + float_time
+                            if sum.workSumTime is not None:
+                                sum.workSumTime = sum.workSumTime + float_time
+                            else:
+                                sum.workSumTime = float_time
+
+                            # 正常签退下班，出勤统计次数 + 1
+                            sum.attendFrequency = sum.attendFrequency + 1
+
+                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                            work = Works.query.filter(set.staffId == Works.staffId).first()
+                            if work.workTime is None:
+                                work.workTime = float_time
+                            else:
+                                work.workTime = work.workTime + float_time
+
+
+                        # 1 time>end+1 状态下忘记签退，定时函数已经给他签退/记录工作时长（在end+1之后他又回来了）
+                        elif attendance.attendState == 6 and current_datetime > end_time_plus :
+                            string_return = 'ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：'+ str(staffName_first) + '！！今天已经默认完成签退 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 4 time<end+1 在临时出门的条件下，他又回来了
+                        elif attendance.attendState == 4 and current_datetime < end_time_plus:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.attendState = 1
+                            staff_information.staffCheckState = 10
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！临时外出返回 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 4 time>end+1 临时出门然后在end+1之前没回来，之后再回来的那种, 4 状态已经在定时函数中被改为3
+                        elif attendance.attendState == 3 and current_datetime > end_time_plus:
+                            string_return = 'ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今天已经默认完成签退|早退 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 2 time<end-1 今日迟到 + 已经签到 + 去刷脸识别 === 迟到条件下的临时出门
+                        elif attendance.attendState == 2 and attendance.attendTime is not None and current_datetime < end_time_sub:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.attendState = 5
+                            attendance.leaveTime = current_datetime.time()
+                            # 记录临时出门的离开时间
+                            staff_information.staffCheckState = 25
+                            # 今日迟到（临时外出）
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的识别人员为：' + str(staffName_first) + '！！今日迟到|现在临时外出 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 2  end-1<time<end+1 今日已经签到 + 今日迟到 + 时间满足下班区间 === 迟到+下班
+                        elif attendance.attendState == 2 and attendance.attendTime is not None and end_time_sub < current_datetime < end_time_plus:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.endTime = current_datetime.time()
+                            # 记录今天下班时间
+                            attendance.attendState = 9
+                            attendance.endTime = current_datetime.time()
+                            staff_information.staffCheckState = 26
+
+                            # 今日迟到|已完成工作
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签退人员为：' + str(staffName_first) + '！！今日迟到|工作已经完成|离开 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+                            # 记录今日工作时长
+                            dt1 = datetime.combine(current_date, attendance.endTime)
+                            dt2 = datetime.combine(current_date, attendance.attendTime)
+                            time_diff = dt1 - dt2
+                            # 获取总秒数
+                            total_seconds = time_diff.total_seconds()
+                            # 计算时、分、秒的差异
+                            hours = int(total_seconds // 3600)
+                            minutes = int((total_seconds % 3600) // 60)
+                            seconds = int(total_seconds % 60)
+                            attendance.workTime = time(hours, minutes, seconds)
+
+                            # 将今天的工作时间存入本月工作时间记录
+                            float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
+                            # 转换为以小时为整数的浮点数
+                            float_time = round(float_time, 3)
+                            # 保留3位小数
+
+                            if sum.workSumTime is not None:
+                                sum.workSumTime = sum.workSumTime + float_time
+                            else:
+                                sum.workSumTime = float_time
+
+                            # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
+                            work = Works.query.filter(set.staffId == Works.staffId).first()
+                            if work.workTime is None:
+                                work.workTime = float_time
+                            else:
+                                work.workTime = work.workTime + float_time
+
+                        # 2 time > end+1 且已经签到 定时函数中已经处理
+                        elif attendance.attendState == 2 and attendance.attendTime is not None and current_datetime > end_time_plus:
+                            string_return = '此时 '+ time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) +' 新来到的签到人员为：' + str(staffName_first) + '！！今天迟到|已经默认完成签退 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 2 time > end + 1 且今日未签到，定时函数中已经将其状态改为8
+                        elif attendance.attendState == 8 and current_datetime > end_time_plus:
+                            string_return='ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今天已经缺勤 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 5 time<end+1
+                        elif attendance.attendState == 5 and current_datetime < end_time_plus:
+                            # 记录考勤记录更新的时间
+                            attendance.editTime = current_datetime
+
+                            attendance.attendState = 2
+                            staff_information.staffCheckState = 21
+
+                            string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今日迟到|现在临时外出返回 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
+
+                        # 5 time > end+1 定时函数已经将其状态修改为7 并记录了工时
+                        elif attendance.attendState == 7 and current_datetime > end_time_plus :
+                            string_return = 'ERROR！ 此时新来到的签到人员为：' + str(staffName_first) + '！！今天迟到|早退|已经默认完成签退 ！！'
+                            attend_records.append(string_return)
                         else:
-                            sum.workSumTime = float_time
-
-                        # 正常签退下班，出勤统计次数 + 1
-                        sum.attendFrequency = sum.attendFrequency + 1
-
-                        # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                        work = Works.query.filter(set.staffId == Works.staffId).first()
-                        if work.workTime is None:
-                            work.workTime = float_time
-                        else:
-                            work.workTime = work.workTime + float_time
-
-
-                    # 1 time>end+1 状态下忘记签退，定时函数已经给他签退/记录工作时长（在end+1之后他又回来了）
-                    elif attendance.attendState == 6 and current_datetime > end_time_plus :
-                        string_return = 'ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：'+ str(staffName_first) + '！！今天已经默认完成签退 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 4 time<end+1 在临时出门的条件下，他又回来了
-                    elif attendance.attendState == 4 and current_datetime < end_time_plus:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.attendState = 1
-                        staff_information.staffCheckState = 10
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！临时外出返回 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 4 time>end+1 临时出门然后在end+1之前没回来，之后再回来的那种, 4 状态已经在定时函数中被改为3
-                    elif attendance.attendState == 3 and current_datetime > end_time_plus:
-                        string_return = 'ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今天已经默认完成签退|早退 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 2 time<end-1 今日迟到 + 已经签到 + 去刷脸识别 === 迟到条件下的临时出门
-                    elif attendance.attendState == 2 and attendance.attendTime is not None and current_datetime < end_time_sub:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.attendState = 5
-                        attendance.leaveTime = current_datetime.time()
-                        # 记录临时出门的离开时间
-                        staff_information.staffCheckState = 25
-                        # 今日迟到（临时外出）
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的识别人员为：' + str(staffName_first) + '！！今日迟到|现在临时外出 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 2  end-1<time<end+1 今日已经签到 + 今日迟到 + 时间满足下班区间 === 迟到+下班
-                    elif attendance.attendState == 2 and attendance.attendTime is not None and end_time_sub < current_datetime < end_time_plus:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.endTime = current_datetime.time()
-                        # 记录今天下班时间
-                        attendance.attendState = 9
-                        attendance.endTime = current_datetime.time()
-                        staff_information.staffCheckState = 26
-
-                        # 今日迟到|已完成工作
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签退人员为：' + str(staffName_first) + '！！今日迟到|工作已经完成|离开 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-                        # 记录今日工作时长
-                        dt1 = datetime.combine(current_date, attendance.endTime)
-                        dt2 = datetime.combine(current_date, attendance.attendTime)
-                        time_diff = dt1 - dt2
-                        # 获取总秒数
-                        total_seconds = time_diff.total_seconds()
-                        # 计算时、分、秒的差异
-                        hours = int(total_seconds // 3600)
-                        minutes = int((total_seconds % 3600) // 60)
-                        seconds = int(total_seconds % 60)
-                        attendance.workTime = time(hours, minutes, seconds)
-
-                        # 将今天的工作时间存入本月工作时间记录
-                        float_time = attendance.workTime.hour + attendance.workTime.minute / 60 + attendance.workTime.second / 3600
-                        # 转换为以小时为整数的浮点数
-                        float_time = round(float_time, 3)
-                        # 保留3位小数
-
-                        if sum.workSumTime is not None:
-                            sum.workSumTime = sum.workSumTime + float_time
-                        else:
-                            sum.workSumTime = float_time
-
-                        # 工作时长保存到年度工作时长统计记录中(Works 的一个字段名的命名写错了，改完以后再执行此操作)
-                        work = Works.query.filter(set.staffId == Works.staffId).first()
-                        if work.workTime is None:
-                            work.workTime = float_time
-                        else:
-                            work.workTime = work.workTime + float_time
-
-                    # 2 time > end+1 且已经签到 定时函数中已经处理
-                    elif attendance.attendState == 2 and attendance.attendTime is not None and current_datetime > end_time_plus:
-                        string_return = '此时 '+ time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime()) +' 新来到的签到人员为：' + str(staffName_first) + '！！今天迟到|已经默认完成签退 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 2 time > end + 1 且今日未签到，定时函数中已经将其状态改为8
-                    elif attendance.attendState == 8 and current_datetime > end_time_plus:
-                        string_return='ERROR！ 此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今天已经缺勤 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 5 time<end+1
-                    elif attendance.attendState == 5 and current_datetime < end_time_plus:
-                        # 记录考勤记录更新的时间
-                        attendance.editTime = current_datetime
-
-                        attendance.attendState = 2
-                        staff_information.staffCheckState = 21
-
-                        string_return = '此时 '+time.strftime("%Y 年-%m 月-%d 日%H:%M", time.localtime())+' 新来到的签到人员为：' + str(staffName_first) + '！！今日迟到|现在临时外出返回 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
-
-                    # 5 time > end+1 定时函数已经将其状态修改为7 并记录了工时
-                    elif attendance.attendState == 7 and current_datetime > end_time_plus :
-                        string_return = 'ERROR！ 此时新来到的签到人员为：' + str(staffName_first) + '！！今天迟到|早退|已经默认完成签退 ！！'
-                        attend_records.append(string_return)
-                    else:
-                        string_return = 'ERROR！ 此时新来到的签到人员为：' + str(staffName_first) + '！！未知的状态 ！！'
-                        print(string_return)
-                        attend_records.append(string_return)
+                            string_return = 'ERROR！ 此时新来到的签到人员为：' + str(staffName_first) + '！！未知的状态 ！！'
+                            print(string_return)
+                            attend_records.append(string_return)
 
         # 保存数据库
         db.session.commit()
@@ -716,7 +716,7 @@ def staff_attend(gateAdmin_username):
         # 开启签到后，开始单次的记录
         global attend_records
         attend_records = []
-        now = time.strftime("%Y-%m-%d %H:00:00", time.localtime())
+        now = datetime.now().strftime("%Y-%m-%d %H:00:00")
         session['now_time'] = now
         gate_admin = gateAdmin.query.filter(gateAdmin.gateAdminId == session.get(gateAdmin_username+'gateAdmin_username')).first()
         return render_template("gate_admin_all/staff_attend.html", gateAdmin=gate_admin)

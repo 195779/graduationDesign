@@ -1,5 +1,6 @@
 from flask import render_template, request, session, redirect, url_for, jsonify
 from flask import Blueprint
+
 from apps.Index.__init__ import index_bp
 from apps.models.check_model import Staff
 from exts import db
@@ -66,5 +67,26 @@ def edit_password(staff_username):
             else:
                 session[staff_username + 'edit_password'] = '申请提交失败'
             return redirect(previous_url)
+    else:
+        return redirect(url_for('login.login'))
+
+
+
+
+@login_required('<staff_username>')
+@index_bp.route('/<staff_username>/open_box', methods=['POST', 'GET'], endpoint='open_box')
+def open_box(staff_username):
+    if session.get(staff_username + 'staff_username') is not None:
+        staff = Staff.query.filter_by(staffId=staff_username).first()
+        image_filename = "static/data/data_headimage_staff/" + staff_username + '/head.jpg'
+        form_editPassword = EditPasswordForm()
+        edit_password = None
+        if session.get(staff_username + 'edit_password') is not None:
+            edit_password = session.get(staff_username + 'edit_password')
+
+            session.pop(staff_username + 'edit_password')
+        return render_template('staff_all/box.html', staff=staff, url_image=image_filename,
+                               edit_password=edit_password,
+                               form_password=form_editPassword)
     else:
         return redirect(url_for('login.login'))

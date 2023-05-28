@@ -85,14 +85,9 @@
                 </li>
 
                 <li>
-                    <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
-                            class="label label-warning pull-right">16</span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="mailbox.html">收件箱</a>
-                        </li>
-                        <li><a href="mail_compose.html">发布公告</a>
-                        </li>
-                    </ul>
+                    <a href="{{ url_for('index.open_box_admin', admin_username=admin.adminId) }}"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span>
+                             </a>
+
                 </li>
             </ul>
 

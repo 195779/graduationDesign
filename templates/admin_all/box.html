@@ -1,0 +1,60 @@
+{% extends 'index/admin_index.html' %}
+
+
+{% block content %}
+    <div class="content">
+        <script src="../../static/assets/js/html5shiv.min.js"></script>
+		<script src="../../static/assets/js/respond.min.js"></script>
+                <div class="row" >
+                    <div class="col-sm-12">
+                        <h4 class="page-title">Compose</h4>
+                    </div>
+                </div>
+                <div class="row">
+
+    <link rel="stylesheet" type="text/css" href="../../static/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/assets/plugins/summernote/dist/summernote-bs4.css">
+    <link rel="stylesheet" type="text/css" href="../../static/assets/css/style.css">
+                    <div class="col-sm-12">
+                        <div class="card-box">
+                            <form>
+                                <div class="form-group">
+                                    <input type="email" placeholder="To" class="form-control">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="email" placeholder="Cc" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="email" placeholder="Bcc" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" placeholder="Subject" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <textarea rows="4" cols="5" class="form-control summernote" placeholder="Enter your message here"></textarea>
+                                </div>
+                                <div class="form-group mb-0">
+                                    <div class="text-center compose-btn">
+                                        <button class="btn btn-primary"><span>Send</span> <i class="fa fa-send m-l-5"></i></button>
+                                        <button class="btn btn-success m-l-5" type="button"><span>Draft</span> <i class="fa fa-floppy-o m-l-5"></i></button>
+                                        <button class="btn btn-success m-l-5" type="button"><span>Delete</span> <i class="fa fa-trash-o m-l-5"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <script src="../../static/assets/js/jquery-3.2.1.min.js"></script>
+	<script src="../../static/assets/js/popper.min.js"></script>
+    <script src="../../static/assets/js/bootstrap.min.js"></script>
+    <script src="../../static/assets/js/jquery.slimscroll.js"></script>
+    <script src="../../static/assets/plugins/summernote/dist/summernote-bs4.min.js"></script>
+    <script src="../../static/assets/js/app.js"></script>
+{% endblock %}

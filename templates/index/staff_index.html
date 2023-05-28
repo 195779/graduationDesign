@@ -526,11 +526,15 @@
                                                     <td>
                                                         {% if pice.beginDate %}
                                                             {{ pice.beginDate }}
+                                                        {% else %}
+                                                            暂无
                                                         {% endif %}
                                                     </td>
                                                     <td>
                                                         {% if pice.endDate %}
                                                             {{ pice.endDate }}
+                                                        {% else %}
+                                                            暂无
                                                         {% endif %}
                                                     </td>
                                                 </tr>
@@ -641,12 +645,8 @@
                                 <div class="input-group date" id="end-date-all-picker">
                                     <input type="text" placeholder="选择查询结束日期  年-月-日" class="form-control"
                                            id="end-date-all" data-provide="datepicker" data-date-format="yyyy-mm-dd"
-                                           name="end-date-all" autocomplete="off" >
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                                <script>
+                                           name="end-date-all" >
+                                     <script>
                                     const datepicker_end = document.getElementById("end-date-all");
                                     // 创建日期选择器
                                     $(datepicker_end).datepicker({
@@ -655,9 +655,13 @@
                                         autoclose: true       // 设置选择日期后自动关闭
                                     });
                                 </script>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
                             </div>
 
-                    <a   class="btn btn-primary float-right btn-rounded" style="margin-top: 5px; margin-right: 15px" onclick="search_attendance({{ staff_information.staffId }})" ><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;查询考勤记录</a>
+                    <a   class="btn btn-primary float-right btn-rounded" style="margin-top: 5px; margin-right: 5px" onclick="search_attendance({{ staff_information.staffId }})" ><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;查询考勤记录</a>
                     <a   class="btn btn-primary float-right btn-rounded" style="margin-top: 5px" id = 'export_excel' ><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp;导出当前界面考勤记录</a>
 
                 </div>

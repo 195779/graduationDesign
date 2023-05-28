@@ -46,41 +46,18 @@
                         <ul class="nav nav-second-level">
                             <li><a href="{{ url_for('depAdmin_all.dep_staff_manage', depAdmin_username=departmentAdmin.departmentAdminId, departmentId=dep.departmentId) }}">本部门职工个人信息</a>
                             </li>
-                            <li><a href="#">本部门职工人脸信息</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
-                        <a href="admin_index.html#"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门考勤统计</span><span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="toastr_notifications.html">总况</a>
-                            </li>
-                            <li><a href="nestable_list.html">出勤/工时统计</a>
-                            </li>
-                            <li><a href="timeline_v2.html">迟到统计</a>
-                            </li>
-                            <li><a href="forum_main.html">早退统计</a>
-                            </li>
-                            <li><a href="code_editor.html">休假统计</a>
-                            </li>
-                            <li><a href="modal_window.html">出差统计</a>
-                            </li>
-                            <li><a href="validation.html">加班统计</a>
-                            </li>
-                        </ul>
+                        <a href="{{ url_for('index.department_admin_index', depAdmin_username=departmentAdmin.departmentAdminId) }}"><i class="fa fa fa-globe"></i> <span class="nav-label">本部门考勤统计</span></a>
+
+
                     </li>
 
 
                     <li>
-                        <a href="mailbox.html"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span><span
-                                class="label label-warning pull-right">16</span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="mailbox.html">收件箱</a>
-                            </li>
-                            <li><a href="mail_compose.html">发布公告</a>
-                            </li>
-                        </ul>
+                        <a href="{{ url_for('index.open_box_dep', depAdmin_username=departmentAdmin.departmentAdminId) }}"><i class="fa fa-envelope"></i> <span class="nav-label">留言/公告</span></a>
+
                     </li>
 
                 </ul>

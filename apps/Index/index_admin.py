@@ -68,6 +68,21 @@ def get_departments2(admin_username):
     else:
         return redirect(url_for('login.login'))
 
+
+
+@login_required('<admin_username>')
+@index_bp.route('/<admin_username>/open_box_admin', methods=['POST', 'GET'], endpoint='open_box_admin')
+def open_box_admin(admin_username):
+    if session.get(admin_username + 'admin_username') is not None:
+
+        username = admin_username
+        admin = Admin.query.filter_by(adminId=username).first()
+
+        return render_template('admin_all/box.html', admin=admin )
+    else:
+        return redirect(url_for('login.login'))
+
+
 """  
 执行重定向redirect函数函数后 跳转执行下面的user_index函数，
 则打开index页面之后，

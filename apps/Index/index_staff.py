@@ -50,13 +50,25 @@ def staff_index(staff_username):
             species_a.append({'name':'出勤起止日期', 'beginDate':set.beginAttendDate, 'endDate':set.endAttendDate})
             species_a.append({'name':'休假起止日期', 'beginDate':set.beginHolidayDate, 'endDate':set.endHolidayDate})
             species_a.append({'name':'出差起止日期', 'beginDate':set.beginOutDate, 'endDate':set.endOutDate})
-            species_a.append({'name': '加班起始日期', 'beginDate': set.beginAddTime.date(), 'endDate':'仅限当天|无结束日期'})
+
+            if set.beginAddTime is not None:
+                species_a.append({'name': '加班起始日期', 'beginDate': set.beginAddTime.date(), 'endDate':'仅限当天|无结束日期'})
+            else:
+                species_a.append({'name': '加班起始日期', 'beginDate': '暂无', 'endDate': '仅限当天|无结束日期'})
 
             species_b = []
-            species_b.append({'name': '出勤起止时刻', 'begintime': set.attendTime.time(), 'endtime': set.endTime.time()})
+            if set.attendTime  is not None:
+                species_b.append({'name': '出勤起止时刻', 'begintime': set.attendTime.time(), 'endtime': set.endTime.time()})
+            else:
+                species_b.append(
+                    {'name': '出勤起止时刻', 'begintime': '暂无', 'endtime': set.endTime.time()})
             species_b.append({'name': '休假起止时刻', 'begintime': '暂无', 'endtime': '暂无'})
             species_b.append({'name': '出差起止时刻', 'begintime': '暂无', 'endtime': '暂无'})
-            species_b.append({'name': '加班起始时刻', 'begintime': set.beginAddTime.time(), 'endtime':'不规定结束时刻'})
+            if set.beginAddTime is not None:
+                species_b.append({'name': '加班起始时刻', 'begintime': set.beginAddTime.time(), 'endtime':'不规定结束时刻'})
+            else:
+                species_b.append(
+                    {'name': '加班起始时刻', 'begintime': '暂无', 'endtime': '不规定结束时刻'})
 
 
 
